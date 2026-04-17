@@ -13,6 +13,7 @@ import { deleteStoredFile, ensureUploadDirectory } from "../lib/uploads";
 const SECTION_KEYS = {
   businessSnapshot: "business_snapshot",
   contactsTransactors: "contacts_transactors",
+  bankingDetails: "banking_details",
   supportingDocuments: "supporting_documents",
   declarations: "declarations_review"
 } as const;
@@ -20,6 +21,10 @@ const SECTION_KEYS = {
 type PrismaWriteClient = Prisma.TransactionClient | typeof prisma;
 
 const DEFAULT_PLACEHOLDER_PASSWORD = "PENDING_ACCOUNT_SETUP";
+const TRANSACTION_OPTIONS = {
+  maxWait: 10000,
+  timeout: 20000
+} as const;
 
 export interface MerchantDraftPayload {
   applicationId?: string;
@@ -78,11 +83,30 @@ export interface MerchantContactsPayload {
   signatories: MerchantSignatoryPayload[];
 }
 
+export interface MerchantBankingPayload {
+  accountName: string;
+  bankName: string;
+  branchName?: string;
+  branchCode?: string;
+  accountNumber: string;
+  accountType?: string;
+  currency?: string;
+}
+
+export interface MerchantDeclarationPayload {
+  signerName: string;
+  signerTitle?: string;
+  acceptedTerms: boolean;
+  certifiedInformation: boolean;
+  authorizedToAct: boolean;
+}
+
 export interface ApplicationDetailResponse {
   applicationId: string;
   applicationType: string;
   status: string;
   currentStep: string | null;
+  submittedAt: string | null;
   organization: {
     id: string;
     legalName: string;
@@ -95,6 +119,8 @@ export interface ApplicationDetailResponse {
   sections: ApplicationSectionSummary[];
   businessSnapshot: MerchantDraftPayload | null;
   merchantContacts: MerchantContactsPayload | null;
+  merchantBanking: MerchantBankingPayload | null;
+  merchantDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedDocumentSummary[];
 }
 
@@ -113,6 +139,15 @@ const normalizeEmail = (value: string): string => value.trim().toLowerCase();
 
 const isActiveStatus = (status: string): boolean =>
   ACTIVE_APPLICATION_STATUSES.has(status);
+
+const assertApplicationEditable = (status: string): void => {
+  if (
+    status !== APPLICATION_STATUSES.draft &&
+    status !== APPLICATION_STATUSES.needsMoreInformation
+  ) {
+    throw new Error("This application can no longer be edited.");
+  }
+};
 
 const normalizeOptionalEmail = (value?: string): string | null => {
   const normalized = normalizeOptionalString(value);
@@ -170,6 +205,29 @@ const normalizeSignatories = (
     }))
     .filter((signatory) => Boolean(signatory.fullName));
 
+const normalizeBanking = (
+  payload: MerchantBankingPayload
+): MerchantBankingPayload => ({
+  accountName: normalizeString(payload.accountName),
+  bankName: normalizeString(payload.bankName),
+  branchName: normalizeOptionalString(payload.branchName) || undefined,
+  branchCode: normalizeOptionalString(payload.branchCode) || undefined,
+  accountNumber: normalizeString(payload.accountNumber),
+  accountType: normalizeOptionalString(payload.accountType) || undefined,
+  currency:
+    normalizeOptionalString(payload.currency)?.toUpperCase() || "USD"
+});
+
+const normalizeDeclaration = (
+  payload: MerchantDeclarationPayload
+): MerchantDeclarationPayload => ({
+  signerName: normalizeString(payload.signerName),
+  signerTitle: normalizeOptionalString(payload.signerTitle) || undefined,
+  acceptedTerms: Boolean(payload.acceptedTerms),
+  certifiedInformation: Boolean(payload.certifiedInformation),
+  authorizedToAct: Boolean(payload.authorizedToAct)
+});
+
 const mapApplicationDetail = (
   application: Prisma.ApplicationGetPayload<{
     include: {
@@ -177,6 +235,11 @@ const mapApplicationDetail = (
       sections: true;
       authorizedTransactors: true;
       directorsSignatories: true;
+      bankAccounts: {
+        orderBy: {
+          createdAt: "asc";
+        };
+      };
       documents: {
         orderBy: {
           createdAt: "desc";
@@ -195,12 +258,24 @@ const mapApplicationDetail = (
     parseSectionData<{
       primaryContact: MerchantContactPersonPayload | null;
     }>(contactsSection?.dataJson || null);
+  const declarationSection = application.sections.find(
+    (section) => section.sectionKey === SECTION_KEYS.declarations
+  );
+  const declarationSectionData = parseSectionData<MerchantDeclarationPayload>(
+    declarationSection?.dataJson || null
+  );
+  const primaryBankAccount =
+    application.bankAccounts.find((bankAccount) => bankAccount.isPrimary) ||
+    application.bankAccounts[0];
 
   return {
     applicationId: application.id,
     applicationType: application.applicationType,
     status: application.status,
     currentStep: application.currentStep,
+    submittedAt: application.submittedAt
+      ? application.submittedAt.toISOString()
+      : null,
     organization: {
       id: application.organization.id,
       legalName: application.organization.legalName,
@@ -257,6 +332,18 @@ const mapApplicationDetail = (
             }))
         }
       : null,
+    merchantBanking: primaryBankAccount
+      ? {
+          accountName: primaryBankAccount.accountName,
+          bankName: primaryBankAccount.bankName,
+          branchName: primaryBankAccount.branchName || undefined,
+          branchCode: primaryBankAccount.branchCode || undefined,
+          accountNumber: primaryBankAccount.accountNumber,
+          accountType: primaryBankAccount.accountType || undefined,
+          currency: primaryBankAccount.currency
+        }
+      : null,
+    merchantDeclaration: declarationSectionData,
     uploadedDocuments: application.documents.map((document) => ({
       id: document.id,
       requirementCode: document.requirementCode,
@@ -316,6 +403,26 @@ const ensureDefaultSections = async (
     where: {
       applicationId_sectionKey: {
         applicationId,
+        sectionKey: SECTION_KEYS.bankingDetails
+      }
+    },
+    create: {
+      applicationId,
+      sectionKey: SECTION_KEYS.bankingDetails,
+      title: "Banking Details",
+      status: "not_started",
+      sortOrder: 3
+    },
+    update: {
+      title: "Banking Details",
+      sortOrder: 3
+    }
+  });
+
+  await client.applicationSection.upsert({
+    where: {
+      applicationId_sectionKey: {
+        applicationId,
         sectionKey: SECTION_KEYS.supportingDocuments
       }
     },
@@ -324,11 +431,11 @@ const ensureDefaultSections = async (
       sectionKey: SECTION_KEYS.supportingDocuments,
       title: "Supporting Documents",
       status: "not_started",
-      sortOrder: 3
+      sortOrder: 4
     },
     update: {
       title: "Supporting Documents",
-      sortOrder: 3
+      sortOrder: 4
     }
   });
 
@@ -344,11 +451,11 @@ const ensureDefaultSections = async (
       sectionKey: SECTION_KEYS.declarations,
       title: "Declarations and Review",
       status: "not_started",
-      sortOrder: 4
+      sortOrder: 5
     },
     update: {
       title: "Declarations and Review",
-      sortOrder: 4
+      sortOrder: 5
     }
   });
 };
@@ -365,6 +472,11 @@ const getApplicationWithDetails = async (
       sections: true,
       authorizedTransactors: true,
       directorsSignatories: true,
+      bankAccounts: {
+        orderBy: {
+          createdAt: "asc"
+        }
+      },
       documents: {
         orderBy: {
           createdAt: "desc"
@@ -400,222 +512,233 @@ export const saveMerchantDraft = async (
 
   const now = new Date();
 
-  const response = await prisma.$transaction(async (transaction) => {
-    let user = payload.applicationId
-      ? await transaction.user.findFirst({
-          where: {
-            createdApplications: {
-              some: {
-                id: payload.applicationId
+  const response = await prisma.$transaction(
+    async (transaction) => {
+      let user = payload.applicationId
+        ? await transaction.user.findFirst({
+            where: {
+              createdApplications: {
+                some: {
+                  id: payload.applicationId
+                }
               }
             }
+          })
+        : await transaction.user.findUnique({
+            where: {
+              email: businessEmail
+            }
+          });
+
+      if (!user) {
+        user = await transaction.user.create({
+          data: {
+            email: businessEmail,
+            passwordHash: DEFAULT_PLACEHOLDER_PASSWORD,
+            fullName: contactPerson,
+            phoneNumber: businessPhone,
+            role: "applicant"
           }
-        })
-      : await transaction.user.findUnique({
+        });
+      } else {
+        user = await transaction.user.update({
           where: {
-            email: businessEmail
+            id: user.id
+          },
+          data: {
+            email: businessEmail,
+            fullName: contactPerson,
+            phoneNumber: businessPhone
+          }
+        });
+      }
+
+      let organization = await transaction.organization.findUnique({
+        where: {
+          ownerUserId: user.id
+        },
+        include: {
+          activeApplication: true
+        }
+      });
+
+      if (!organization) {
+        organization = await transaction.organization.create({
+          data: {
+            ownerUserId: user.id,
+            legalName,
+            tradingName,
+            entityType,
+            businessEmail,
+            businessPhone,
+            physicalAddressLine1: businessAddress
+          },
+          include: {
+            activeApplication: true
+          }
+        });
+      } else {
+        organization = await transaction.organization.update({
+          where: {
+            id: organization.id
+          },
+          data: {
+            legalName,
+            tradingName,
+            entityType,
+            businessEmail,
+            businessPhone,
+            physicalAddressLine1: businessAddress
+          },
+          include: {
+            activeApplication: true
+          }
+        });
+      }
+
+      let application =
+        payload.applicationId &&
+        (await transaction.application.findUnique({
+          where: {
+            id: payload.applicationId
+          }
+        }));
+
+      if (!application && organization.activeApplication) {
+        if (
+          organization.activeApplication.applicationType ===
+            APPLICATION_TYPES.merchant &&
+          isActiveStatus(organization.activeApplication.status)
+        ) {
+          application = organization.activeApplication;
+        } else if (!isActiveStatus(organization.activeApplication.status)) {
+          await transaction.organization.update({
+            where: {
+              id: organization.id
+            },
+            data: {
+              activeApplicationId: null
+            }
+          });
+        }
+      }
+
+      if (!application) {
+        application = await transaction.application.create({
+          data: {
+            organizationId: organization.id,
+            createdByUserId: user.id,
+            applicationType: APPLICATION_TYPES.merchant,
+            status: APPLICATION_STATUSES.draft,
+            currentStep: SECTION_KEYS.contactsTransactors
           }
         });
 
-    if (!user) {
-      user = await transaction.user.create({
-        data: {
-          email: businessEmail,
-          passwordHash: DEFAULT_PLACEHOLDER_PASSWORD,
-          fullName: contactPerson,
-          phoneNumber: businessPhone,
-          role: "applicant"
-        }
-      });
-    } else {
-      user = await transaction.user.update({
-        where: {
-          id: user.id
-        },
-        data: {
-          email: businessEmail,
-          fullName: contactPerson,
-          phoneNumber: businessPhone
-        }
-      });
-    }
+        await transaction.applicationStatusHistory.create({
+          data: {
+            applicationId: application.id,
+            changedByUserId: user.id,
+            fromStatus: null,
+            toStatus: APPLICATION_STATUSES.draft,
+            reason: "Merchant draft created."
+          }
+        });
 
-    let organization = await transaction.organization.findUnique({
-      where: {
-        ownerUserId: user.id
-      },
-      include: {
-        activeApplication: true
-      }
-    });
-
-    if (!organization) {
-      organization = await transaction.organization.create({
-        data: {
-          ownerUserId: user.id,
-          legalName,
-          tradingName,
-          entityType,
-          businessEmail,
-          businessPhone,
-          physicalAddressLine1: businessAddress
-        },
-        include: {
-          activeApplication: true
-        }
-      });
-    } else {
-      organization = await transaction.organization.update({
-        where: {
-          id: organization.id
-        },
-        data: {
-          legalName,
-          tradingName,
-          entityType,
-          businessEmail,
-          businessPhone,
-          physicalAddressLine1: businessAddress
-        },
-        include: {
-          activeApplication: true
-        }
-      });
-    }
-
-    let application =
-      payload.applicationId &&
-      (await transaction.application.findUnique({
-        where: {
-          id: payload.applicationId
-        }
-      }));
-
-    if (!application && organization.activeApplication) {
-      if (
-        organization.activeApplication.applicationType ===
-          APPLICATION_TYPES.merchant &&
-        isActiveStatus(organization.activeApplication.status)
-      ) {
-        application = organization.activeApplication;
-      } else if (!isActiveStatus(organization.activeApplication.status)) {
         await transaction.organization.update({
           where: {
             id: organization.id
           },
           data: {
-            activeApplicationId: null
+            activeApplicationId: application.id
+          }
+        });
+      } else {
+        assertApplicationEditable(application.status);
+
+        application = await transaction.application.update({
+          where: {
+            id: application.id
+          },
+          data: {
+            currentStep: SECTION_KEYS.contactsTransactors
           }
         });
       }
-    }
 
-    if (!application) {
-      application = await transaction.application.create({
-        data: {
-          organizationId: organization.id,
-          createdByUserId: user.id,
-          applicationType: APPLICATION_TYPES.merchant,
-          status: APPLICATION_STATUSES.draft,
-          currentStep: SECTION_KEYS.businessSnapshot
-        }
-      });
+      await ensureDefaultSections(transaction, application.id);
 
-      await transaction.applicationStatusHistory.create({
-        data: {
-          applicationId: application.id,
-          changedByUserId: user.id,
-          fromStatus: null,
-          toStatus: APPLICATION_STATUSES.draft,
-          reason: "Merchant draft created."
-        }
-      });
-
-      await transaction.organization.update({
+      await transaction.applicationSection.upsert({
         where: {
-          id: organization.id
-        },
-        data: {
-          activeApplicationId: application.id
-        }
-      });
-    } else {
-      application = await transaction.application.update({
-        where: {
-          id: application.id
-        },
-        data: {
-          currentStep: SECTION_KEYS.businessSnapshot
-        }
-      });
-    }
-
-    await ensureDefaultSections(transaction, application.id);
-
-    await transaction.applicationSection.upsert({
-      where: {
-        applicationId_sectionKey: {
-          applicationId: application.id,
-          sectionKey: SECTION_KEYS.businessSnapshot
-        }
-      },
-      create: {
-        applicationId: application.id,
-        sectionKey: SECTION_KEYS.businessSnapshot,
-        title: "Business Snapshot",
-        status: "completed",
-        sortOrder: 1,
-        lastEditedAt: now,
-        dataJson: JSON.stringify({
-          applicationId: application.id,
-          entityType,
-          legalName,
-          tradingName,
-          contactPerson,
-          businessEmail,
-          businessPhone,
-          projectedTransactions,
-          businessAddress,
-          productsDescription
-        })
-      },
-      update: {
-        status: "completed",
-        lastEditedAt: now,
-        dataJson: JSON.stringify({
-          applicationId: application.id,
-          entityType,
-          legalName,
-          tradingName,
-          contactPerson,
-          businessEmail,
-          businessPhone,
-          projectedTransactions,
-          businessAddress,
-          productsDescription
-        })
-      }
-    });
-
-    const detailedApplication = await transaction.application.findUniqueOrThrow({
-      where: {
-        id: application.id
-      },
-      include: {
-        organization: true,
-        sections: true,
-        authorizedTransactors: true,
-        directorsSignatories: true,
-        documents: {
-          orderBy: {
-            createdAt: "desc"
+          applicationId_sectionKey: {
+            applicationId: application.id,
+            sectionKey: SECTION_KEYS.businessSnapshot
           }
+        },
+        create: {
+          applicationId: application.id,
+          sectionKey: SECTION_KEYS.businessSnapshot,
+          title: "Business Snapshot",
+          status: "completed",
+          sortOrder: 1,
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            projectedTransactions,
+            businessAddress,
+            productsDescription
+          })
+        },
+        update: {
+          status: "completed",
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            projectedTransactions,
+            businessAddress,
+            productsDescription
+          })
         }
-      }
-    });
+      });
 
-    return mapApplicationDetail(detailedApplication);
-  });
+      const detailedApplication =
+        await transaction.application.findUniqueOrThrow({
+          where: {
+            id: application.id
+          },
+          include: {
+            organization: true,
+            sections: true,
+            authorizedTransactors: true,
+            directorsSignatories: true,
+            bankAccounts: {
+              orderBy: {
+                createdAt: "asc"
+              }
+            },
+            documents: {
+              orderBy: {
+                createdAt: "desc"
+              }
+            }
+          }
+        });
+
+      return mapApplicationDetail(detailedApplication);
+    },
+    TRANSACTION_OPTIONS
+  );
 
   return response;
 };
@@ -642,6 +765,7 @@ export const saveMerchantContacts = async (
       throw new Error("Application not found.");
     }
 
+    assertApplicationEditable(application.status);
     await ensureDefaultSections(transaction, applicationId);
 
     await transaction.authorizedTransactor.deleteMany({
@@ -693,7 +817,7 @@ export const saveMerchantContacts = async (
         id: applicationId
       },
       data: {
-        currentStep: SECTION_KEYS.contactsTransactors
+        currentStep: SECTION_KEYS.bankingDetails
       }
     });
 
@@ -733,6 +857,11 @@ export const saveMerchantContacts = async (
         sections: true,
         authorizedTransactors: true,
         directorsSignatories: true,
+        bankAccounts: {
+          orderBy: {
+            createdAt: "asc"
+          }
+        },
         documents: {
           orderBy: {
             createdAt: "desc"
@@ -742,7 +871,290 @@ export const saveMerchantContacts = async (
     });
 
     return mapApplicationDetail(detailedApplication);
-  });
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const saveMerchantBanking = async (
+  applicationId: string,
+  payload: MerchantBankingPayload
+): Promise<ApplicationDetailResponse> => {
+  const bankingDetails = normalizeBanking(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicationEditable(application.status);
+    await ensureDefaultSections(transaction, applicationId);
+
+    await transaction.bankAccount.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.bankAccount.create({
+      data: {
+        applicationId,
+        accountName: bankingDetails.accountName,
+        bankName: bankingDetails.bankName,
+        branchName: bankingDetails.branchName || null,
+        branchCode: bankingDetails.branchCode || null,
+        accountNumber: bankingDetails.accountNumber,
+        accountType: bankingDetails.accountType || null,
+        currency: bankingDetails.currency || "USD",
+        isPrimary: true
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.supportingDocuments
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.bankingDetails
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.bankingDetails,
+        title: "Banking Details",
+        status: "completed",
+        sortOrder: 3,
+        lastEditedAt: now,
+        dataJson: JSON.stringify(bankingDetails)
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify(bankingDetails)
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true,
+        sections: true,
+        authorizedTransactors: true,
+        directorsSignatories: true,
+        bankAccounts: {
+          orderBy: {
+            createdAt: "asc"
+          }
+        },
+        documents: {
+          orderBy: {
+            createdAt: "desc"
+          }
+        }
+      }
+    });
+
+    return mapApplicationDetail(detailedApplication);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const submitMerchantApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload,
+  acceptanceIp?: string
+): Promise<ApplicationDetailResponse> => {
+  const declaration = normalizeDeclaration(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true,
+        sections: true,
+        documents: true,
+        bankAccounts: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    if (
+      application.status !== APPLICATION_STATUSES.draft &&
+      application.status !== APPLICATION_STATUSES.needsMoreInformation
+    ) {
+      throw new Error(
+        "Only draft or returned applications can be submitted."
+      );
+    }
+
+    if (
+      !declaration.acceptedTerms ||
+      !declaration.certifiedInformation ||
+      !declaration.authorizedToAct
+    ) {
+      throw new Error(
+        "All declaration confirmations must be accepted before submission."
+      );
+    }
+
+    await ensureDefaultSections(transaction, applicationId);
+
+    const sectionStatusByKey = new Map(
+      application.sections.map((section) => [section.sectionKey, section.status])
+    );
+
+    const missingSections = [
+      SECTION_KEYS.businessSnapshot,
+      SECTION_KEYS.contactsTransactors,
+      SECTION_KEYS.bankingDetails
+    ].filter((sectionKey) => sectionStatusByKey.get(sectionKey) !== "completed");
+
+    if (missingSections.length > 0) {
+      throw new Error(
+        "Complete the business, contacts, and banking steps before submitting."
+      );
+    }
+
+    if (
+      !application.bankAccounts.length ||
+      sectionStatusByKey.get(SECTION_KEYS.supportingDocuments) !== "completed"
+    ) {
+      throw new Error(
+        "All required supporting documents must be uploaded before submission."
+      );
+    }
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.declarations
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.declarations,
+        title: "Declarations and Review",
+        status: "completed",
+        sortOrder: 5,
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      }
+    });
+
+    await transaction.applicationAgreement.deleteMany({
+      where: {
+        applicationId,
+        agreementType: "merchant_terms_v1"
+      }
+    });
+
+    await transaction.applicationAgreement.create({
+      data: {
+        applicationId,
+        agreementType: "merchant_terms_v1",
+        versionLabel: "v1",
+        title: "Omari Merchant Terms and Declarations",
+        acceptedByUserId: application.createdByUserId,
+        acceptanceIp: normalizeOptionalString(acceptanceIp) || null,
+        snapshotText: JSON.stringify(declaration),
+        acceptedAt: now
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        status: APPLICATION_STATUSES.submitted,
+        currentStep: SECTION_KEYS.declarations,
+        submittedAt: now
+      }
+    });
+
+    await transaction.applicationStatusHistory.create({
+      data: {
+        applicationId,
+        changedByUserId: application.createdByUserId,
+        fromStatus: application.status,
+        toStatus: APPLICATION_STATUSES.submitted,
+        reason: "Merchant application submitted by applicant."
+      }
+    });
+
+    const existingOpenReviewTask = await transaction.reviewTask.findFirst({
+      where: {
+        applicationId,
+        taskType: "initial_review",
+        status: "open"
+      }
+    });
+
+    if (!existingOpenReviewTask) {
+      await transaction.reviewTask.create({
+        data: {
+          applicationId,
+          taskType: "initial_review",
+          status: "open",
+          notes: "New merchant application awaiting internal review."
+        }
+      });
+    }
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true,
+        sections: true,
+        authorizedTransactors: true,
+        directorsSignatories: true,
+        bankAccounts: {
+          orderBy: {
+            createdAt: "asc"
+          }
+        },
+        documents: {
+          orderBy: {
+            createdAt: "desc"
+          }
+        }
+      }
+    });
+
+    return mapApplicationDetail(detailedApplication);
+  }, TRANSACTION_OPTIONS);
 
   return response;
 };
@@ -796,7 +1208,7 @@ const updateDocumentSectionStatus = async (
       sectionKey: SECTION_KEYS.supportingDocuments,
       title: "Supporting Documents",
       status: allRequiredUploaded ? "completed" : "in_progress",
-      sortOrder: 3,
+      sortOrder: 4,
       lastEditedAt: new Date()
     },
     update: {
@@ -826,6 +1238,7 @@ export const replaceApplicationDocuments = async (
     throw new Error("Application not found.");
   }
 
+  assertApplicationEditable(application.status);
   await prisma.application.update({
     where: {
       id: applicationId

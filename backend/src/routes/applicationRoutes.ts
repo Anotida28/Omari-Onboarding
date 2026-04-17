@@ -2,6 +2,8 @@ import { Router } from "express";
 import multer from "multer";
 import {
   getApplication,
+  submitMerchant,
+  upsertMerchantBanking,
   upsertMerchantContacts,
   uploadApplicationDocuments,
   upsertMerchantDraft
@@ -34,6 +36,8 @@ const router = Router();
 
 router.post("/merchant-draft", upsertMerchantDraft);
 router.post("/:applicationId/merchant-contacts", upsertMerchantContacts);
+router.post("/:applicationId/merchant-banking", upsertMerchantBanking);
+router.post("/:applicationId/merchant-submit", submitMerchant);
 router.get("/:applicationId", getApplication);
 router.post(
   "/:applicationId/documents",

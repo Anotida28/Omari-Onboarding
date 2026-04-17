@@ -84,11 +84,30 @@ export interface MerchantContactsPayload {
   signatories: MerchantSignatoryPayload[];
 }
 
+export interface MerchantBankingPayload {
+  accountName: string;
+  bankName: string;
+  branchName?: string;
+  branchCode?: string;
+  accountNumber: string;
+  accountType?: string;
+  currency?: string;
+}
+
+export interface MerchantDeclarationPayload {
+  signerName: string;
+  signerTitle?: string;
+  acceptedTerms: boolean;
+  certifiedInformation: boolean;
+  authorizedToAct: boolean;
+}
+
 export interface ApplicationDetailResponse {
   applicationId: string;
   applicationType: string;
   status: string;
   currentStep: string | null;
+  submittedAt: string | null;
   organization: {
     id: string;
     legalName: string;
@@ -101,6 +120,8 @@ export interface ApplicationDetailResponse {
   sections: ApplicationSectionSummary[];
   businessSnapshot: MerchantDraftPayload | null;
   merchantContacts: MerchantContactsPayload | null;
+  merchantBanking: MerchantBankingPayload | null;
+  merchantDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedApplicationDocument[];
 }
 
@@ -212,6 +233,42 @@ export const saveMerchantContacts = async (
 ): Promise<ApplicationDetailResponse> => {
   const response = await fetch(
     `${API_BASE_URL}/applications/${applicationId}/merchant-contacts`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+  return handleResponse<ApplicationDetailResponse>(response);
+};
+
+export const saveMerchantBanking = async (
+  applicationId: string,
+  payload: MerchantBankingPayload
+): Promise<ApplicationDetailResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/applications/${applicationId}/merchant-banking`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+  return handleResponse<ApplicationDetailResponse>(response);
+};
+
+export const submitMerchantApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload
+): Promise<ApplicationDetailResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/applications/${applicationId}/merchant-submit`,
     {
       method: "POST",
       headers: {

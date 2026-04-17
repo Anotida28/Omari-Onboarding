@@ -3,23 +3,29 @@ import {
   ApplicationDetailResponse,
   ApplicationSectionSummary,
   DocumentRequirementItem,
+  MerchantBankingPayload,
   MerchantContactPersonPayload,
   MerchantContactsPayload,
+  MerchantDeclarationPayload,
   MerchantDraftPayload,
   MerchantSignatoryPayload,
   MerchantTransactorPayload,
   UploadedApplicationDocument,
   getApplication,
   getDocumentRequirements,
+  saveMerchantBanking,
   saveMerchantContacts,
   saveMerchantDraft,
+  submitMerchantApplication,
   uploadApplicationDocuments
 } from "../services/api";
 
 type MerchantStepKey =
   | "business_snapshot"
   | "contacts_transactors"
-  | "supporting_documents";
+  | "banking_details"
+  | "supporting_documents"
+  | "declarations_review";
 
 interface MerchantFormState {
   legalName: string;
@@ -38,12 +44,32 @@ interface ContactSectionState {
   signatories: MerchantSignatoryPayload[];
 }
 
+interface BankingSectionState {
+  accountName: string;
+  bankName: string;
+  branchName: string;
+  branchCode: string;
+  accountNumber: string;
+  accountType: string;
+  currency: string;
+}
+
+interface DeclarationSectionState {
+  signerName: string;
+  signerTitle: string;
+  acceptedTerms: boolean;
+  certifiedInformation: boolean;
+  authorizedToAct: boolean;
+}
+
 const LOCAL_STORAGE_KEY = "omari-onboarding:merchant-application-id";
 
 const MERCHANT_STEPS: Array<{ key: MerchantStepKey; label: string }> = [
   { key: "business_snapshot", label: "Business Snapshot" },
   { key: "contacts_transactors", label: "Contacts & Transactors" },
-  { key: "supporting_documents", label: "Supporting Documents" }
+  { key: "banking_details", label: "Banking Details" },
+  { key: "supporting_documents", label: "Supporting Documents" },
+  { key: "declarations_review", label: "Review & Submit" }
 ];
 
 const defaultFormState: MerchantFormState = {
@@ -83,6 +109,24 @@ const createDefaultContactState = (): ContactSectionState => ({
   primaryContact: createEmptyPrimaryContact(),
   authorizedTransactors: [createEmptyTransactor()],
   signatories: [createEmptySignatory()]
+});
+
+const createDefaultBankingState = (): BankingSectionState => ({
+  accountName: "",
+  bankName: "",
+  branchName: "",
+  branchCode: "",
+  accountNumber: "",
+  accountType: "Current",
+  currency: "USD"
+});
+
+const createDefaultDeclarationState = (): DeclarationSectionState => ({
+  signerName: "",
+  signerTitle: "",
+  acceptedTerms: false,
+  certifiedInformation: false,
+  authorizedToAct: false
 });
 
 const humanize = (value: string): string =>
@@ -157,6 +201,30 @@ const buildContactState = (
   };
 };
 
+const buildBankingState = (
+  application: ApplicationDetailResponse
+): BankingSectionState => ({
+  accountName: application.merchantBanking?.accountName || "",
+  bankName: application.merchantBanking?.bankName || "",
+  branchName: application.merchantBanking?.branchName || "",
+  branchCode: application.merchantBanking?.branchCode || "",
+  accountNumber: application.merchantBanking?.accountNumber || "",
+  accountType: application.merchantBanking?.accountType || "Current",
+  currency: application.merchantBanking?.currency || "USD"
+});
+
+const buildDeclarationState = (
+  application: ApplicationDetailResponse
+): DeclarationSectionState => ({
+  signerName: application.merchantDeclaration?.signerName || "",
+  signerTitle: application.merchantDeclaration?.signerTitle || "",
+  acceptedTerms: Boolean(application.merchantDeclaration?.acceptedTerms),
+  certifiedInformation: Boolean(
+    application.merchantDeclaration?.certifiedInformation
+  ),
+  authorizedToAct: Boolean(application.merchantDeclaration?.authorizedToAct)
+});
+
 const buildDraftPayload = (
   applicationId: string,
   entityType: string,
@@ -203,15 +271,31 @@ const normalizeContactState = (
   }))
 });
 
+const normalizeBankingState = (
+  state: BankingSectionState
+): MerchantBankingPayload => ({
+  accountName: state.accountName.trim(),
+  bankName: state.bankName.trim(),
+  branchName: state.branchName.trim(),
+  branchCode: state.branchCode.trim(),
+  accountNumber: state.accountNumber.trim(),
+  accountType: state.accountType.trim(),
+  currency: state.currency.trim().toUpperCase()
+});
+
+const normalizeDeclarationState = (
+  state: DeclarationSectionState
+): MerchantDeclarationPayload => ({
+  signerName: state.signerName.trim(),
+  signerTitle: state.signerTitle.trim(),
+  acceptedTerms: state.acceptedTerms,
+  certifiedInformation: state.certifiedInformation,
+  authorizedToAct: state.authorizedToAct
+});
+
 const getPreferredStep = (
   application: ApplicationDetailResponse
 ): MerchantStepKey => {
-  const currentStep = application.currentStep as MerchantStepKey | null;
-
-  if (currentStep && MERCHANT_STEPS.some((step) => step.key === currentStep)) {
-    return currentStep;
-  }
-
   const firstIncomplete = application.sections
     .slice()
     .sort((left, right) => left.sortOrder - right.sortOrder)
@@ -221,7 +305,17 @@ const getPreferredStep = (
         section.status !== "completed"
     );
 
-  return (firstIncomplete?.key as MerchantStepKey) || "business_snapshot";
+  if (firstIncomplete?.key) {
+    return firstIncomplete.key as MerchantStepKey;
+  }
+
+  const currentStep = application.currentStep as MerchantStepKey | null;
+
+  if (currentStep && MERCHANT_STEPS.some((step) => step.key === currentStep)) {
+    return currentStep;
+  }
+
+  return "business_snapshot";
 };
 
 const findStepIndex = (step: MerchantStepKey): number =>
@@ -232,6 +326,11 @@ function MerchantOnboardingForm(): JSX.Element {
   const [contactSection, setContactSection] = useState<ContactSectionState>(
     createDefaultContactState()
   );
+  const [bankingSection, setBankingSection] = useState<BankingSectionState>(
+    createDefaultBankingState()
+  );
+  const [declarationSection, setDeclarationSection] =
+    useState<DeclarationSectionState>(createDefaultDeclarationState());
   const [applicationId, setApplicationId] = useState("");
   const [applicationStatus, setApplicationStatus] = useState("");
   const [sections, setSections] = useState<ApplicationSectionSummary[]>([]);
@@ -270,6 +369,8 @@ function MerchantOnboardingForm(): JSX.Element {
     setSelectedEntityType(application.organization.entityType);
     setForm(buildFormState(application));
     setContactSection(buildContactState(application));
+    setBankingSection(buildBankingState(application));
+    setDeclarationSection(buildDeclarationState(application));
     setUploadedDocuments(groupUploadedDocuments(application.uploadedDocuments));
     setActiveStep(getPreferredStep(application));
     window.localStorage.setItem(LOCAL_STORAGE_KEY, application.applicationId);
@@ -392,6 +493,39 @@ function MerchantOnboardingForm(): JSX.Element {
     });
   }, [form.contactPerson, form.businessEmail, form.businessPhone]);
 
+  useEffect(() => {
+    setBankingSection((current) => {
+      if (current.accountName) {
+        return current;
+      }
+
+      return {
+        ...current,
+        accountName: form.legalName
+      };
+    });
+  }, [form.legalName]);
+
+  useEffect(() => {
+    setDeclarationSection((current) => {
+      if (current.signerName) {
+        return current;
+      }
+
+      return {
+        ...current,
+        signerName:
+          contactSection.primaryContact.fullName || form.contactPerson || "",
+        signerTitle:
+          contactSection.primaryContact.designation || current.signerTitle
+      };
+    });
+  }, [
+    contactSection.primaryContact.designation,
+    contactSection.primaryContact.fullName,
+    form.contactPerson
+  ]);
+
   const stagedUploadCount = useMemo(
     () =>
       requirements.filter((requirement) => {
@@ -409,6 +543,31 @@ function MerchantOnboardingForm(): JSX.Element {
       }).length,
     [requirements, uploadedDocuments]
   );
+
+  const requiredRequirements = useMemo(
+    () => requirements.filter((requirement) => requirement.isRequired),
+    [requirements]
+  );
+
+  const uploadedRequiredRequirementCount = useMemo(
+    () =>
+      requiredRequirements.filter((requirement) => {
+        const files = uploadedDocuments[requirement.code];
+        return Array.isArray(files) && files.length > 0;
+      }).length,
+    [requiredRequirements, uploadedDocuments]
+  );
+
+  const totalUploadedDocumentCount = useMemo(
+    () =>
+      Object.values(uploadedDocuments).reduce(
+        (count, files) => count + files.length,
+        0
+      ),
+    [uploadedDocuments]
+  );
+
+  const isSubmitted = applicationStatus === "submitted";
 
   const currentStepIndex = findStepIndex(activeStep);
   const previousStep =
@@ -448,6 +607,28 @@ function MerchantOnboardingForm(): JSX.Element {
         ...current.primaryContact,
         [name]: value
       }
+    }));
+  };
+
+  const handleBankingFieldChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ): void => {
+    const { name, value } = event.target;
+
+    setBankingSection((current) => ({
+      ...current,
+      [name]: value
+    }));
+  };
+
+  const handleDeclarationFieldChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    const { name, value, type, checked } = event.target;
+
+    setDeclarationSection((current) => ({
+      ...current,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -549,6 +730,8 @@ function MerchantOnboardingForm(): JSX.Element {
   const handleReset = (): void => {
     setForm(defaultFormState);
     setContactSection(createDefaultContactState());
+    setBankingSection(createDefaultBankingState());
+    setDeclarationSection(createDefaultDeclarationState());
     setSections([]);
     setSelectedFiles({});
     setUploadedDocuments({});
@@ -632,7 +815,72 @@ function MerchantOnboardingForm(): JSX.Element {
         );
         syncApplicationState(contactsResponse);
         setMessage("Contacts and transactors saved successfully.");
+        setActiveStep("banking_details");
+        return;
+      }
+
+      if (activeStep === "banking_details") {
+        if (!applicationId) {
+          if (
+            !selectedEntityType ||
+            !form.legalName.trim() ||
+            !form.contactPerson.trim() ||
+            !form.businessEmail.trim()
+          ) {
+            throw new Error(
+              "Save the business snapshot and contacts details first, or complete the required merchant fields so a draft can be created automatically."
+            );
+          }
+
+          await ensureDraftForCurrentState();
+        }
+
+        const normalizedBanking = normalizeBankingState(bankingSection);
+
+        if (
+          !normalizedBanking.accountName ||
+          !normalizedBanking.bankName ||
+          !normalizedBanking.accountNumber
+        ) {
+          throw new Error(
+            "Account name, bank name, and account number are required before saving banking details."
+          );
+        }
+
+        const bankingResponse = await saveMerchantBanking(
+          applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "",
+          normalizedBanking
+        );
+        syncApplicationState(bankingResponse);
+        setMessage("Banking details saved successfully.");
         setActiveStep("supporting_documents");
+        return;
+      }
+
+      if (activeStep === "declarations_review") {
+        const currentApplicationId =
+          applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "";
+
+        if (!currentApplicationId) {
+          throw new Error(
+            "Save the earlier merchant steps before submitting the application."
+          );
+        }
+
+        const normalizedDeclaration =
+          normalizeDeclarationState(declarationSection);
+
+        if (!normalizedDeclaration.signerName) {
+          throw new Error("Signer name is required before submission.");
+        }
+
+        const submittedApplication = await submitMerchantApplication(
+          currentApplicationId,
+          normalizedDeclaration
+        );
+
+        syncApplicationState(submittedApplication);
+        setMessage("Merchant application submitted successfully.");
         return;
       }
 
@@ -766,7 +1014,7 @@ function MerchantOnboardingForm(): JSX.Element {
               </p>
             </div>
             <span className="status-chip">
-              {loadingState ? "Loading setup..." : "Step 1 of 3"}
+              {loadingState ? "Loading setup..." : "Step 1 of 5"}
             </span>
           </div>
 
@@ -1209,6 +1457,115 @@ function MerchantOnboardingForm(): JSX.Element {
         </section>
       ) : null}
 
+      {activeStep === "banking_details" ? (
+        <section className="form-section">
+          <div className="form-section__header">
+            <div>
+              <h3>Banking Details</h3>
+              <p>
+                Capture the primary settlement account that Omari should use for
+                merchant payouts and reconciliation.
+              </p>
+            </div>
+            <span className="status-chip">
+              {applicationId ? "Live banking draft" : "Previous steps first"}
+            </span>
+          </div>
+
+          <div className="subsection-card">
+            <div className="subsection-card__header">
+              <div>
+                <h4>Primary Settlement Account</h4>
+                <p>
+                  This should be the main bank account linked to the merchant
+                  profile for settlement.
+                </p>
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <label className="field">
+                <span>Account Name</span>
+                <input
+                  name="accountName"
+                  value={bankingSection.accountName}
+                  onChange={handleBankingFieldChange}
+                  placeholder="Enter account name"
+                />
+              </label>
+
+              <label className="field">
+                <span>Bank Name</span>
+                <input
+                  name="bankName"
+                  value={bankingSection.bankName}
+                  onChange={handleBankingFieldChange}
+                  placeholder="Enter bank name"
+                />
+              </label>
+
+              <label className="field">
+                <span>Branch Name</span>
+                <input
+                  name="branchName"
+                  value={bankingSection.branchName}
+                  onChange={handleBankingFieldChange}
+                  placeholder="Enter branch name"
+                />
+              </label>
+
+              <label className="field">
+                <span>Branch Code</span>
+                <input
+                  name="branchCode"
+                  value={bankingSection.branchCode}
+                  onChange={handleBankingFieldChange}
+                  placeholder="Enter branch code"
+                />
+              </label>
+
+              <label className="field">
+                <span>Account Number</span>
+                <input
+                  name="accountNumber"
+                  value={bankingSection.accountNumber}
+                  onChange={handleBankingFieldChange}
+                  placeholder="Enter account number"
+                />
+              </label>
+
+              <label className="field">
+                <span>Account Type</span>
+                <select
+                  name="accountType"
+                  value={bankingSection.accountType}
+                  onChange={handleBankingFieldChange}
+                >
+                  <option value="Current">Current</option>
+                  <option value="Savings">Savings</option>
+                  <option value="Business">Business</option>
+                  <option value="Corporate">Corporate</option>
+                </select>
+              </label>
+
+              <label className="field">
+                <span>Currency</span>
+                <select
+                  name="currency"
+                  value={bankingSection.currency}
+                  onChange={handleBankingFieldChange}
+                >
+                  <option value="USD">USD</option>
+                  <option value="ZWG">ZWG</option>
+                  <option value="ZAR">ZAR</option>
+                  <option value="GBP">GBP</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {activeStep === "supporting_documents" ? (
         <section className="form-section">
           <div className="form-section__header">
@@ -1332,6 +1689,195 @@ function MerchantOnboardingForm(): JSX.Element {
         </section>
       ) : null}
 
+      {activeStep === "declarations_review" ? (
+        <section className="form-section">
+          <div className="form-section__header">
+            <div>
+              <h3>Declarations & Review</h3>
+              <p>
+                Review the merchant profile, confirm the declarations, and
+                submit the application for internal OMDS review.
+              </p>
+            </div>
+            <span className="status-chip status-chip--soft">
+              {isSubmitted
+                ? `Submitted${applicationStatus ? ` | ${humanize(applicationStatus)}` : ""}`
+                : "Ready for final review"}
+            </span>
+          </div>
+
+          <div className="review-grid">
+            <article className="review-card">
+              <h4>Business Snapshot</h4>
+              <dl className="detail-list">
+                <div>
+                  <dt>Business name</dt>
+                  <dd>{form.legalName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Trading name</dt>
+                  <dd>{form.tradingName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Entity type</dt>
+                  <dd>{humanize(selectedEntityType || "-")}</dd>
+                </div>
+                <div>
+                  <dt>Business email</dt>
+                  <dd>{form.businessEmail || "-"}</dd>
+                </div>
+              </dl>
+            </article>
+
+            <article className="review-card">
+              <h4>Contacts & Signatories</h4>
+              <dl className="detail-list">
+                <div>
+                  <dt>Primary contact</dt>
+                  <dd>{contactSection.primaryContact.fullName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Contact email</dt>
+                  <dd>{contactSection.primaryContact.email || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Authorized transactors</dt>
+                  <dd>{contactSection.authorizedTransactors.length}</dd>
+                </div>
+                <div>
+                  <dt>Signatories</dt>
+                  <dd>{contactSection.signatories.length}</dd>
+                </div>
+              </dl>
+            </article>
+
+            <article className="review-card">
+              <h4>Banking Details</h4>
+              <dl className="detail-list">
+                <div>
+                  <dt>Account name</dt>
+                  <dd>{bankingSection.accountName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Bank</dt>
+                  <dd>{bankingSection.bankName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Branch</dt>
+                  <dd>{bankingSection.branchName || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Currency</dt>
+                  <dd>{bankingSection.currency || "-"}</dd>
+                </div>
+              </dl>
+            </article>
+
+            <article className="review-card">
+              <h4>Supporting Documents</h4>
+              <dl className="detail-list">
+                <div>
+                  <dt>Uploaded document groups</dt>
+                  <dd>{uploadedRequirementCount}</dd>
+                </div>
+                <div>
+                  <dt>Total uploaded files</dt>
+                  <dd>{totalUploadedDocumentCount}</dd>
+                </div>
+                <div>
+                  <dt>Required groups complete</dt>
+                  <dd>
+                    {uploadedRequiredRequirementCount}/{requiredRequirements.length}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Application status</dt>
+                  <dd>{humanize(applicationStatus || "draft")}</dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+
+          <div className="subsection-card">
+            <div className="subsection-card__header">
+              <div>
+                <h4>Applicant Declarations</h4>
+                <p>
+                  The named signatory confirms the merchant information and
+                  accepts the Omari merchant terms.
+                </p>
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <label className="field">
+                <span>Signer Name</span>
+                <input
+                  name="signerName"
+                  value={declarationSection.signerName}
+                  onChange={handleDeclarationFieldChange}
+                  placeholder="Enter the signer's full name"
+                  disabled={isSubmitted}
+                />
+              </label>
+
+              <label className="field">
+                <span>Signer Title</span>
+                <input
+                  name="signerTitle"
+                  value={declarationSection.signerTitle}
+                  onChange={handleDeclarationFieldChange}
+                  placeholder="Enter role or position"
+                  disabled={isSubmitted}
+                />
+              </label>
+            </div>
+
+            <div className="checklist">
+              <label className="checkbox-row">
+                <input
+                  type="checkbox"
+                  name="acceptedTerms"
+                  checked={declarationSection.acceptedTerms}
+                  onChange={handleDeclarationFieldChange}
+                  disabled={isSubmitted}
+                />
+                <span>I accept the Omari merchant terms and onboarding conditions.</span>
+              </label>
+
+              <label className="checkbox-row">
+                <input
+                  type="checkbox"
+                  name="certifiedInformation"
+                  checked={declarationSection.certifiedInformation}
+                  onChange={handleDeclarationFieldChange}
+                  disabled={isSubmitted}
+                />
+                <span>I certify that the information and uploaded documents are accurate.</span>
+              </label>
+
+              <label className="checkbox-row">
+                <input
+                  type="checkbox"
+                  name="authorizedToAct"
+                  checked={declarationSection.authorizedToAct}
+                  onChange={handleDeclarationFieldChange}
+                  disabled={isSubmitted}
+                />
+                <span>I am authorized to submit this merchant application on behalf of the business.</span>
+              </label>
+            </div>
+
+            {isSubmitted ? (
+              <div className="submit-banner">
+                This merchant application has already been submitted and is now
+                waiting for internal review.
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
       <div className="form-actions form-actions--split">
         <div className="form-actions__group">
           {previousStep ? (
@@ -1366,15 +1912,21 @@ function MerchantOnboardingForm(): JSX.Element {
           <button
             type="submit"
             className="button button--primary"
-            disabled={savingStep}
+            disabled={savingStep || isSubmitted}
           >
             {savingStep
               ? "Saving..."
-              : activeStep === "business_snapshot"
+              : isSubmitted
+                ? "Application Submitted"
+                : activeStep === "business_snapshot"
                 ? "Save Business Snapshot"
                 : activeStep === "contacts_transactors"
                   ? "Save Contacts Section"
-                  : `Save Documents${stagedUploadCount > 0 ? " & Upload" : ""}`}
+                  : activeStep === "declarations_review"
+                    ? "Submit Merchant Application"
+                    : activeStep === "banking_details"
+                      ? "Save Banking Details"
+                      : `Save Documents${stagedUploadCount > 0 ? " & Upload" : ""}`}
           </button>
         </div>
       </div>

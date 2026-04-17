@@ -2,8 +2,10 @@ import { Request, Response } from "express";
 import {
   getApplicationDetail,
   replaceApplicationDocuments,
+  saveMerchantBanking,
   saveMerchantContacts,
-  saveMerchantDraft
+  saveMerchantDraft,
+  submitMerchantApplication
 } from "../services/applicationService";
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -243,6 +245,115 @@ export const upsertMerchantContacts = async (
         error instanceof Error
           ? error.message
           : "Failed to save merchant contacts."
+    });
+  }
+};
+
+export const upsertMerchantBanking = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const applicationId = req.params.applicationId;
+  const {
+    accountName,
+    bankName,
+    branchName,
+    branchCode,
+    accountNumber,
+    accountType,
+    currency
+  } = req.body as Record<string, unknown>;
+
+  if (!isNonEmptyString(applicationId)) {
+    res.status(400).json({
+      message: "applicationId is required."
+    });
+    return;
+  }
+
+  if (
+    !isNonEmptyString(accountName) ||
+    !isNonEmptyString(bankName) ||
+    !isNonEmptyString(accountNumber)
+  ) {
+    res.status(400).json({
+      message:
+        "accountName, bankName, and accountNumber are required."
+    });
+    return;
+  }
+
+  try {
+    const response = await saveMerchantBanking(applicationId, {
+      accountName,
+      bankName,
+      branchName: isNonEmptyString(branchName) ? branchName : undefined,
+      branchCode: isNonEmptyString(branchCode) ? branchCode : undefined,
+      accountNumber,
+      accountType: isNonEmptyString(accountType) ? accountType : undefined,
+      currency: isNonEmptyString(currency) ? currency : undefined
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Failed to save merchant banking details.", error);
+    res.status(500).json({
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to save merchant banking details."
+    });
+  }
+};
+
+export const submitMerchant = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const applicationId = req.params.applicationId;
+  const {
+    signerName,
+    signerTitle,
+    acceptedTerms,
+    certifiedInformation,
+    authorizedToAct
+  } = req.body as Record<string, unknown>;
+
+  if (!isNonEmptyString(applicationId)) {
+    res.status(400).json({
+      message: "applicationId is required."
+    });
+    return;
+  }
+
+  if (!isNonEmptyString(signerName)) {
+    res.status(400).json({
+      message: "signerName is required."
+    });
+    return;
+  }
+
+  try {
+    const response = await submitMerchantApplication(
+      applicationId,
+      {
+        signerName,
+        signerTitle: isNonEmptyString(signerTitle) ? signerTitle : undefined,
+        acceptedTerms: Boolean(acceptedTerms),
+        certifiedInformation: Boolean(certifiedInformation),
+        authorizedToAct: Boolean(authorizedToAct)
+      },
+      req.ip
+    );
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Failed to submit merchant application.", error);
+    res.status(500).json({
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to submit merchant application."
     });
   }
 };
