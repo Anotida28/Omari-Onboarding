@@ -55,10 +55,6 @@ function PortalSidebar({
         <div className="sidebar__brand-mark">
           <img src="/omari-logo.png" alt="Omari logo" />
         </div>
-        <div>
-          <p className="sidebar__eyebrow">OMDS Platform</p>
-          <h1>Omari Onboarding</h1>
-        </div>
       </div>
 
       <nav className="sidebar__nav" aria-label="Primary">
@@ -84,6 +80,11 @@ function PortalSidebar({
           </section>
         ))}
       </nav>
+
+      <div className="sidebar__account">
+        <p>Account</p>
+        <strong>Lourence Ruhwaya</strong>
+      </div>
     </aside>
   );
 }

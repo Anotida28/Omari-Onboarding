@@ -20,40 +20,44 @@ function HomePage(): JSX.Element {
 
         <main className="workspace-main">
           <header className="topbar">
-            <div>
-              <p className="topbar__eyebrow">
-                {isApplicantView
-                  ? "Merchant onboarding workspace"
-                  : "Internal review workspace"}
-              </p>
-              <h2>{isApplicantView ? "Applicant Setup" : "Review Queue"}</h2>
-            </div>
+            <strong className="topbar__title">
+              {isApplicantView ? "Omari - Onboarding System" : "Omari - Review System"}
+            </strong>
 
             <div className="topbar__meta">
-              <span className="status-chip status-chip--brand">
-                Omari branded
-              </span>
               <div className="profile-card">
                 <div className="profile-card__avatar">
                   {isApplicantView ? "AP" : "RV"}
                 </div>
                 <div>
-                  <strong>
-                    {isApplicantView ? "Applicant Workspace" : "Review Manager"}
-                  </strong>
+                  <strong>{isApplicantView ? "Applicant Workspace" : "Review Manager"}</strong>
                   <span>
-                    {isApplicantView ? "Applicant Portal" : "Internal Review"}
+                    {isApplicantView ? "Merchant onboarding" : "Internal review"}
                   </span>
                 </div>
               </div>
             </div>
           </header>
 
-          {isApplicantView ? (
-            <MerchantOnboardingForm />
-          ) : (
-            <InternalReviewWorkspace />
-          )}
+          <div className="workspace-content">
+            <section className="workspace-intro">
+              <p className="workspace-intro__eyebrow">
+                {isApplicantView ? "Merchant onboarding workspace" : "Internal review workspace"}
+              </p>
+              <h1>{isApplicantView ? "Applicant Setup" : "Review Operations"}</h1>
+              <p>
+                {isApplicantView
+                  ? "Capture merchant information in a guided flow, save drafts safely, and submit when each section is complete."
+                  : "Evaluate submissions with complete context, review document readiness, and process decision actions with confidence."}
+              </p>
+            </section>
+
+            {isApplicantView ? (
+              <MerchantOnboardingForm />
+            ) : (
+              <InternalReviewWorkspace />
+            )}
+          </div>
         </main>
       </div>
     </div>

@@ -960,19 +960,6 @@ function MerchantOnboardingForm(): JSX.Element {
             tracking and save points.
           </p>
         </div>
-
-        <div className="panel-header__summary">
-          <span className="status-chip status-chip--brand">
-            {applicationId ? "Live Draft" : "Merchant Flow"}
-          </span>
-          <strong>{requirements.length}</strong>
-          <span>Requirements loaded</span>
-          {applicationId ? (
-            <span className="panel-header__meta">
-              Draft: {applicationId.slice(0, 8)} | {humanize(applicationStatus)}
-            </span>
-          ) : null}
-        </div>
       </div>
 
       <div className="stepper">
@@ -993,8 +980,7 @@ function MerchantOnboardingForm(): JSX.Element {
             >
               <span className="stepper__index">{index + 1}</span>
               <span className="stepper__content">
-                <strong>{step.label}</strong>
-                <span>{humanize(status)}</span>
+                <strong className="stepper__label">{step.label}</strong>
               </span>
             </button>
           );

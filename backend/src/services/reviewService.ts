@@ -38,49 +38,12 @@ export interface ReviewQueueResponse {
 
 interface ReviewDecisionPayload {
   note?: string;
-
-  const REVIEW_TASK_ACTIVE_STATUSES = new Set(["open", "waiting_applicant"]);
-  const REVIEW_TASK_OPEN_STATUS = "open";
-  const REVIEW_TASK_WAITING_STATUS = "waiting_applicant";
-  const REVIEW_TASK_COMPLETED_STATUS = "completed";
-
-  const reviewApplicationInclude = {
-    organization: true,
-    documents: {
-      orderBy: {
-        createdAt: "desc"
-      }
-    },
-    sections: {
-      orderBy: {
-        sortOrder: "asc"
-      }
-    },
-    reviewTasks: {
-      orderBy: {
-        createdAt: "desc"
-      }
-    }
-  } as const;
 }
 
 interface DocumentReviewPayload {
   status: "pending" | "accepted" | "rejected";
   note?: string;
 }
-
-  const requireDecisionNote = (value?: string): string => {
-    const message = normalizeOptionalString(value);
-
-    if (!message) {
-      throw new Error("A note is required for this action.");
-    }
-
-    return message;
-  };
-
-  const getDecisionNote = (value?: string): string | null =>
-    normalizeOptionalString(value);
 
 const PENDING_REVIEW_STATUSES = [
   APPLICATION_STATUSES.submitted,
@@ -93,119 +56,33 @@ const PENDING_REVIEW_STATUSES = [
 const CLOSED_REVIEW_STATUSES = [
   APPLICATION_STATUSES.approved,
   APPLICATION_STATUSES.rejected,
-
-  const areRequiredDocumentsComplete = async (
-    transaction: Prisma.TransactionClient,
-    application: {
-      applicationType: string;
-      organization: { entityType: string };
-      documents: Array<{
-        requirementCode: string | null;
-        status: string;
-      }>;
-    }
-  ): Promise<boolean> => {
-    const requiredRequirements = await transaction.documentRequirement.findMany({
-      where: {
-        applicationType: application.applicationType,
-        entityType: application.organization.entityType,
-        isRequired: true
-      }
-    });
-
-    if (requiredRequirements.length === 0) {
-      return true;
-    }
-
-    const documentsByRequirement = new Map<string, string[]>();
-
-    for (const document of application.documents) {
-      if (!document.requirementCode) {
-        continue;
-      }
-
-      const bucket = documentsByRequirement.get(document.requirementCode) || [];
-      bucket.push(document.status);
-      documentsByRequirement.set(document.requirementCode, bucket);
-    }
-
-    return requiredRequirements.every((requirement) => {
-      const requirementDocuments = documentsByRequirement.get(requirement.code) || [];
-
-      return (
-        requirementDocuments.length > 0 &&
-        requirementDocuments.every((status) => status === "accepted")
-      );
-    });
-  };
-
-  const updateReviewTaskState = async (
-    transaction: Prisma.TransactionClient,
-    applicationId: string,
-    toStatus: string,
-    note: string | null,
-    now: Date
-  ): Promise<void> => {
-    const activeTasks = await transaction.reviewTask.findMany({
-      where: {
-        applicationId,
-        status: {
-          in: Array.from(REVIEW_TASK_ACTIVE_STATUSES)
-        }
-      },
-      orderBy: {
-        createdAt: "desc"
-      }
-    });
-
-    const nextTaskStatus =
-      toStatus === APPLICATION_STATUSES.needsMoreInformation
-        ? REVIEW_TASK_WAITING_STATUS
-        : REVIEW_TASK_COMPLETED_STATUS;
-
-    if (activeTasks.length === 0) {
-      await transaction.reviewTask.create({
-        data: {
-          applicationId,
-          taskType: "initial_review",
-          status: nextTaskStatus,
-          notes: note,
-          completedAt: nextTaskStatus === REVIEW_TASK_WAITING_STATUS ? null : now
-        }
-      });
-
-      return;
-    }
-
-    const [currentTask, ...supersededTasks] = activeTasks;
-
-    await transaction.reviewTask.update({
-      where: {
-        id: currentTask.id
-      },
-      data: {
-        status: nextTaskStatus,
-        notes: note ?? currentTask.notes,
-        completedAt: nextTaskStatus === REVIEW_TASK_WAITING_STATUS ? null : now
-      }
-    });
-
-    for (const task of supersededTasks) {
-      await transaction.reviewTask.update({
-        where: {
-          id: task.id
-        },
-        data: {
-          status: REVIEW_TASK_COMPLETED_STATUS,
-          completedAt: now,
-          notes: task.notes ?? note
-        }
-      });
-    }
-  };
   APPLICATION_STATUSES.activated,
   APPLICATION_STATUSES.archived
 ];
+
+const REVIEW_TASK_ACTIVE_STATUSES = new Set(["open", "waiting_applicant"]);
+const REVIEW_TASK_OPEN_STATUS = "open";
+const REVIEW_TASK_WAITING_STATUS = "waiting_applicant";
+const REVIEW_TASK_COMPLETED_STATUS = "completed";
+
+const reviewApplicationInclude = {
+  organization: true,
+  documents: {
+    orderBy: {
+      createdAt: "desc"
+    }
+  },
+  sections: {
+    orderBy: {
+      sortOrder: "asc"
+    }
+  },
+  reviewTasks: {
+    orderBy: {
+      createdAt: "desc"
+    }
+  }
+} as const;
 
 const normalizeOptionalString = (value?: string): string | null => {
   if (!value) {
@@ -215,6 +92,19 @@ const normalizeOptionalString = (value?: string): string | null => {
   const normalized = value.trim();
   return normalized.length > 0 ? normalized : null;
 };
+
+const requireDecisionNote = (value?: string): string => {
+  const message = normalizeOptionalString(value);
+
+  if (!message) {
+    throw new Error("A note is required for this action.");
+  }
+
+  return message;
+};
+
+const getDecisionNote = (value?: string): string | null =>
+  normalizeOptionalString(value);
 
 const VALID_DOCUMENT_REVIEW_STATUSES = new Set<string>([
   "pending",
@@ -244,6 +134,125 @@ const getReviewDetailOrThrow = async (
   }
 
   return detail;
+};
+
+const areRequiredDocumentsComplete = async (
+  transaction: Prisma.TransactionClient,
+  application: {
+    applicationType: string;
+    organization: { entityType: string };
+    documents: Array<{
+      requirementCode: string | null;
+      status: string;
+    }>;
+  }
+): Promise<boolean> => {
+  const requiredRequirements = await transaction.documentRequirement.findMany({
+    where: {
+      applicationType: application.applicationType,
+      entityType: application.organization.entityType,
+      isRequired: true
+    }
+  });
+
+  if (requiredRequirements.length === 0) {
+    return true;
+  }
+
+  const documentsByRequirement = new Map<string, string[]>();
+
+  for (const document of application.documents) {
+    if (!document.requirementCode) {
+      continue;
+    }
+
+    const bucket = documentsByRequirement.get(document.requirementCode) || [];
+    bucket.push(document.status);
+    documentsByRequirement.set(document.requirementCode, bucket);
+  }
+
+  return requiredRequirements.every((requirement) => {
+    const requirementDocuments = documentsByRequirement.get(requirement.code) || [];
+
+    return (
+      requirementDocuments.length > 0 &&
+      requirementDocuments.every((status) => status === "accepted")
+    );
+  });
+};
+
+const updateReviewTaskState = async (
+  transaction: Prisma.TransactionClient,
+  applicationId: string,
+  toStatus: string,
+  note: string | null,
+  now: Date
+): Promise<void> => {
+  const activeTasks = await transaction.reviewTask.findMany({
+    where: {
+      applicationId,
+      status: {
+        in: Array.from(REVIEW_TASK_ACTIVE_STATUSES)
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+
+  const nextTaskStatus =
+    toStatus === APPLICATION_STATUSES.needsMoreInformation
+      ? REVIEW_TASK_WAITING_STATUS
+      : REVIEW_TASK_COMPLETED_STATUS;
+
+  if (activeTasks.length === 0) {
+    await transaction.reviewTask.create({
+      data: {
+        applicationId,
+        taskType: "initial_review",
+        status: nextTaskStatus,
+        notes: note,
+        completedAt: nextTaskStatus === REVIEW_TASK_WAITING_STATUS ? null : now
+      }
+    });
+
+    return;
+  }
+
+  const [currentTask, ...supersededTasks] = activeTasks;
+
+  await transaction.reviewTask.update({
+    where: {
+      id: currentTask.id
+    },
+    data: {
+      status: nextTaskStatus,
+      notes: note ?? currentTask.notes,
+      completedAt: nextTaskStatus === REVIEW_TASK_WAITING_STATUS ? null : now
+    }
+  });
+
+  for (const task of supersededTasks) {
+    await transaction.reviewTask.update({
+      where: {
+        id: task.id
+      },
+      data: {
+        status: REVIEW_TASK_COMPLETED_STATUS,
+        completedAt: now,
+        notes: task.notes ?? note
+      }
+    });
+  }
+};
+
+const ensureReviewableStatus = (status: string): void => {
+  if (
+    !ACTIVE_APPLICATION_STATUSES.has(status) ||
+    status === APPLICATION_STATUSES.draft
+  ) {
+    throw new Error("This application is not available for review actions.");
+  }
 };
 
 export const listReviewApplications = async (
@@ -321,12 +330,6 @@ export const listReviewApplications = async (
   };
 };
 
-const ensureReviewableStatus = (status: string): void => {
-  if (!ACTIVE_APPLICATION_STATUSES.has(status) || status === APPLICATION_STATUSES.draft) {
-    throw new Error("This application is not available for review actions.");
-  }
-};
-
 const transitionReviewStatus = async (
   applicationId: string,
   toStatus: string,
@@ -335,100 +338,95 @@ const transitionReviewStatus = async (
   const message = normalizeOptionalString(note);
   const now = new Date();
 
-  const updatedApplicationId = await prisma.$transaction(
-    async (transaction) => {
-      const application = await transaction.application.findUnique({
-        where: {
-          id: applicationId
-        },
-        include: reviewApplicationInclude
-      });
+  const updatedApplicationId = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: reviewApplicationInclude
+    });
 
-      if (!application) {
-        throw new Error("Application not found.");
-      }
-
-      ensureReviewableStatus(application.status);
-
-      if (application.status === toStatus) {
-        throw new Error("This application is already in that status.");
-      }
-
-      if (toStatus === APPLICATION_STATUSES.approved) {
-        const documentsComplete = await areRequiredDocumentsComplete(
-          transaction,
-          application
-        );
-
-        if (!documentsComplete) {
-          throw new Error(
-            "All required documents must be accepted before approval."
-          );
-        }
-      }
-
-      await transaction.application.update({
-        where: {
-          id: applicationId
-        },
-        data: {
-          status: toStatus,
-          closedAt:
-            toStatus === APPLICATION_STATUSES.approved ||
-            toStatus === APPLICATION_STATUSES.rejected
-              ? now
-              : null
-        }
-      });
-
-      await transaction.applicationStatusHistory.create({
-        data: {
-          applicationId,
-          changedByUserId: null,
-          fromStatus: application.status,
-          toStatus,
-          reason: message
-        }
-      });
-
-      await transaction.auditLog.create({
-        data: {
-          actorUserId: null,
-          entityType: "application",
-          entityId: applicationId,
-          action: toStatus,
-          summary: `Application moved to ${toStatus}.`,
-          detailsJson: JSON.stringify({
-            note: message,
-            requiredDocumentsComplete:
-              toStatus === APPLICATION_STATUSES.approved
-          })
-        }
-      });
-
-      await updateReviewTaskState(transaction, applicationId, toStatus, message, now);
-
-      if (
-        toStatus === APPLICATION_STATUSES.approved ||
-        toStatus === APPLICATION_STATUSES.rejected
-      ) {
-        await transaction.organization.update({
-          where: {
-            id: application.organizationId
-          },
-          data: {
-            activeApplicationId: null
-          }
-        });
-      }
-
-      return application.id;
-    },
-    {
-      maxWait: 15000,
-      timeout: 60000
+    if (!application) {
+      throw new Error("Application not found.");
     }
-  );
+
+    ensureReviewableStatus(application.status);
+
+    if (application.status === toStatus) {
+      throw new Error("This application is already in that status.");
+    }
+
+    if (toStatus === APPLICATION_STATUSES.approved) {
+      const documentsComplete = await areRequiredDocumentsComplete(
+        transaction,
+        application
+      );
+
+      if (!documentsComplete) {
+        throw new Error("All required documents must be accepted before approval.");
+      }
+    }
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        status: toStatus,
+        closedAt:
+          toStatus === APPLICATION_STATUSES.approved ||
+          toStatus === APPLICATION_STATUSES.rejected
+            ? now
+            : null
+      }
+    });
+
+    await transaction.applicationStatusHistory.create({
+      data: {
+        applicationId,
+        changedByUserId: null,
+        fromStatus: application.status,
+        toStatus,
+        reason: message
+      }
+    });
+
+    await transaction.auditLog.create({
+      data: {
+        actorUserId: null,
+        entityType: "application",
+        entityId: applicationId,
+        action: toStatus,
+        summary: `Application moved to ${toStatus}.`,
+        detailsJson: JSON.stringify({
+          note: message,
+          requiredDocumentsComplete:
+            toStatus === APPLICATION_STATUSES.approved
+        })
+      }
+    });
+
+    await updateReviewTaskState(transaction, applicationId, toStatus, message, now);
+
+    if (
+      toStatus === APPLICATION_STATUSES.approved ||
+      toStatus === APPLICATION_STATUSES.rejected
+    ) {
+      await transaction.organization.update({
+        where: {
+          id: application.organizationId
+        },
+        data: {
+          activeApplicationId: null
+        }
+      });
+    }
+
+    return application.id;
+  }, {
+    maxWait: 15000,
+    timeout: 60000
+  });
 
   return getReviewDetailOrThrow(updatedApplicationId);
 };
@@ -474,56 +472,53 @@ export const reviewApplicationDocument = async (
     throw new Error("Document review status must be pending, accepted, or rejected.");
   }
 
-  const applicationId = await prisma.$transaction(
-    async (transaction) => {
-      const document = await transaction.document.findUnique({
-        where: {
-          id: documentId
-        },
-        include: {
-          application: true
-        }
-      });
-
-      if (!document) {
-        throw new Error("Document not found.");
+  const applicationId = await prisma.$transaction(async (transaction) => {
+    const document = await transaction.document.findUnique({
+      where: {
+        id: documentId
+      },
+      include: {
+        application: true
       }
+    });
 
-      ensureReviewableStatus(document.application.status);
-
-      await transaction.document.update({
-        where: {
-          id: documentId
-        },
-        data: {
-          status: normalizedStatus,
-          reviewNotes: normalizedNote,
-          reviewedByUserId: null
-        }
-      });
-
-      await transaction.auditLog.create({
-        data: {
-          actorUserId: null,
-          entityType: "document",
-          entityId: documentId,
-          action: `review_${normalizedStatus}`,
-          summary: `Document marked as ${normalizedStatus}.`,
-          detailsJson: JSON.stringify({
-            applicationId: document.applicationId,
-            requirementCode: document.requirementCode,
-            note: normalizedNote
-          })
-        }
-      });
-
-      return document.applicationId;
-    },
-    {
-      maxWait: 15000,
-      timeout: 60000
+    if (!document) {
+      throw new Error("Document not found.");
     }
-  );
+
+    ensureReviewableStatus(document.application.status);
+
+    await transaction.document.update({
+      where: {
+        id: documentId
+      },
+      data: {
+        status: normalizedStatus,
+        reviewNotes: normalizedNote,
+        reviewedByUserId: null
+      }
+    });
+
+    await transaction.auditLog.create({
+      data: {
+        actorUserId: null,
+        entityType: "document",
+        entityId: documentId,
+        action: `review_${normalizedStatus}`,
+        summary: `Document marked as ${normalizedStatus}.`,
+        detailsJson: JSON.stringify({
+          applicationId: document.applicationId,
+          requirementCode: document.requirementCode,
+          note: normalizedNote
+        })
+      }
+    });
+
+    return document.applicationId;
+  }, {
+    maxWait: 15000,
+    timeout: 60000
+  });
 
   return getReviewDetailOrThrow(applicationId);
 };
