@@ -46,7 +46,34 @@ export interface UploadedApplicationDocument {
   label: string;
   originalFileName: string;
   status: string;
+  isRequired: boolean;
+  reviewNotes: string | null;
+  downloadUrl: string;
   uploadedAt: string;
+  reviewedAt: string | null;
+}
+
+export interface DocumentChecklistSummaryItem {
+  requirementCode: string;
+  label: string;
+  isRequired: boolean;
+  status: string;
+  uploadedCount: number;
+  acceptedCount: number;
+  pendingCount: number;
+  rejectedCount: number;
+}
+
+export interface DocumentReviewSummary {
+  totalDocuments: number;
+  acceptedDocuments: number;
+  pendingDocuments: number;
+  rejectedDocuments: number;
+  requiredDocuments: number;
+  acceptedRequiredDocuments: number;
+  missingRequiredDocuments: DocumentChecklistSummaryItem[];
+  rejectedRequiredDocuments: DocumentChecklistSummaryItem[];
+  pendingRequiredDocuments: DocumentChecklistSummaryItem[];
 }
 
 export interface ApplicationSectionSummary {
@@ -102,6 +129,50 @@ export interface MerchantDeclarationPayload {
   authorizedToAct: boolean;
 }
 
+export interface ApplicationStatusHistoryItem {
+  id: string;
+  fromStatus: string | null;
+  toStatus: string;
+  reason: string | null;
+  createdAt: string;
+}
+
+export interface ReviewTaskItem {
+  id: string;
+  taskType: string;
+  status: string;
+  notes: string | null;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+export interface ReviewQueueItem {
+  applicationId: string;
+  applicationType: string;
+  status: string;
+  currentStep: string | null;
+  submittedAt: string | null;
+  updatedAt: string;
+  organization: {
+    legalName: string;
+    tradingName: string | null;
+    entityType: string;
+  };
+  sectionProgress: {
+    completed: number;
+    total: number;
+  };
+  reviewTask: {
+    taskType: string;
+    status: string;
+  } | null;
+}
+
+export interface ReviewQueueResponse {
+  scope: string;
+  items: ReviewQueueItem[];
+}
+
 export interface ApplicationDetailResponse {
   applicationId: string;
   applicationType: string;
@@ -123,6 +194,10 @@ export interface ApplicationDetailResponse {
   merchantBanking: MerchantBankingPayload | null;
   merchantDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedApplicationDocument[];
+  documentChecklist: DocumentChecklistSummaryItem[];
+  documentReviewSummary: DocumentReviewSummary;
+  statusHistory: ApplicationStatusHistoryItem[];
+  reviewTasks: ReviewTaskItem[];
 }
 
 export const API_BASE_URL =
@@ -269,6 +344,76 @@ export const submitMerchantApplication = async (
 ): Promise<ApplicationDetailResponse> => {
   const response = await fetch(
     `${API_BASE_URL}/applications/${applicationId}/merchant-submit`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+  return handleResponse<ApplicationDetailResponse>(response);
+};
+
+export const getReviewQueue = async (
+  scope = "pending"
+): Promise<ReviewQueueResponse> => {
+  const params = new URLSearchParams({
+    scope
+  });
+  const response = await fetch(`${API_BASE_URL}/review/applications?${params.toString()}`);
+  return handleResponse<ReviewQueueResponse>(response);
+};
+
+const postReviewAction = async (
+  applicationId: string,
+  action: "request-info" | "approve" | "reject",
+  note: string
+): Promise<ApplicationDetailResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/review/applications/${applicationId}/${action}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        note
+      })
+    }
+  );
+
+  return handleResponse<ApplicationDetailResponse>(response);
+};
+
+export const requestApplicationInfo = async (
+  applicationId: string,
+  note: string
+): Promise<ApplicationDetailResponse> =>
+  postReviewAction(applicationId, "request-info", note);
+
+export const approveReviewApplication = async (
+  applicationId: string,
+  note: string
+): Promise<ApplicationDetailResponse> =>
+  postReviewAction(applicationId, "approve", note);
+
+export const rejectReviewApplication = async (
+  applicationId: string,
+  note: string
+): Promise<ApplicationDetailResponse> =>
+  postReviewAction(applicationId, "reject", note);
+
+export const reviewApplicationDocument = async (
+  documentId: string,
+  payload: {
+    status: "pending" | "accepted" | "rejected";
+    note: string;
+  }
+): Promise<ApplicationDetailResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/review/documents/${documentId}/review`,
     {
       method: "POST",
       headers: {

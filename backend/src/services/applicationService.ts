@@ -22,8 +22,8 @@ type PrismaWriteClient = Prisma.TransactionClient | typeof prisma;
 
 const DEFAULT_PLACEHOLDER_PASSWORD = "PENDING_ACCOUNT_SETUP";
 const TRANSACTION_OPTIONS = {
-  maxWait: 10000,
-  timeout: 20000
+  maxWait: 15000,
+  timeout: 60000
 } as const;
 
 export interface MerchantDraftPayload {
@@ -45,7 +45,11 @@ interface UploadedDocumentSummary {
   label: string;
   originalFileName: string;
   status: string;
+  isRequired: boolean;
+  reviewNotes: string | null;
+  downloadUrl: string;
   uploadedAt: string;
+  reviewedAt: string | null;
 }
 
 interface ApplicationSectionSummary {
@@ -101,6 +105,46 @@ export interface MerchantDeclarationPayload {
   authorizedToAct: boolean;
 }
 
+interface ApplicationStatusHistorySummary {
+  id: string;
+  fromStatus: string | null;
+  toStatus: string;
+  reason: string | null;
+  createdAt: string;
+}
+
+interface ReviewTaskSummary {
+  id: string;
+  taskType: string;
+  status: string;
+  notes: string | null;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+interface DocumentChecklistSummaryItem {
+  requirementCode: string;
+  label: string;
+  isRequired: boolean;
+  status: string;
+  uploadedCount: number;
+  acceptedCount: number;
+  pendingCount: number;
+  rejectedCount: number;
+}
+
+interface DocumentReviewSummary {
+  totalDocuments: number;
+  acceptedDocuments: number;
+  pendingDocuments: number;
+  rejectedDocuments: number;
+  requiredDocuments: number;
+  acceptedRequiredDocuments: number;
+  missingRequiredDocuments: DocumentChecklistSummaryItem[];
+  rejectedRequiredDocuments: DocumentChecklistSummaryItem[];
+  pendingRequiredDocuments: DocumentChecklistSummaryItem[];
+}
+
 export interface ApplicationDetailResponse {
   applicationId: string;
   applicationType: string;
@@ -122,6 +166,10 @@ export interface ApplicationDetailResponse {
   merchantBanking: MerchantBankingPayload | null;
   merchantDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedDocumentSummary[];
+  documentChecklist: DocumentChecklistSummaryItem[];
+  documentReviewSummary: DocumentReviewSummary;
+  statusHistory: ApplicationStatusHistorySummary[];
+  reviewTasks: ReviewTaskSummary[];
 }
 
 const normalizeString = (value: string): string => value.trim();
@@ -165,6 +213,9 @@ const parseSectionData = <T>(value: string | null): T | null => {
     return null;
   }
 };
+
+const normalizeDocumentStatus = (status: string): string =>
+  status === "uploaded" ? "pending" : status;
 
 const normalizeContactPerson = (
   contact: MerchantContactPersonPayload
@@ -228,26 +279,81 @@ const normalizeDeclaration = (
   authorizedToAct: Boolean(payload.authorizedToAct)
 });
 
-const mapApplicationDetail = (
-  application: Prisma.ApplicationGetPayload<{
-    include: {
-      organization: true;
-      sections: true;
-      authorizedTransactors: true;
-      directorsSignatories: true;
-      bankAccounts: {
-        orderBy: {
-          createdAt: "asc";
-        };
-      };
-      documents: {
-        orderBy: {
-          createdAt: "desc";
-        };
-      };
-    };
-  }>
-): ApplicationDetailResponse => {
+const applicationDetailInclude = Prisma.validator<Prisma.ApplicationInclude>()({
+  organization: true,
+  sections: true,
+  authorizedTransactors: true,
+  directorsSignatories: true,
+  bankAccounts: {
+    orderBy: {
+      createdAt: "asc"
+    }
+  },
+  documents: {
+    orderBy: {
+      createdAt: "desc"
+    }
+  },
+  statusHistory: {
+    orderBy: {
+      createdAt: "desc"
+    }
+  },
+  reviewTasks: {
+    orderBy: {
+      createdAt: "desc"
+    }
+  }
+});
+
+type ApplicationDetailRecord = Prisma.ApplicationGetPayload<{
+  include: typeof applicationDetailInclude;
+}>;
+
+const getDocumentRequirementsForApplication = async (
+  applicationType: string,
+  entityType: string
+) => {
+  const requirements = await prisma.documentRequirement.findMany({
+    where: {
+      applicationType,
+      entityType: {
+        in: [entityType, "any"]
+      }
+    }
+  });
+
+  const orderedRequirements = requirements
+    .slice()
+    .sort((left, right) => {
+      const leftSpecificity = left.entityType === entityType ? 0 : 1;
+      const rightSpecificity = right.entityType === entityType ? 0 : 1;
+
+      if (leftSpecificity !== rightSpecificity) {
+        return leftSpecificity - rightSpecificity;
+      }
+
+      if (left.sortOrder !== right.sortOrder) {
+        return left.sortOrder - right.sortOrder;
+      }
+
+      return left.label.localeCompare(right.label);
+    });
+
+  const requirementByCode = new Map<string, (typeof orderedRequirements)[number]>();
+
+  for (const requirement of orderedRequirements) {
+    if (!requirementByCode.has(requirement.code)) {
+      requirementByCode.set(requirement.code, requirement);
+    }
+  }
+
+  return [...requirementByCode.values()];
+};
+
+const mapApplicationDetail = async (
+  application: ApplicationDetailRecord
+): Promise<ApplicationDetailResponse> => {
   const businessSnapshotSection = application.sections.find(
     (section) => section.sectionKey === SECTION_KEYS.businessSnapshot
   );
@@ -267,6 +373,96 @@ const mapApplicationDetail = (
   const primaryBankAccount =
     application.bankAccounts.find((bankAccount) => bankAccount.isPrimary) ||
     application.bankAccounts[0];
+  const documentRequirements = await getDocumentRequirementsForApplication(
+    application.applicationType,
+    application.organization.entityType
+  );
+  const requirementByCode = new Map(
+    documentRequirements.map((requirement) => [requirement.code, requirement])
+  );
+  const uploadedDocuments = application.documents.map((document) => {
+    const normalizedStatus = normalizeDocumentStatus(document.status);
+    const requirement = document.requirementCode
+      ? requirementByCode.get(document.requirementCode)
+      : null;
+
+    return {
+      id: document.id,
+      requirementCode: document.requirementCode,
+      label: document.label,
+      originalFileName: document.originalFileName,
+      status: normalizedStatus,
+      isRequired: requirement?.isRequired || false,
+      reviewNotes: document.reviewNotes,
+      downloadUrl: `/uploads/${document.storagePath}`,
+      uploadedAt: document.createdAt.toISOString(),
+      reviewedAt:
+        normalizedStatus === "accepted" || normalizedStatus === "rejected"
+          ? document.updatedAt.toISOString()
+          : null
+    };
+  });
+  const documentsByRequirement = new Map<
+    string,
+    Array<(typeof uploadedDocuments)[number]>
+  >();
+
+  for (const document of uploadedDocuments) {
+    if (!document.requirementCode) {
+      continue;
+    }
+
+    const bucket = documentsByRequirement.get(document.requirementCode) || [];
+    bucket.push(document);
+    documentsByRequirement.set(document.requirementCode, bucket);
+  }
+
+  const documentChecklist = documentRequirements.map((requirement) => {
+    const requirementDocuments = documentsByRequirement.get(requirement.code) || [];
+    const acceptedCount = requirementDocuments.filter(
+      (document) => document.status === "accepted"
+    ).length;
+    const rejectedCount = requirementDocuments.filter(
+      (document) => document.status === "rejected"
+    ).length;
+    const pendingCount = requirementDocuments.filter(
+      (document) => document.status === "pending"
+    ).length;
+
+    let status = "missing";
+
+    if (requirementDocuments.length > 0) {
+      if (rejectedCount > 0) {
+        status = "rejected";
+      } else if (pendingCount > 0) {
+        status = "pending";
+      } else {
+        status = "accepted";
+      }
+    }
+
+    return {
+      requirementCode: requirement.code,
+      label: requirement.label,
+      isRequired: requirement.isRequired,
+      status,
+      uploadedCount: requirementDocuments.length,
+      acceptedCount,
+      pendingCount,
+      rejectedCount
+    };
+  });
+  const acceptedDocuments = uploadedDocuments.filter(
+    (document) => document.status === "accepted"
+  ).length;
+  const rejectedDocuments = uploadedDocuments.filter(
+    (document) => document.status === "rejected"
+  ).length;
+  const pendingDocuments = uploadedDocuments.length - acceptedDocuments - rejectedDocuments;
+  const requiredChecklist = documentChecklist.filter((item) => item.isRequired);
+  const acceptedRequiredDocuments = requiredChecklist.filter(
+    (item) => item.status === "accepted"
+  ).length;
 
   return {
     applicationId: application.id,
@@ -344,13 +540,39 @@ const mapApplicationDetail = (
         }
       : null,
     merchantDeclaration: declarationSectionData,
-    uploadedDocuments: application.documents.map((document) => ({
-      id: document.id,
-      requirementCode: document.requirementCode,
-      label: document.label,
-      originalFileName: document.originalFileName,
-      status: document.status,
-      uploadedAt: document.createdAt.toISOString()
+    uploadedDocuments,
+    documentChecklist,
+    documentReviewSummary: {
+      totalDocuments: uploadedDocuments.length,
+      acceptedDocuments,
+      pendingDocuments,
+      rejectedDocuments,
+      requiredDocuments: requiredChecklist.length,
+      acceptedRequiredDocuments,
+      missingRequiredDocuments: requiredChecklist.filter(
+        (item) => item.status === "missing"
+      ),
+      rejectedRequiredDocuments: requiredChecklist.filter(
+        (item) => item.status === "rejected"
+      ),
+      pendingRequiredDocuments: requiredChecklist.filter(
+        (item) => item.status === "pending"
+      )
+    },
+    statusHistory: application.statusHistory.map((item) => ({
+      id: item.id,
+      fromStatus: item.fromStatus,
+      toStatus: item.toStatus,
+      reason: item.reason,
+      createdAt: item.createdAt.toISOString()
+    })),
+    reviewTasks: application.reviewTasks.map((task) => ({
+      id: task.id,
+      taskType: task.taskType,
+      status: task.status,
+      notes: task.notes,
+      createdAt: task.createdAt.toISOString(),
+      completedAt: task.completedAt ? task.completedAt.toISOString() : null
     }))
   };
 };
@@ -467,25 +689,10 @@ const getApplicationWithDetails = async (
     where: {
       id: applicationId
     },
-    include: {
-      organization: true,
-      sections: true,
-      authorizedTransactors: true,
-      directorsSignatories: true,
-      bankAccounts: {
-        orderBy: {
-          createdAt: "asc"
-        }
-      },
-      documents: {
-        orderBy: {
-          createdAt: "desc"
-        }
-      }
-    }
+    include: applicationDetailInclude
   });
 
-  return application ? mapApplicationDetail(application) : null;
+  return application ? await mapApplicationDetail(application) : null;
 };
 
 export const getApplicationDetail = async (
@@ -717,25 +924,10 @@ export const saveMerchantDraft = async (
           where: {
             id: application.id
           },
-          include: {
-            organization: true,
-            sections: true,
-            authorizedTransactors: true,
-            directorsSignatories: true,
-            bankAccounts: {
-              orderBy: {
-                createdAt: "asc"
-              }
-            },
-            documents: {
-              orderBy: {
-                createdAt: "desc"
-              }
-            }
-          }
+          include: applicationDetailInclude
         });
 
-      return mapApplicationDetail(detailedApplication);
+      return await mapApplicationDetail(detailedApplication);
     },
     TRANSACTION_OPTIONS
   );
@@ -852,25 +1044,10 @@ export const saveMerchantContacts = async (
       where: {
         id: applicationId
       },
-      include: {
-        organization: true,
-        sections: true,
-        authorizedTransactors: true,
-        directorsSignatories: true,
-        bankAccounts: {
-          orderBy: {
-            createdAt: "asc"
-          }
-        },
-        documents: {
-          orderBy: {
-            createdAt: "desc"
-          }
-        }
-      }
+      include: applicationDetailInclude
     });
 
-    return mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -953,25 +1130,10 @@ export const saveMerchantBanking = async (
       where: {
         id: applicationId
       },
-      include: {
-        organization: true,
-        sections: true,
-        authorizedTransactors: true,
-        directorsSignatories: true,
-        bankAccounts: {
-          orderBy: {
-            createdAt: "asc"
-          }
-        },
-        documents: {
-          orderBy: {
-            createdAt: "desc"
-          }
-        }
-      }
+      include: applicationDetailInclude
     });
 
-    return mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -1135,25 +1297,10 @@ export const submitMerchantApplication = async (
       where: {
         id: applicationId
       },
-      include: {
-        organization: true,
-        sections: true,
-        authorizedTransactors: true,
-        directorsSignatories: true,
-        bankAccounts: {
-          orderBy: {
-            createdAt: "asc"
-          }
-        },
-        documents: {
-          orderBy: {
-            createdAt: "desc"
-          }
-        }
-      }
+      include: applicationDetailInclude
     });
 
-    return mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -1316,7 +1463,9 @@ export const replaceApplicationDocuments = async (
         fileExtension,
         sizeBytes: BigInt(file.size),
         storagePath: relativePath,
-        status: "uploaded"
+        status: "pending",
+        reviewNotes: null,
+        reviewedByUserId: null
       }
     });
   }

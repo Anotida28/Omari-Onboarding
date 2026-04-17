@@ -47,7 +47,7 @@ model Organization {
   postalAddress       String?      @db.NVarChar(500)
   status              String       @default("active") @db.VarChar(50)
   ownerUserId         String       @unique @db.UniqueIdentifier
-  activeApplicationId String?      @unique @db.UniqueIdentifier
+  activeApplicationId String?      @db.UniqueIdentifier
   ownerUser           User         @relation("OrganizationOwner", fields: [ownerUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   activeApplication   Application? @relation("OrganizationActiveApplication", fields: [activeApplicationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   applications        Application[] @relation("OrganizationApplications")
@@ -70,7 +70,7 @@ model Application {
   decisionNotes       String?                   @db.NVarChar(Max)
   organization        Organization              @relation("OrganizationApplications", fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   createdByUser       User                      @relation("ApplicationCreatedBy", fields: [createdByUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  activeForOrganization Organization?           @relation("OrganizationActiveApplication")
+  activeForOrganizations Organization[]         @relation("OrganizationActiveApplication")
   sections            ApplicationSection[]
   documents           Document[]
   comments            ReviewComment[]

@@ -5,6 +5,7 @@ import multer from "multer";
 import path from "path";
 import applicationRoutes from "./routes/applicationRoutes";
 import documentRequirementRoutes from "./routes/documentRequirementRoutes";
+import reviewRoutes from "./routes/reviewRoutes";
 import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/applications", applicationRoutes);
 app.use("/api/document-requirements", documentRequirementRoutes);
+app.use("/api/review", reviewRoutes);
 app.use("/api/users", userRoutes);
 
 app.use(

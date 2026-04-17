@@ -1,27 +1,54 @@
-const navGroups = [
+type PortalView = "applicant" | "review";
+
+interface PortalSidebarProps {
+  activeView: PortalView;
+  onSelectView: (view: PortalView) => void;
+}
+
+const buildNavGroups = (activeView: PortalView) => [
   {
-    title: "Main",
+    title: "Workspace",
     items: [
-      { label: "Dashboard" },
-      { label: "Merchant Onboarding", active: true },
-      { label: "Document Rules" }
+      {
+        label: "Applicant Setup",
+        view: "applicant" as const,
+        active: activeView === "applicant"
+      },
+      {
+        label: "Internal Review",
+        view: "review" as const,
+        active: activeView === "review"
+      }
     ]
   },
   {
     title: "Workflow",
     items: [
-      { label: "Applications" },
-      { label: "Reviews" },
-      { label: "Approvals" }
+      {
+        label: activeView === "applicant" ? "Merchant Onboarding" : "Review Queue",
+        view: activeView,
+        active: true
+      },
+      {
+        label:
+          activeView === "applicant" ? "Supporting Documents" : "Decision Actions",
+        view: activeView,
+        active: false
+      }
     ]
   },
   {
     title: "Settings",
-    items: [{ label: "Profile" }, { label: "Support" }]
+    items: [{ label: "Support", view: activeView, active: false }]
   }
 ];
 
-function PortalSidebar(): JSX.Element {
+function PortalSidebar({
+  activeView,
+  onSelectView
+}: PortalSidebarProps): JSX.Element {
+  const navGroups = buildNavGroups(activeView);
+
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
@@ -46,6 +73,7 @@ function PortalSidebar(): JSX.Element {
                     className={`sidebar__item${
                       item.active ? " sidebar__item--active" : ""
                     }`}
+                    onClick={() => onSelectView(item.view)}
                   >
                     <span className="sidebar__icon" aria-hidden="true" />
                     <span>{item.label}</span>
