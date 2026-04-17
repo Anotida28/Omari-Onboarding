@@ -1,0 +1,301 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String                   @id @default(uuid()) @db.UniqueIdentifier
+  email             String                   @unique @db.VarChar(191)
+  passwordHash      String                   @db.VarChar(255)
+  fullName          String                   @db.VarChar(191)
+  phoneNumber       String?                  @db.VarChar(50)
+  role              String                   @default("applicant") @db.VarChar(50)
+  status            String                   @default("active") @db.VarChar(50)
+  lastLoginAt       DateTime?
+  organizationOwner Organization?            @relation("OrganizationOwner")
+  createdApplications Application[]          @relation("ApplicationCreatedBy")
+  uploadedDocuments Document[]               @relation("DocumentUploadedBy")
+  reviewedDocuments Document[]               @relation("DocumentReviewedBy")
+  authoredComments  ReviewComment[]          @relation("CommentAuthor")
+  statusChanges     ApplicationStatusHistory[] @relation("StatusChangedBy")
+  assignedReviewTasks ReviewTask[]           @relation("ReviewTaskAssignedTo")
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+
+  @@index([role, status])
+}
+
+model Organization {
+  id                  String       @id @default(uuid()) @db.UniqueIdentifier
+  legalName           String       @db.VarChar(191)
+  tradingName         String?      @db.VarChar(191)
+  entityType          String       @default("private_limited_company") @db.VarChar(100)
+  registrationNumber  String?      @db.VarChar(100)
+  tradingLicenseNumber String?     @db.VarChar(100)
+  taxNumber           String?      @db.VarChar(100)
+  businessEmail       String?      @db.VarChar(191)
+  businessPhone       String?      @db.VarChar(50)
+  physicalAddressLine1 String?     @db.VarChar(255)
+  physicalAddressLine2 String?     @db.VarChar(255)
+  city                String?      @db.VarChar(100)
+  province            String?      @db.VarChar(100)
+  country             String       @default("Zimbabwe") @db.VarChar(100)
+  postalAddress       String?      @db.NVarChar(500)
+  status              String       @default("active") @db.VarChar(50)
+  ownerUserId         String       @unique @db.UniqueIdentifier
+  activeApplicationId String?      @unique @db.UniqueIdentifier
+  ownerUser           User         @relation("OrganizationOwner", fields: [ownerUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  activeApplication   Application? @relation("OrganizationActiveApplication", fields: [activeApplicationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  applications        Application[] @relation("OrganizationApplications")
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([entityType, status])
+}
+
+model Application {
+  id                  String                    @id @default(uuid()) @db.UniqueIdentifier
+  organizationId      String                    @db.UniqueIdentifier
+  createdByUserId     String                    @db.UniqueIdentifier
+  applicationType     String                    @default("merchant") @db.VarChar(50)
+  status              String                    @default("draft") @db.VarChar(50)
+  currentStep         String?                   @db.VarChar(100)
+  version             Int                       @default(1)
+  submittedAt         DateTime?
+  closedAt            DateTime?
+  decisionNotes       String?                   @db.NVarChar(Max)
+  organization        Organization              @relation("OrganizationApplications", fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdByUser       User                      @relation("ApplicationCreatedBy", fields: [createdByUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  activeForOrganization Organization?           @relation("OrganizationActiveApplication")
+  sections            ApplicationSection[]
+  documents           Document[]
+  comments            ReviewComment[]
+  statusHistory       ApplicationStatusHistory[]
+  directorsSignatories DirectorSignatory[]
+  authorizedTransactors AuthorizedTransactor[]
+  bankAccounts        BankAccount[]
+  outlets             Outlet[]
+  agreements          ApplicationAgreement[]
+  reviewTasks         ReviewTask[]
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  @@index([organizationId, createdAt])
+  @@index([status, applicationType])
+}
+
+model ApplicationSection {
+  id             String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId  String      @db.UniqueIdentifier
+  sectionKey     String      @db.VarChar(100)
+  title          String      @db.VarChar(191)
+  status         String      @default("not_started") @db.VarChar(50)
+  sortOrder      Int         @default(0)
+  dataJson       String?     @db.NVarChar(Max)
+  lastEditedAt   DateTime?
+  application    Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([applicationId, sectionKey])
+  @@index([applicationId, status])
+}
+
+model DocumentRequirement {
+  id                String   @id @default(uuid()) @db.UniqueIdentifier
+  applicationType   String   @db.VarChar(50)
+  entityType        String   @default("any") @db.VarChar(100)
+  code              String   @db.VarChar(100)
+  label             String   @db.VarChar(191)
+  description       String?  @db.NVarChar(Max)
+  allowedExtensions String   @default("pdf,jpg,jpeg,png") @db.VarChar(100)
+  maxFiles          Int      @default(1)
+  isRequired        Boolean  @default(true)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([applicationType, entityType, code])
+  @@index([applicationType, entityType])
+}
+
+model Document {
+  id               String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId    String      @db.UniqueIdentifier
+  uploadedByUserId String      @db.UniqueIdentifier
+  reviewedByUserId String?     @db.UniqueIdentifier
+  sectionKey       String?     @db.VarChar(100)
+  requirementCode  String?     @db.VarChar(100)
+  label            String      @db.VarChar(191)
+  originalFileName String      @db.VarChar(255)
+  storedFileName   String      @db.VarChar(255)
+  mimeType         String      @db.VarChar(100)
+  fileExtension    String      @db.VarChar(20)
+  sizeBytes        BigInt?     @db.BigInt
+  storagePath      String      @db.VarChar(500)
+  status           String      @default("uploaded") @db.VarChar(50)
+  reviewNotes      String?     @db.NVarChar(Max)
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  uploadedByUser   User        @relation("DocumentUploadedBy", fields: [uploadedByUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviewedByUser   User?       @relation("DocumentReviewedBy", fields: [reviewedByUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([applicationId, requirementCode])
+  @@index([status, createdAt])
+}
+
+model ReviewComment {
+  id           String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId String     @db.UniqueIdentifier
+  authorUserId String      @db.UniqueIdentifier
+  sectionKey   String?     @db.VarChar(100)
+  visibility   String      @default("applicant") @db.VarChar(50)
+  commentType  String      @default("general") @db.VarChar(50)
+  message      String      @db.NVarChar(Max)
+  isResolved   Boolean     @default(false)
+  application  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  authorUser   User        @relation("CommentAuthor", fields: [authorUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([applicationId, visibility, createdAt])
+}
+
+model ApplicationStatusHistory {
+  id              String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId   String      @db.UniqueIdentifier
+  changedByUserId String?     @db.UniqueIdentifier
+  fromStatus      String?     @db.VarChar(50)
+  toStatus        String      @db.VarChar(50)
+  reason          String?     @db.NVarChar(Max)
+  metadataJson    String?     @db.NVarChar(Max)
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  changedByUser   User?       @relation("StatusChangedBy", fields: [changedByUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt       DateTime    @default(now())
+
+  @@index([applicationId, createdAt])
+}
+
+model DirectorSignatory {
+  id                 String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId      String      @db.UniqueIdentifier
+  fullName           String      @db.VarChar(191)
+  roleTitle          String      @default("signatory") @db.VarChar(100)
+  designation        String?     @db.VarChar(100)
+  email              String?     @db.VarChar(191)
+  phoneNumber        String?     @db.VarChar(50)
+  nationalIdNumber   String?     @db.VarChar(100)
+  residentialAddress String?     @db.NVarChar(500)
+  isPrimarySignatory Boolean     @default(false)
+  sortOrder          Int         @default(0)
+  application        Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([applicationId, roleTitle])
+}
+
+model AuthorizedTransactor {
+  id                 String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId      String      @db.UniqueIdentifier
+  fullName           String      @db.VarChar(191)
+  designation        String?     @db.VarChar(100)
+  email              String?     @db.VarChar(191)
+  phoneNumber        String?     @db.VarChar(50)
+  nationalIdNumber   String?     @db.VarChar(100)
+  residentialAddress String?     @db.NVarChar(500)
+  sortOrder          Int         @default(0)
+  application        Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([applicationId, fullName])
+}
+
+model BankAccount {
+  id            String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId String      @db.UniqueIdentifier
+  accountName   String      @db.VarChar(191)
+  bankName      String      @db.VarChar(191)
+  branchName    String?     @db.VarChar(191)
+  branchCode    String?     @db.VarChar(100)
+  accountNumber String      @db.VarChar(100)
+  accountType   String?     @db.VarChar(100)
+  currency      String      @default("USD") @db.VarChar(10)
+  isPrimary     Boolean     @default(true)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([applicationId, isPrimary])
+}
+
+model Outlet {
+  id               String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId    String      @db.UniqueIdentifier
+  name             String      @db.VarChar(191)
+  code             String?     @db.VarChar(100)
+  phoneNumber      String?     @db.VarChar(50)
+  email            String?     @db.VarChar(191)
+  addressLine1     String?     @db.VarChar(255)
+  addressLine2     String?     @db.VarChar(255)
+  city             String?     @db.VarChar(100)
+  province         String?     @db.VarChar(100)
+  country          String      @default("Zimbabwe") @db.VarChar(100)
+  status           String      @default("active") @db.VarChar(50)
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([applicationId, status])
+}
+
+model ApplicationAgreement {
+  id               String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId    String      @db.UniqueIdentifier
+  agreementType    String      @db.VarChar(100)
+  versionLabel     String      @db.VarChar(50)
+  title            String      @db.VarChar(191)
+  acceptedByUserId String      @db.UniqueIdentifier
+  acceptanceIp     String?     @db.VarChar(100)
+  snapshotText     String?     @db.NVarChar(Max)
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  acceptedAt       DateTime    @default(now())
+
+  @@index([applicationId, agreementType])
+}
+
+model ReviewTask {
+  id               String      @id @default(uuid()) @db.UniqueIdentifier
+  applicationId    String      @db.UniqueIdentifier
+  assignedToUserId String?     @db.UniqueIdentifier
+  taskType         String      @db.VarChar(100)
+  status           String      @default("open") @db.VarChar(50)
+  dueAt            DateTime?
+  completedAt      DateTime?
+  notes            String?     @db.NVarChar(Max)
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  assignedToUser   User?       @relation("ReviewTaskAssignedTo", fields: [assignedToUserId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([applicationId, status])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.UniqueIdentifier
+  actorUserId String?  @db.UniqueIdentifier
+  entityType  String   @db.VarChar(100)
+  entityId    String   @db.VarChar(100)
+  action      String   @db.VarChar(100)
+  summary     String   @db.VarChar(255)
+  detailsJson String?  @db.NVarChar(Max)
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+}
