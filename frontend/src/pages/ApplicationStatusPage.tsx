@@ -17,30 +17,6 @@ const humanize = (value: string): string =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-const getApplicationLabel = (applicationType: string): string => {
-  if (applicationType === "agent") {
-    return "agent";
-  }
-
-  if (applicationType === "payer") {
-    return "payer / biller";
-  }
-
-  return "merchant";
-};
-
-const getApplicationRoute = (applicationType: string): string => {
-  if (applicationType === "agent") {
-    return "/applications/agent";
-  }
-
-  if (applicationType === "payer") {
-    return "/applications/payer";
-  }
-
-  return "/applications/merchant";
-};
-
 const formatDate = (value: string | null): string => {
   if (!value) {
     return "-";
@@ -61,6 +37,46 @@ const formatDate = (value: string | null): string => {
   });
 };
 
+const getStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    draft: "Draft",
+    submitted: "Submitted",
+    initial_review: "Under Review",
+    document_check: "Document Check",
+    compliance_review: "Compliance Review",
+    needs_more_information: "Action Required",
+    approved: "Approved",
+    rejected: "Rejected",
+    activated: "Activated",
+    archived: "Archived"
+  };
+
+  return labels[status] || humanize(status);
+};
+
+const getStatusVariant = (status: string): string => {
+  if (status === "draft") {
+    return "draft";
+  }
+
+  if (status === "needs_more_information") {
+    return "warning";
+  }
+
+  if (["approved", "activated"].includes(status)) {
+    return "success";
+  }
+
+  if (status === "rejected") {
+    return "danger";
+  }
+
+  return "info";
+};
+
+const getApplicationRoute = (applicationType: string): string =>
+  `/applications/wizard?type=${applicationType}`;
+
 const groupCommentsBySection = (
   comments: ReviewCommentItem[]
 ): Record<string, ReviewCommentItem[]> =>
@@ -75,11 +91,29 @@ const groupCommentsBySection = (
     return accumulator;
   }, {});
 
+const getWorkflowStageIndex = (status: string): number => {
+  if (status === "draft") {
+    return 0;
+  }
+
+  if (status === "submitted") {
+    return 1;
+  }
+
+  if (["initial_review", "document_check", "needs_more_information"].includes(status)) {
+    return 2;
+  }
+
+  if (status === "compliance_review") {
+    return 3;
+  }
+
+  return 4;
+};
+
 function ApplicationStatusPage(): JSX.Element {
   const { applicationId } = useParams<{ applicationId: string }>();
-  const [application, setApplication] = useState<ApplicationDetailResponse | null>(
-    null
-  );
+  const [application, setApplication] = useState<ApplicationDetailResponse | null>(null);
   const [loadingApplication, setLoadingApplication] = useState(true);
   const [error, setError] = useState("");
 
@@ -109,96 +143,102 @@ function ApplicationStatusPage(): JSX.Element {
     void loadApplication();
   }, [applicationId]);
 
-  const unresolvedComments = useMemo(
-    () => application?.comments.filter((comment) => !comment.isResolved) || [],
+  const applicantComments = useMemo(
+    () =>
+      (application?.comments || [])
+        .filter((comment) => comment.visibility === "applicant")
+        .sort((left, right) => {
+          return new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime();
+        }),
     [application]
   );
 
-  const unresolvedBySection = useMemo(
-    () => groupCommentsBySection(unresolvedComments),
-    [unresolvedComments]
+  const commentsBySection = useMemo(
+    () => groupCommentsBySection(applicantComments),
+    [applicantComments]
   );
 
-  const statusSummary = useMemo(() => {
+  const workflowStages = useMemo(() => {
+    if (!application) {
+      return [];
+    }
+
+    const currentStageIndex = getWorkflowStageIndex(application.status);
+
+    return [
+      {
+        key: "draft",
+        title: "Draft",
+        description: "Business details and application data are being prepared."
+      },
+      {
+        key: "submitted",
+        title: "Submitted",
+        description: "The application file has been handed over to Omari."
+      },
+      {
+        key: "review",
+        title: "Review",
+        description: "Operations review documents, contacts, and workflow completeness."
+      },
+      {
+        key: "compliance",
+        title: "Compliance",
+        description: "Compliance validates the application before final outcome."
+      },
+      {
+        key: "outcome",
+        title: "Outcome",
+        description: "The application is approved, rejected, or activated."
+      }
+    ].map((stage, index) => ({
+      ...stage,
+      isComplete: index < currentStageIndex,
+      isCurrent: index === currentStageIndex
+    }));
+  }, [application]);
+
+  const latestTask = useMemo(() => {
     if (!application) {
       return null;
     }
 
-    const completedSections = application.sections.filter(
-      (section) => section.status === "completed"
-    ).length;
+    return (
+      application.reviewTasks.find(
+        (task) => task.status !== "completed" && task.status !== "cancelled"
+      ) ||
+      application.reviewTasks[0] ||
+      null
+    );
+  }, [application]);
 
-    return {
-      completedSections,
-      unresolvedApplicantComments: unresolvedComments.filter(
-        (comment) => comment.visibility === "applicant"
-      ).length,
-      documentIssues:
-        application.documentReviewSummary.missingRequiredDocuments.length +
-        application.documentReviewSummary.rejectedRequiredDocuments.length,
-      latestTask:
-        application.reviewTasks.find(
-          (task) => task.status !== "completed" && task.status !== "cancelled"
-        ) || application.reviewTasks[0] || null
-    };
-  }, [application, unresolvedComments]);
-
-  const nextActionCopy = useMemo(() => {
+  const timelineEvents = useMemo<TimelineEvent[]>(() => {
     if (!application) {
-      return {
-        title: "No active application",
-        description:
-          "Start a merchant, agent, or payer / biller application to see live status, review feedback, and resubmission guidance here."
-      };
+      return [];
     }
 
-    const label = getApplicationLabel(application.applicationType);
-
-    if (application.status === "needs_more_information") {
-      return {
-        title: "Update the requested sections and resubmit",
-        description:
-          `Open the ${label} form, resolve reviewer notes, and resubmit from the review step once corrections are complete.`
-      };
-    }
-
-    if (application.status === "submitted") {
-      return {
-        title: "Waiting for internal review",
-        description:
-          `Your ${label} application is with the Omari review team. You can monitor progress and respond here if corrections are requested.`
-      };
-    }
-
-    if (application.status === "approved") {
-      return {
-        title: "Application approved",
-        description:
-          `The ${label} onboarding request has been approved. Keep this page as your status history reference.`
-      };
-    }
-
-    if (application.status === "rejected") {
-      return {
-        title: "Application closed",
-        description:
-          `This ${label} application has been rejected. Review the recorded notes here before creating a new application.`
-      };
-    }
-
-    return {
-      title: "Continue your application",
-      description:
-        `You still have an active ${label} application in progress. Use the form to finish missing sections and submit when ready.`
-    };
+    return [...application.statusHistory]
+      .sort((left, right) => {
+        return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
+      })
+      .map((item, index) => ({
+        id: item.id,
+        title: `${item.fromStatus ? humanize(item.fromStatus) : "New"} to ${humanize(
+          item.toStatus
+        )}`,
+        description: item.reason || "Workflow status updated.",
+        timestamp: formatDate(item.createdAt),
+        isCompleted: true,
+        isActive: index === 0
+      }));
   }, [application]);
 
   return (
     <PortalShell
       title="Omari - Onboarding System"
       eyebrow="Applicant workspace"
-      heading="Application Status And Next Actions"
-      description="Track your live status, understand reviewer feedback, and follow a clear checklist for what to do next."
+      heading="Application Status"
+      description="Track the business onboarding workflow, understand current review stage, and act on any requests without losing context."
       navGroups={APPLICANT_NAV_GROUPS}
     >
       {error ? <p className="feedback feedback--error">{error}</p> : null}
@@ -206,331 +246,326 @@ function ApplicationStatusPage(): JSX.Element {
       {loadingApplication ? (
         <div className="empty-state">
           <strong>Loading your application status...</strong>
-          <span>Preparing the latest status, comments, and timeline.</span>
+          <span>Preparing the latest workflow, comments, and document review context.</span>
         </div>
       ) : null}
 
       {!loadingApplication && !application ? (
-        <div className="dashboard-grid">
-          <article className="dashboard-card dashboard-card--hero">
-            <span className="dashboard-card__eyebrow">Status</span>
-            <h2>No active application</h2>
-            <p>
-              Start your onboarding flow and this page will track review
-              progress, returned notes, and resubmission guidance for you.
-            </p>
-
-            <div className="dashboard-actions">
-              <Link
-                to="/applications/merchant"
-                className="button button--primary button-link"
-              >
-                Start New Merchant Application
-              </Link>
-              <Link
-                to="/applications/agent"
-                className="button button--ghost button-link"
-              >
-                Start New Agent Application
-              </Link>
-              <Link
-                to="/applications/payer"
-                className="button button--ghost button-link"
-              >
-                Start New Payer / Biller Application
-              </Link>
+        <section className="page-section">
+          <div className="page-section__header">
+            <div>
+              <p className="page-section__eyebrow">Status</p>
+              <h2 className="page-section__title">No active application</h2>
+              <p className="page-section__description">
+                Start an onboarding flow and this page will track reviewer activity, required
+                actions, and workflow progression.
+              </p>
             </div>
-          </article>
-        </div>
+          </div>
+
+          <div className="application-entry-list">
+            {[
+              ["merchant", "Merchant onboarding", "Merchant and settlement onboarding for businesses."],
+              ["agent", "Agent onboarding", "Agent network and outlet onboarding workflow."],
+              ["payer", "Payer / biller onboarding", "Settlement and payer agreement onboarding."]
+            ].map(([key, title, description]) => (
+              <article key={key} className="application-entry">
+                <span className="application-entry__icon" aria-hidden="true">
+                  {title.charAt(0)}
+                </span>
+                <div className="application-entry__copy">
+                  <strong>{title}</strong>
+                  <p>{description}</p>
+                </div>
+                <Link to={`/applications/wizard?type=${key}`} className="btn btn--secondary">
+                  Start
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
       ) : null}
 
-      {!loadingApplication && application && statusSummary ? (
-        <>
-          <div className="dashboard-grid">
-            <article className="dashboard-card dashboard-card--hero">
-              <span className="dashboard-card__eyebrow">Current Status</span>
-              <h2>{humanize(application.status)}</h2>
-              <p>{nextActionCopy.description}</p>
-
-              <div className="dashboard-actions">
-                <Link
-                  to={getApplicationRoute(application.applicationType)}
-                  className="button button--primary button-link"
-                >
-                  {application.status === "needs_more_information"
-                    ? "Open Correction Form"
-                    : application.status === "submitted"
-                      ? "Open Application Form"
-                      : "Resume Application Form"}
-                </Link>
-              </div>
-            </article>
-
-            <article className="dashboard-card">
-              <span className="dashboard-card__eyebrow">Application Progress</span>
-              <strong>
-                {statusSummary.completedSections}/{application.sections.length} sections
-              </strong>
-              <p>Current step: {humanize(application.currentStep || "business_snapshot")}</p>
-              <span className="dashboard-card__meta">
-                Submitted: {formatDate(application.submittedAt)}
-              </span>
-            </article>
-
-            <article className="dashboard-card">
-              <span className="dashboard-card__eyebrow">Open Reviewer Notes</span>
-              <strong>{statusSummary.unresolvedApplicantComments}</strong>
-              <p>Applicant-visible comments still waiting for correction or confirmation.</p>
-            </article>
-
-            <article className="dashboard-card">
-              <span className="dashboard-card__eyebrow">Document Issues</span>
-              <strong>{statusSummary.documentIssues}</strong>
-              <p>Required document groups that are still missing or rejected.</p>
-            </article>
-          </div>
-
-          {application.status === "needs_more_information" ? (
-            <div className="feedback feedback--warning">
-              <strong>{nextActionCopy.title}</strong>
-              <div>
-                Open the {getApplicationLabel(application.applicationType)} form, apply the requested fixes, and use the
-                review step to resubmit once all corrections are complete.
-              </div>
-            </div>
-          ) : null}
-
-          <div className="review-grid">
-            <section className="form-section">
-              <div className="form-section__header">
+      {!loadingApplication && application ? (
+        <div className="status-workbench">
+          <aside className="status-workbench__rail">
+            <section className="page-section page-section--dense">
+              <div className="page-section__header">
                 <div>
-                  <h3>Section Status</h3>
-                  <p>
-                    See which parts of the current application flow are complete and where
-                    reviewer notes are still open.
-                  </p>
+                  <p className="page-section__eyebrow">Current status</p>
+                  <h2 className="page-section__title">{getStatusLabel(application.status)}</h2>
+                  <p className="page-section__description">{application.organization.legalName}</p>
                 </div>
               </div>
 
-              <div className="section-tracker">
-                {application.sections.map((section) => {
-                  const unresolvedForSection =
-                    unresolvedBySection[section.key]?.filter(
-                      (comment) => comment.visibility === "applicant"
-                    ) || [];
-
-                  return (
-                    <article key={section.key} className="section-tracker__item">
-                      <div className="section-tracker__item-top">
-                        <div>
-                          <strong>{section.title}</strong>
-                          <p>Last updated: {formatDate(section.lastEditedAt)}</p>
-                        </div>
-                        <span
-                          className={`status-chip${
-                            section.status === "completed"
-                              ? " status-chip--brand"
-                              : section.status === "in_progress"
-                                ? " status-chip--soft"
-                                : ""
-                          }`}
-                        >
-                          {humanize(section.status)}
-                        </span>
-                      </div>
-
-                      {unresolvedForSection.length > 0 ? (
-                        <span className="section-tracker__health">
-                          {unresolvedForSection.length} open{" "}
-                          {unresolvedForSection.length === 1 ? "comment" : "comments"}
-                        </span>
-                      ) : (
-                        <span className="section-tracker__health">No open notes</span>
-                      )}
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="form-section">
-              <div className="form-section__header">
-                <div>
-                  <h3>Action Checklist</h3>
-                  <p>
-                    Use this as your checklist for what to do before the
-                    application can move forward.
-                  </p>
-                </div>
-              </div>
-
-              <div className="comment-summary-inline">
-                <strong>{nextActionCopy.title}</strong>
-                <span>{nextActionCopy.description}</span>
-              </div>
-
-              <div className="detail-list detail-list--compact">
-                <div>
-                  <dt>Latest review task</dt>
-                  <dd>
-                    {statusSummary.latestTask
-                      ? `${humanize(statusSummary.latestTask.taskType)} | ${humanize(
-                          statusSummary.latestTask.status
-                        )}`
-                      : "No active task"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Required docs accepted</dt>
-                  <dd>
-                    {application.documentReviewSummary.acceptedRequiredDocuments}/
-                    {application.documentReviewSummary.requiredDocuments}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Open applicant comments</dt>
-                  <dd>{statusSummary.unresolvedApplicantComments}</dd>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <section className="form-section">
-            <div className="form-section__header">
-              <div>
-                <h3>Reviewer Feedback</h3>
-                <p>
-                  These are the applicant-visible notes that explain what needs
-                  to be updated before resubmission.
-                </p>
-              </div>
-              <span className="status-chip status-chip--soft">
-                {application.comments.length} comments
-              </span>
-            </div>
-
-            {application.comments.length === 0 ? (
-              <div className="empty-state">
-                <strong>No reviewer comments yet</strong>
-                <span>
-                  If the Omari review team needs anything from you, their notes
-                  will appear here.
+              <div className="status-rail-meta">
+                <span className={`status-badge status-badge--${getStatusVariant(application.status)}`}>
+                  {getStatusLabel(application.status)}
                 </span>
+                <dl className="stacked-meta stacked-meta--compact">
+                  <div>
+                    <dt>Application type</dt>
+                    <dd>{humanize(application.applicationType)}</dd>
+                  </div>
+                  <div>
+                    <dt>Current step</dt>
+                    <dd>{humanize(application.currentStep || "business_snapshot")}</dd>
+                  </div>
+                  <div>
+                    <dt>Submitted</dt>
+                    <dd>{formatDate(application.submittedAt)}</dd>
+                  </div>
+                </dl>
               </div>
-            ) : (
-              <div className="comment-thread">
-                {application.comments.map((comment) => (
-                  <article key={comment.id} className="comment-card">
-                    <div className="comment-card__header">
-                      <div>
-                        <strong>{comment.author.fullName}</strong>
-                        <span className="comment-card__meta">
-                          {comment.sectionKey
-                            ? humanize(comment.sectionKey)
-                            : "General application note"}{" "}
-                          | {humanize(comment.commentType)} |{" "}
-                          {formatDate(comment.createdAt)}
-                        </span>
-                      </div>
-                      <span
-                        className={`status-chip${
-                          comment.isResolved ? " status-chip--brand" : " status-chip--soft"
-                        }`}
-                      >
-                        {comment.isResolved ? "Resolved" : "Open"}
-                      </span>
-                    </div>
+            </section>
 
-                    <p className="comment-card__message">{comment.message}</p>
+            <section className="page-section page-section--dense">
+              <div className="page-section__header">
+                <div>
+                  <p className="page-section__eyebrow">Workflow</p>
+                  <h3 className="page-section__title">Progress timeline</h3>
+                </div>
+              </div>
+
+              <div className="workflow-rail">
+                {workflowStages.map((stage) => (
+                  <article
+                    key={stage.key}
+                    className={`workflow-rail__item${
+                      stage.isCurrent ? " workflow-rail__item--current" : ""
+                    }${stage.isComplete ? " workflow-rail__item--complete" : ""}`}
+                  >
+                    <span className="workflow-rail__dot" aria-hidden="true" />
+                    <div>
+                      <strong>{stage.title}</strong>
+                      <p>{stage.description}</p>
+                    </div>
                   </article>
                 ))}
               </div>
-            )}
-          </section>
+            </section>
+          </aside>
 
-          <div className="review-grid">
-            <section className="form-section">
-              <div className="form-section__header">
+          <div className="status-workbench__detail">
+            {application.status === "needs_more_information" ? (
+              <section className="page-section page-section--alert">
+                <div className="page-section__header">
+                  <div>
+                    <p className="page-section__eyebrow">Action required</p>
+                    <h3 className="page-section__title">Corrections are needed before review can continue</h3>
+                    <p className="page-section__description">
+                      Update the flagged sections, replace any rejected documents, and resubmit the
+                      application from the final review step.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="page-actions">
+                  <Link
+                    to={getApplicationRoute(application.applicationType)}
+                    className="btn btn--primary"
+                  >
+                    Open application
+                  </Link>
+                </div>
+              </section>
+            ) : null}
+
+            <div className="detail-grid detail-grid--status">
+              <section className="page-section">
+                <div className="page-section__header">
+                  <div>
+                    <p className="page-section__eyebrow">Step tracker</p>
+                    <h3 className="page-section__title">Section completion</h3>
+                  </div>
+                </div>
+
+                <div className="section-tracker section-tracker--stacked">
+                  {application.sections.map((section) => {
+                    const sectionComments = commentsBySection[section.key] || [];
+
+                    return (
+                      <article key={section.key} className="section-tracker__item">
+                        <div className="section-tracker__item-top">
+                          <div>
+                            <strong>{section.title}</strong>
+                            <p>Last updated {formatDate(section.lastEditedAt)}</p>
+                          </div>
+                          <span
+                            className={`status-chip${
+                              section.status === "completed"
+                                ? " status-chip--brand"
+                                : section.status === "in_progress"
+                                  ? " status-chip--soft"
+                                  : ""
+                            }`}
+                          >
+                            {humanize(section.status)}
+                          </span>
+                        </div>
+                        <span className="section-tracker__health">
+                          {sectionComments.length
+                            ? `${sectionComments.length} open reviewer notes`
+                            : "No open reviewer notes"}
+                        </span>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section className="page-section">
+                <div className="page-section__header">
+                  <div>
+                    <p className="page-section__eyebrow">Review controls</p>
+                    <h3 className="page-section__title">Details panel</h3>
+                  </div>
+                </div>
+
+                <dl className="stacked-meta">
+                  <div>
+                    <dt>Latest review task</dt>
+                    <dd>
+                      {latestTask
+                        ? `${humanize(latestTask.taskType)} | ${humanize(latestTask.status)}`
+                        : "No active review task"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Required docs accepted</dt>
+                    <dd>
+                      {application.documentReviewSummary.acceptedRequiredDocuments}/
+                      {application.documentReviewSummary.requiredDocuments}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Missing required docs</dt>
+                    <dd>{application.documentReviewSummary.missingRequiredDocuments.length}</dd>
+                  </div>
+                  <div>
+                    <dt>Rejected required docs</dt>
+                    <dd>{application.documentReviewSummary.rejectedRequiredDocuments.length}</dd>
+                  </div>
+                </dl>
+              </section>
+            </div>
+
+            <section className="page-section">
+              <div className="page-section__header">
                 <div>
-                  <h3>Status Timeline</h3>
-                  <p>
-                    Follow how the application moved through submission, review,
-                    and any returns for correction.
+                  <p className="page-section__eyebrow">Reviewer feedback</p>
+                  <h3 className="page-section__title">Comments and requests</h3>
+                  <p className="page-section__description">
+                    Comments are grouped by section so you can see exactly where corrections are
+                    needed.
                   </p>
                 </div>
               </div>
 
-              <Timeline
-                events={application.statusHistory.map((item): TimelineEvent => ({
-                  id: item.id,
-                  title: `${humanize(item.fromStatus || "new")} to ${humanize(item.toStatus)}`,
-                  description: item.reason || "No reason recorded.",
-                  timestamp: formatDate(item.createdAt),
-                  isCompleted: true,
-                  isActive: false
-                }))}
-              />
-            </section>
-
-            <section className="form-section">
-              <div className="form-section__header">
-                <div>
-                  <h3>Document Readiness</h3>
-                  <p>
-                    Keep an eye on required document groups that still need work
-                    before the application can pass review.
-                  </p>
+              {applicantComments.length === 0 ? (
+                <div className="empty-state empty-state--compact">
+                  <strong>No applicant-visible comments yet</strong>
+                  <span>Reviewers have not posted any notes that require your action.</span>
                 </div>
-              </div>
+              ) : (
+                <div className="comment-groups">
+                  {Object.entries(commentsBySection).map(([sectionKey, comments]) => (
+                    <section key={sectionKey} className="comment-group">
+                      <header className="comment-group__header">
+                        <strong>{sectionKey === "general" ? "General" : humanize(sectionKey)}</strong>
+                        <span>{comments.length} note{comments.length === 1 ? "" : "s"}</span>
+                      </header>
 
-              <div className="document-summary-grid">
-                <article className="review-card">
-                  <h4>Missing Required Documents</h4>
-                  {application.documentReviewSummary.missingRequiredDocuments.length ? (
-                    <ul className="flag-list">
-                      {application.documentReviewSummary.missingRequiredDocuments.map(
-                        (item) => (
-                          <li key={item.requirementCode}>
-                            <strong>{item.label}</strong>
-                            <span>No file uploaded yet.</span>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    <div className="empty-state">
-                      <strong>No required files are missing</strong>
-                      <span>Every required document type has at least one upload.</span>
-                    </div>
-                  )}
-                </article>
-
-                <article className="review-card">
-                  <h4>Rejected Required Documents</h4>
-                  {application.documentReviewSummary.rejectedRequiredDocuments.length ? (
-                    <ul className="flag-list">
-                      {application.documentReviewSummary.rejectedRequiredDocuments.map(
-                        (item) => (
-                          <li key={item.requirementCode}>
-                            <strong>{item.label}</strong>
-                            <span>
-                              {item.rejectedCount} rejected file(s) need replacement.
-                            </span>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    <div className="empty-state">
-                      <strong>No required files are rejected</strong>
-                      <span>There are no rejected required documents right now.</span>
-                    </div>
-                  )}
-                </article>
-              </div>
+                      <div className="comment-thread">
+                        {comments.map((comment) => (
+                          <article key={comment.id} className="comment-card comment-card--structured">
+                            <div className="comment-card__header">
+                              <div>
+                                <strong>{comment.author.fullName}</strong>
+                                <span className="comment-card__meta">
+                                  {formatDate(comment.updatedAt)} | {humanize(comment.commentType)}
+                                </span>
+                              </div>
+                              <span
+                                className={`status-chip${
+                                  comment.isResolved ? " status-chip--brand" : " status-chip--soft"
+                                }`}
+                              >
+                                {comment.isResolved ? "Resolved" : "Open"}
+                              </span>
+                            </div>
+                            <p className="comment-card__message">{comment.message}</p>
+                          </article>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )}
             </section>
+
+            <div className="detail-grid detail-grid--status">
+              <section className="page-section">
+                <div className="page-section__header">
+                  <div>
+                    <p className="page-section__eyebrow">Document review</p>
+                    <h3 className="page-section__title">Document readiness</h3>
+                  </div>
+                </div>
+
+                <div className="document-flags">
+                  <article className="document-flag-card">
+                    <strong>Missing required documents</strong>
+                    {application.documentReviewSummary.missingRequiredDocuments.length ? (
+                      <ul className="flag-list">
+                        {application.documentReviewSummary.missingRequiredDocuments.map((item) => (
+                          <li key={item.requirementCode}>
+                            <span>{item.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>None.</p>
+                    )}
+                  </article>
+
+                  <article className="document-flag-card">
+                    <strong>Rejected required documents</strong>
+                    {application.documentReviewSummary.rejectedRequiredDocuments.length ? (
+                      <ul className="flag-list">
+                        {application.documentReviewSummary.rejectedRequiredDocuments.map((item) => (
+                          <li key={item.requirementCode}>
+                            <span>{item.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>None.</p>
+                    )}
+                  </article>
+                </div>
+              </section>
+
+              <section className="page-section">
+                <div className="page-section__header">
+                  <div>
+                    <p className="page-section__eyebrow">History</p>
+                    <h3 className="page-section__title">Workflow activity</h3>
+                  </div>
+                </div>
+
+                {timelineEvents.length === 0 ? (
+                  <div className="empty-state empty-state--compact">
+                    <strong>No workflow history yet</strong>
+                    <span>Application events will appear here as the process progresses.</span>
+                  </div>
+                ) : (
+                  <Timeline events={timelineEvents} />
+                )}
+              </section>
+            </div>
           </div>
-        </>
+        </div>
       ) : null}
     </PortalShell>
   );
