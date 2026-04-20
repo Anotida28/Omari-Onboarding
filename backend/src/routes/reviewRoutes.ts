@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { requireAdmin, requireAuth } from "../middleware/auth";
 import {
   approve,
   listReviewQueue,
@@ -9,6 +10,7 @@ import {
 
 const router = Router();
 
+router.use(requireAuth, requireAdmin);
 router.get("/applications", listReviewQueue);
 router.post("/documents/:documentId/review", reviewDocument);
 router.post("/applications/:applicationId/request-info", requestInfo);

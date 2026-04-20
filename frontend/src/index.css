@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -6,9 +6,13 @@
 
 body {
   margin: 0;
-  font-family: "Plus Jakarta Sans", "Trebuchet MS", sans-serif;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   background: #edf7f2;
   color: #15352e;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -16,4 +20,14 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", "Trebuchet MS", sans-serif;
+  letter-spacing: 0.01em;
 }

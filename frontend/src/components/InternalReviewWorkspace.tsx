@@ -4,20 +4,23 @@ import {
   ApplicationDetailResponse,
   ReviewQueueItem,
   approveReviewApplication,
+  createApplicationComment,
   getApplication,
   getReviewQueue,
   rejectReviewApplication,
   reviewApplicationDocument,
+  updateApplicationCommentResolution,
   requestApplicationInfo
 } from "../services/api";
 
 type ReviewScope = "pending" | "all" | "closed";
 type ReviewAction = "request-info" | "approve" | "reject";
+type CommentVisibility = "applicant" | "internal";
 
 const REVIEW_SCOPE_OPTIONS: Array<{ value: ReviewScope; label: string }> = [
-  { value: "pending", label: "Pending" },
-  { value: "all", label: "All" },
-  { value: "closed", label: "Closed" }
+  { value: "pending", label: "Action Required" },
+  { value: "all", label: "All Applications" },
+  { value: "closed", label: "Completed Decisions" }
 ];
 
 const ASSET_BASE_URL = API_BASE_URL.replace(/\/api$/, "");
@@ -106,26 +109,26 @@ const DECISION_ACTION_COPY: Record<
   }
 > = {
   "request-info": {
-    title: "Request More Information",
+    title: "Request Corrections",
     description:
-      "This returns the application to the applicant side while keeping the review history intact.",
-    confirmLabel: "Send Request",
+      "This sends the application back to the applicant for corrections while preserving review history.",
+    confirmLabel: "Send Correction Request",
     toneClassName: "status-chip--soft",
     requiresNote: true
   },
   approve: {
     title: "Approve Application",
     description:
-      "This finalizes the application, closes the active review task, and releases the organization slot.",
-    confirmLabel: "Approve Application",
+      "This finalizes approval, closes the active review task, and moves the application to the approved state.",
+    confirmLabel: "Confirm Approval",
     toneClassName: "status-chip--brand",
     requiresNote: false
   },
   reject: {
     title: "Reject Application",
     description:
-      "This finalizes the application and closes the active review task after the note is recorded.",
-    confirmLabel: "Reject Application",
+      "This records a final rejection decision and closes the active review task after the note is captured.",
+    confirmLabel: "Confirm Rejection",
     toneClassName: "status-chip--danger",
     requiresNote: true
   }
@@ -141,10 +144,17 @@ function InternalReviewWorkspace(): JSX.Element {
     useState<ApplicationDetailResponse | null>(null);
   const [reviewNote, setReviewNote] = useState("");
   const [documentNotes, setDocumentNotes] = useState<Record<string, string>>({});
+  const [commentMessage, setCommentMessage] = useState("");
+  const [commentVisibility, setCommentVisibility] =
+    useState<CommentVisibility>("applicant");
+  const [commentSectionKey, setCommentSectionKey] = useState("");
+  const [commentType, setCommentType] = useState("correction");
   const [loadingQueue, setLoadingQueue] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [processingAction, setProcessingAction] = useState(false);
   const [processingDocumentId, setProcessingDocumentId] = useState("");
+  const [processingComment, setProcessingComment] = useState(false);
+  const [processingCommentId, setProcessingCommentId] = useState("");
   const [pendingDecision, setPendingDecision] = useState<ReviewAction | null>(
     null
   );
@@ -186,7 +196,7 @@ function InternalReviewWorkspace(): JSX.Element {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Unable to load the review queue."
+          : "Unable to load the application queue."
       );
     } finally {
       setLoadingQueue(false);
@@ -288,6 +298,13 @@ function InternalReviewWorkspace(): JSX.Element {
     });
   }, [selectedApplication]);
 
+  useEffect(() => {
+    setCommentMessage("");
+    setCommentSectionKey("");
+    setCommentVisibility("applicant");
+    setCommentType("correction");
+  }, [selectedApplicationId]);
+
   const queueSummary = useMemo(
     () => ({
       submitted: queue.filter((item) => item.status === "submitted").length,
@@ -342,9 +359,146 @@ function InternalReviewWorkspace(): JSX.Element {
     };
   }, [selectedApplication]);
 
+  const selectedApplicationView = useMemo(() => {
+    if (!selectedApplication) {
+      return null;
+    }
+
+    const isAgent = selectedApplication.applicationType === "agent";
+    const isPayer = selectedApplication.applicationType === "payer";
+    const supplementalDetails = isAgent
+      ? [
+          {
+            label: "Registration number",
+            value: selectedApplication.businessSnapshot?.registrationNumber
+          },
+          {
+            label: "Tax number",
+            value: selectedApplication.businessSnapshot?.taxNumber
+          },
+          {
+            label: "Outlet estimate",
+            value: selectedApplication.businessSnapshot?.outletCountEstimate
+          }
+        ]
+      : isPayer
+        ? [
+            {
+              label: "Registration number",
+              value: selectedApplication.businessSnapshot?.registrationNumber
+            },
+            {
+              label: "Tax number",
+              value: selectedApplication.businessSnapshot?.taxNumber
+            },
+            {
+              label: "Settlement scope",
+              value: selectedApplication.businessSnapshot?.serviceCoverage
+            }
+          ]
+        : [];
+
+    return {
+      isAgent,
+      isPayer,
+      applicationLabel: isPayer ? "payer / biller" : isAgent ? "agent" : "merchant",
+      workflowLabel: isPayer
+        ? "payer workflow"
+        : isAgent
+          ? "agent workflow"
+          : "merchant workflow",
+      primaryContact: isPayer
+        ? selectedApplication.payerContacts?.primaryContact || null
+        : isAgent
+          ? selectedApplication.agentContacts?.primaryContact || null
+          : selectedApplication.merchantContacts?.primaryContact || null,
+      participants: isPayer
+        ? selectedApplication.payerContacts?.operationsContacts || []
+        : isAgent
+          ? selectedApplication.agentContacts?.authorizedTransactors || []
+          : selectedApplication.merchantContacts?.authorizedTransactors || [],
+      participantsTitle: isPayer
+        ? "Operations Contacts"
+        : "Authorized Transactors",
+      participantDescriptor: isPayer
+        ? "operations contact"
+        : "authorized transactor",
+      principals: isAgent
+        ? selectedApplication.agentContacts?.directors || []
+        : isPayer
+          ? selectedApplication.payerContacts?.signatories || []
+          : selectedApplication.merchantContacts?.signatories || [],
+      principalsTitle: isAgent ? "Directors" : "Signatories",
+      principalDescriptor: isAgent ? "director" : "signatory",
+      bankingTitle: isAgent
+        ? "Outlets & Banking"
+        : isPayer
+          ? "Settlement & Banking"
+          : "Banking",
+      banking: isPayer
+        ? selectedApplication.payerSettlement
+        : selectedApplication.agentOperations || selectedApplication.merchantBanking,
+      declaration: isPayer
+        ? selectedApplication.payerDeclaration
+        : selectedApplication.agentDeclaration || selectedApplication.merchantDeclaration,
+      outlets: isAgent ? selectedApplication.agentOperations?.outlets || [] : [],
+      businessMetricLabel: isAgent
+        ? "Years in operation"
+        : isPayer
+          ? "Expected payment volume"
+          : "Projected transactions",
+      businessMetricValue: isAgent
+        ? selectedApplication.businessSnapshot?.yearsInOperation
+        : selectedApplication.businessSnapshot?.projectedTransactions,
+      serviceLabel: isAgent
+        ? "Service coverage"
+        : isPayer
+          ? "Billing use case"
+          : "Products and services",
+      serviceValue: isAgent
+        ? selectedApplication.businessSnapshot?.serviceCoverage
+        : selectedApplication.businessSnapshot?.productsDescription,
+      supplementalDetails,
+      settlementExtras: isPayer
+        ? [
+            {
+              label: "Settlement method",
+              value: selectedApplication.payerSettlement?.settlementMethod
+            },
+            {
+              label: "Reconciliation email",
+              value: selectedApplication.payerSettlement?.reconciliationEmail
+            },
+            {
+              label: "Integration notes",
+              value: selectedApplication.payerSettlement?.integrationNotes
+            }
+          ]
+        : []
+    };
+  }, [selectedApplication]);
+
+  const commentSummary = useMemo(() => {
+    if (!selectedApplication) {
+      return null;
+    }
+
+    return {
+      total: selectedApplication.comments.length,
+      unresolved: selectedApplication.comments.filter((comment) => !comment.isResolved)
+        .length,
+      unresolvedApplicant: selectedApplication.comments.filter(
+        (comment) => !comment.isResolved && comment.visibility === "applicant"
+      ).length,
+      unresolvedInternal: selectedApplication.comments.filter(
+        (comment) => !comment.isResolved && comment.visibility === "internal"
+      ).length
+    };
+  }, [selectedApplication]);
+
   const handleRefreshQueue = async (): Promise<void> => {
     await loadQueue(scope, selectedApplicationId || undefined);
-    setMessage("Review queue refreshed.");
+    setMessage("Application queue refreshed.");
   };
 
   const handleAction = async (action: ReviewAction): Promise<boolean> => {
@@ -382,7 +536,7 @@ function InternalReviewWorkspace(): JSX.Element {
       setSelectedApplication(response);
       setMessage(
         action === "request-info"
-          ? "Application returned for more information."
+          ? "Application returned for corrections."
           : action === "approve"
             ? "Application approved successfully."
             : "Application rejected successfully."
@@ -457,6 +611,75 @@ function InternalReviewWorkspace(): JSX.Element {
     }
   };
 
+  const handleCreateComment = async (): Promise<void> => {
+    if (!selectedApplicationId) {
+      return;
+    }
+
+    if (!commentMessage.trim()) {
+      setError("Enter a comment before adding it to the review thread.");
+      return;
+    }
+
+    setProcessingComment(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await createApplicationComment(selectedApplicationId, {
+        message: commentMessage,
+        sectionKey: commentSectionKey || undefined,
+        visibility: commentVisibility,
+        commentType
+      });
+
+      setSelectedApplication(response);
+      setCommentMessage("");
+      setCommentSectionKey("");
+      setCommentType(commentVisibility === "internal" ? "general" : "correction");
+      setMessage("Comment added to the application thread.");
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to create the review comment."
+      );
+    } finally {
+      setProcessingComment(false);
+    }
+  };
+
+  const handleToggleCommentResolution = async (
+    commentId: string,
+    isResolved: boolean
+  ): Promise<void> => {
+    setProcessingCommentId(commentId);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await updateApplicationCommentResolution(
+        commentId,
+        isResolved
+      );
+
+      setSelectedApplication(response);
+      setMessage(
+        isResolved
+          ? "Comment marked as resolved."
+          : "Comment reopened for follow-up."
+      );
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to update the comment state."
+      );
+    } finally {
+      setProcessingCommentId("");
+    }
+  };
+
   return (
     <section className="review-workspace">
       <div className="review-summary">
@@ -469,7 +692,7 @@ function InternalReviewWorkspace(): JSX.Element {
           <strong>{queueSummary.submitted}</strong>
         </article>
         <article className="review-summary__card">
-          <span>Needs info</span>
+          <span>Needs corrections</span>
           <strong>{queueSummary.needsInfo}</strong>
         </article>
         <article className="review-summary__card">
@@ -485,16 +708,16 @@ function InternalReviewWorkspace(): JSX.Element {
         <aside className="review-queue">
           <div className="review-queue__header">
             <div>
-              <p className="panel-header__eyebrow">Review Queue</p>
+              <p className="panel-header__eyebrow">Application Queue</p>
               <h3>Applications</h3>
             </div>
             <div className="review-queue__tools">
               <label className="field review-search">
-                <span>Search Queue</span>
+                <span>Search Applications</span>
                 <input
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Search name, status, type, or step"
+                  placeholder="Search by name, status, type, or step"
                 />
               </label>
 
@@ -532,7 +755,7 @@ function InternalReviewWorkspace(): JSX.Element {
                   className="button button--ghost"
                   onClick={() => void handleRefreshQueue()}
                 >
-                  Refresh
+                  Refresh Queue
                 </button>
               </div>
             </div>
@@ -540,15 +763,15 @@ function InternalReviewWorkspace(): JSX.Element {
 
           {loadingQueue ? (
             <div className="empty-state">
-              <strong>Loading review queue...</strong>
-              <span>Submitted merchant applications are being loaded.</span>
+              <strong>Loading application queue...</strong>
+              <span>Submitted applications are being loaded.</span>
             </div>
           ) : null}
 
           {!loadingQueue && queue.length === 0 ? (
             <div className="empty-state">
               <strong>No applications in this view</strong>
-              <span>Try a different filter or submit a merchant application first.</span>
+              <span>Try a different filter or submit an application first.</span>
             </div>
           ) : null}
 
@@ -645,7 +868,7 @@ function InternalReviewWorkspace(): JSX.Element {
                   <div>
                     <h3>Application Overview</h3>
                     <p>
-                      This page brings together the merchant submission,
+                      This page brings together the application submission,
                       uploaded evidence, and workflow state for one review pass.
                     </p>
                   </div>
@@ -701,14 +924,14 @@ function InternalReviewWorkspace(): JSX.Element {
                     <span className="review-overview-card__label">Business Contact</span>
                     <strong>
                       {formatValue(
-                        selectedApplication.merchantContacts?.primaryContact.fullName ||
+                        selectedApplicationView?.primaryContact?.fullName ||
                           selectedApplication.businessSnapshot?.contactPerson ||
                           null
                       )}
                     </strong>
                     <p>
                       {formatValue(
-                        selectedApplication.merchantContacts?.primaryContact.email ||
+                        selectedApplicationView?.primaryContact?.email ||
                           selectedApplication.organization.businessEmail
                       )}
                     </p>
@@ -721,7 +944,7 @@ function InternalReviewWorkspace(): JSX.Element {
                   <div>
                     <h3>Section Tracker</h3>
                     <p>
-                      Check completion across the merchant workflow before taking
+                      Check completion across the current workflow before taking
                       a final action.
                     </p>
                   </div>
@@ -805,21 +1028,22 @@ function InternalReviewWorkspace(): JSX.Element {
                       </dd>
                     </div>
                     <div>
-                      <dt>Projected transactions</dt>
-                      <dd>
-                        {formatValue(
-                          selectedApplication.businessSnapshot?.projectedTransactions
-                        )}
-                      </dd>
+                      <dt>
+                        {selectedApplicationView?.businessMetricLabel ||
+                          "Projected transactions"}
+                      </dt>
+                      <dd>{formatValue(selectedApplicationView?.businessMetricValue)}</dd>
                     </div>
                     <div>
-                      <dt>Products and services</dt>
-                      <dd>
-                        {formatValue(
-                          selectedApplication.businessSnapshot?.productsDescription
-                        )}
-                      </dd>
+                      <dt>{selectedApplicationView?.serviceLabel || "Products and services"}</dt>
+                      <dd>{formatValue(selectedApplicationView?.serviceValue)}</dd>
                     </div>
+                    {selectedApplicationView?.supplementalDetails.map((detail) => (
+                      <div key={detail.label}>
+                        <dt>{detail.label}</dt>
+                        <dd>{formatValue(detail.value)}</dd>
+                      </div>
+                    ))}
                   </dl>
                 </article>
 
@@ -830,7 +1054,7 @@ function InternalReviewWorkspace(): JSX.Element {
                       <dt>Primary contact</dt>
                       <dd>
                         {formatValue(
-                          selectedApplication.merchantContacts?.primaryContact.fullName
+                          selectedApplicationView?.primaryContact?.fullName
                         )}
                       </dd>
                     </div>
@@ -838,7 +1062,7 @@ function InternalReviewWorkspace(): JSX.Element {
                       <dt>Contact email</dt>
                       <dd>
                         {formatValue(
-                          selectedApplication.merchantContacts?.primaryContact.email
+                          selectedApplicationView?.primaryContact?.email
                         )}
                       </dd>
                     </div>
@@ -846,7 +1070,7 @@ function InternalReviewWorkspace(): JSX.Element {
                       <dt>Phone</dt>
                       <dd>
                         {formatValue(
-                          selectedApplication.merchantContacts?.primaryContact.phoneNumber
+                          selectedApplicationView?.primaryContact?.phoneNumber
                         )}
                       </dd>
                     </div>
@@ -854,7 +1078,7 @@ function InternalReviewWorkspace(): JSX.Element {
                       <dt>Designation</dt>
                       <dd>
                         {formatValue(
-                          selectedApplication.merchantContacts?.primaryContact.designation
+                          selectedApplicationView?.primaryContact?.designation
                         )}
                       </dd>
                     </div>
@@ -862,60 +1086,69 @@ function InternalReviewWorkspace(): JSX.Element {
                       <dt>Residential address</dt>
                       <dd>
                         {formatValue(
-                          selectedApplication.merchantContacts?.primaryContact
-                            .residentialAddress
+                          selectedApplicationView?.primaryContact?.residentialAddress
                         )}
                       </dd>
                     </div>
                     <div>
-                      <dt>Authorized transactors</dt>
+                      <dt>
+                        {selectedApplicationView?.participantsTitle ||
+                          "Authorized transactors"}
+                      </dt>
                       <dd>
-                        {selectedApplication.merchantContacts?.authorizedTransactors.length ||
-                          0}
+                        {selectedApplicationView?.participants.length || 0}
                       </dd>
                     </div>
                     <div>
-                      <dt>Signatories</dt>
-                      <dd>
-                        {selectedApplication.merchantContacts?.signatories.length || 0}
-                      </dd>
+                      <dt>{selectedApplicationView?.principalsTitle || "Signatories"}</dt>
+                      <dd>{selectedApplicationView?.principals.length || 0}</dd>
                     </div>
                   </dl>
                 </article>
 
                 <article className="review-card">
-                  <h4>Banking</h4>
+                  <h4>{selectedApplicationView?.bankingTitle || "Banking"}</h4>
                   <dl className="detail-list">
                     <div>
                       <dt>Account name</dt>
-                      <dd>{selectedApplication.merchantBanking?.accountName || "-"}</dd>
+                      <dd>{selectedApplicationView?.banking?.accountName || "-"}</dd>
                     </div>
                     <div>
                       <dt>Bank</dt>
-                      <dd>{formatValue(selectedApplication.merchantBanking?.bankName)}</dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.bankName)}</dd>
                     </div>
                     <div>
                       <dt>Branch name</dt>
-                      <dd>{formatValue(selectedApplication.merchantBanking?.branchName)}</dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.branchName)}</dd>
                     </div>
                     <div>
                       <dt>Branch code</dt>
-                      <dd>{formatValue(selectedApplication.merchantBanking?.branchCode)}</dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.branchCode)}</dd>
                     </div>
                     <div>
                       <dt>Account number</dt>
-                      <dd>
-                        {formatValue(selectedApplication.merchantBanking?.accountNumber)}
-                      </dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.accountNumber)}</dd>
                     </div>
                     <div>
                       <dt>Account type</dt>
-                      <dd>{formatValue(selectedApplication.merchantBanking?.accountType)}</dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.accountType)}</dd>
                     </div>
                     <div>
                       <dt>Currency</dt>
-                      <dd>{formatValue(selectedApplication.merchantBanking?.currency)}</dd>
+                      <dd>{formatValue(selectedApplicationView?.banking?.currency)}</dd>
                     </div>
+                    {selectedApplicationView?.settlementExtras.map((detail) => (
+                      <div key={detail.label}>
+                        <dt>{detail.label}</dt>
+                        <dd>{formatValue(detail.value)}</dd>
+                      </div>
+                    ))}
+                    {selectedApplicationView?.isAgent ? (
+                      <div>
+                        <dt>Outlets</dt>
+                        <dd>{selectedApplicationView.outlets.length}</dd>
+                      </div>
+                    ) : null}
                   </dl>
                 </article>
 
@@ -924,40 +1157,23 @@ function InternalReviewWorkspace(): JSX.Element {
                   <dl className="detail-list">
                     <div>
                       <dt>Signer name</dt>
-                      <dd>
-                        {formatValue(selectedApplication.merchantDeclaration?.signerName)}
-                      </dd>
+                      <dd>{formatValue(selectedApplicationView?.declaration?.signerName)}</dd>
                     </div>
                     <div>
                       <dt>Signer title</dt>
-                      <dd>
-                        {formatValue(selectedApplication.merchantDeclaration?.signerTitle)}
-                      </dd>
+                      <dd>{formatValue(selectedApplicationView?.declaration?.signerTitle)}</dd>
                     </div>
                     <div>
                       <dt>Accepted terms</dt>
-                      <dd>
-                        {formatBoolean(
-                          selectedApplication.merchantDeclaration?.acceptedTerms
-                        )}
-                      </dd>
+                      <dd>{formatBoolean(selectedApplicationView?.declaration?.acceptedTerms)}</dd>
                     </div>
                     <div>
                       <dt>Certified information</dt>
-                      <dd>
-                        {formatBoolean(
-                          selectedApplication.merchantDeclaration
-                            ?.certifiedInformation
-                        )}
-                      </dd>
+                      <dd>{formatBoolean(selectedApplicationView?.declaration?.certifiedInformation)}</dd>
                     </div>
                     <div>
                       <dt>Authorized to act</dt>
-                      <dd>
-                        {formatBoolean(
-                          selectedApplication.merchantDeclaration?.authorizedToAct
-                        )}
-                      </dd>
+                      <dd>{formatBoolean(selectedApplicationView?.declaration?.authorizedToAct)}</dd>
                     </div>
                   </dl>
                 </article>
@@ -967,22 +1183,25 @@ function InternalReviewWorkspace(): JSX.Element {
                 <section className="form-section">
                   <div className="form-section__header">
                     <div>
-                      <h3>Authorized Transactors</h3>
+                      <h3>
+                        {selectedApplicationView?.participantsTitle ||
+                          "Authorized Transactors"}
+                      </h3>
                       <p>
-                        Everyone listed here can transact or act on behalf of the
-                        merchant during onboarding.
+                        Everyone listed here can transact or act on behalf of the{" "}
+                        {selectedApplicationView?.applicationLabel || "application"}{" "}
+                        during onboarding.
                       </p>
                     </div>
                     <span className="status-chip status-chip--soft">
-                      {selectedApplication.merchantContacts?.authorizedTransactors.length ||
-                        0}{" "}
+                      {selectedApplicationView?.participants.length || 0}{" "}
                       listed
                     </span>
                   </div>
 
-                  {selectedApplication.merchantContacts?.authorizedTransactors.length ? (
+                  {selectedApplicationView?.participants.length ? (
                     <div className="people-grid">
-                      {selectedApplication.merchantContacts.authorizedTransactors.map(
+                      {selectedApplicationView.participants.map(
                         (person, index) => (
                           <article className="person-card" key={`${person.fullName}-${index}`}>
                             <strong>{formatValue(person.fullName)}</strong>
@@ -1014,9 +1233,14 @@ function InternalReviewWorkspace(): JSX.Element {
                     </div>
                   ) : (
                     <div className="empty-state">
-                      <strong>No authorized transactors listed</strong>
+                      <strong>
+                        No{" "}
+                        {selectedApplicationView?.participantsTitle?.toLowerCase() ||
+                          "authorized transactors"}{" "}
+                        listed
+                      </strong>
                       <span>
-                        This section was left empty in the merchant submission.
+                        This section was left empty in the submitted application.
                       </span>
                     </div>
                   )}
@@ -1025,25 +1249,30 @@ function InternalReviewWorkspace(): JSX.Element {
                 <section className="form-section">
                   <div className="form-section__header">
                     <div>
-                      <h3>Signatories</h3>
+                      <h3>{selectedApplicationView?.principalsTitle || "Signatories"}</h3>
                       <p>
-                        Confirm who was named as a signatory and whether a primary
-                        signatory is clearly identified.
+                        Confirm who was named as a{" "}
+                        {selectedApplicationView?.principalDescriptor || "signatory"} and whether a primary
+                        contact is clearly identified.
                       </p>
                     </div>
                     <span className="status-chip status-chip--soft">
-                      {selectedApplication.merchantContacts?.signatories.length || 0} listed
+                      {selectedApplicationView?.principals.length || 0} listed
                     </span>
                   </div>
 
-                  {selectedApplication.merchantContacts?.signatories.length ? (
+                  {selectedApplicationView?.principals.length ? (
                     <div className="people-grid">
-                      {selectedApplication.merchantContacts.signatories.map(
+                      {selectedApplicationView.principals.map(
                         (person, index) => (
                           <article className="person-card" key={`${person.fullName}-${index}`}>
                             <div className="person-card__header">
                               <strong>{formatValue(person.fullName)}</strong>
-                              {person.isPrimarySignatory ? (
+                              {(
+                                person.isPrimarySignatory ||
+                                ("isPrimaryDirector" in person &&
+                                  Boolean(person.isPrimaryDirector))
+                              ) ? (
                                 <span className="status-chip status-chip--brand">
                                   Primary
                                 </span>
@@ -1077,14 +1306,69 @@ function InternalReviewWorkspace(): JSX.Element {
                     </div>
                   ) : (
                     <div className="empty-state">
-                      <strong>No signatories listed</strong>
+                      <strong>No {selectedApplicationView?.principalsTitle?.toLowerCase() || "signatories"} listed</strong>
                       <span>
-                        The applicant did not provide any signatory records here.
+                        The applicant did not provide any records in this section.
                       </span>
                     </div>
                   )}
                 </section>
               </div>
+
+              {selectedApplicationView?.isAgent ? (
+                <section className="form-section">
+                  <div className="form-section__header">
+                    <div>
+                      <h3>Operating Outlets</h3>
+                      <p>Review the branch and outlet footprint attached to this agent application.</p>
+                    </div>
+                    <span className="status-chip status-chip--soft">
+                      {selectedApplicationView.outlets.length} listed
+                    </span>
+                  </div>
+
+                  {selectedApplicationView.outlets.length ? (
+                    <div className="people-grid">
+                      {selectedApplicationView.outlets.map((outlet, index) => (
+                        <article className="person-card" key={`${outlet.name}-${index}`}>
+                          <strong>{formatValue(outlet.name)}</strong>
+                          <dl className="detail-list detail-list--compact">
+                            <div>
+                              <dt>Code</dt>
+                              <dd>{formatValue(outlet.code)}</dd>
+                            </div>
+                            <div>
+                              <dt>Phone</dt>
+                              <dd>{formatValue(outlet.phoneNumber)}</dd>
+                            </div>
+                            <div>
+                              <dt>Email</dt>
+                              <dd>{formatValue(outlet.email)}</dd>
+                            </div>
+                            <div>
+                              <dt>Address</dt>
+                              <dd>{formatValue(outlet.addressLine1)}</dd>
+                            </div>
+                            <div>
+                              <dt>City</dt>
+                              <dd>{formatValue(outlet.city)}</dd>
+                            </div>
+                            <div>
+                              <dt>Province</dt>
+                              <dd>{formatValue(outlet.province)}</dd>
+                            </div>
+                          </dl>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-state">
+                      <strong>No outlets listed</strong>
+                      <span>The applicant did not provide any outlet records here.</span>
+                    </div>
+                  )}
+                </section>
+              ) : null}
 
               <section className="form-section">
                 <div className="form-section__header">
@@ -1221,7 +1505,7 @@ function InternalReviewWorkspace(): JSX.Element {
                 <div className="form-section__header">
                   <div>
                     <h3>Uploaded Documents</h3>
-                    <p>Review the uploaded merchant documents before deciding.</p>
+                    <p>Review the uploaded documents before deciding.</p>
                   </div>
                   <span className="status-chip status-chip--soft">
                     {selectedApplication.uploadedDocuments.length} file(s)
@@ -1327,7 +1611,7 @@ function InternalReviewWorkspace(): JSX.Element {
                   <div className="form-section__header">
                     <div>
                       <h3>Status History</h3>
-                      <p>Track how this merchant application moved through the workflow.</p>
+                      <p>Track how this application moved through the workflow.</p>
                     </div>
                   </div>
 
@@ -1383,10 +1667,202 @@ function InternalReviewWorkspace(): JSX.Element {
               <section className="form-section">
                 <div className="form-section__header">
                   <div>
+                    <h3>Review Comments</h3>
+                    <p>
+                      Leave internal notes or applicant-visible correction items
+                      tied to the exact section that needs attention.
+                    </p>
+                  </div>
+                  <span className="status-chip status-chip--soft">
+                    {commentSummary?.unresolved || 0} unresolved
+                  </span>
+                </div>
+
+                <div className="review-overview-grid">
+                  <article className="review-overview-card">
+                    <span className="review-overview-card__label">All Comments</span>
+                    <strong>{commentSummary?.total || 0}</strong>
+                    <p>Every note recorded against this application.</p>
+                  </article>
+
+                  <article className="review-overview-card">
+                    <span className="review-overview-card__label">Open Items</span>
+                    <strong>{commentSummary?.unresolved || 0}</strong>
+                    <p>Comments still waiting for follow-up or confirmation.</p>
+                  </article>
+
+                  <article className="review-overview-card">
+                    <span className="review-overview-card__label">
+                      Applicant Visible
+                    </span>
+                    <strong>{commentSummary?.unresolvedApplicant || 0}</strong>
+                    <p>Outstanding notes the applicant can currently see.</p>
+                  </article>
+
+                  <article className="review-overview-card">
+                    <span className="review-overview-card__label">Internal Only</span>
+                    <strong>{commentSummary?.unresolvedInternal || 0}</strong>
+                    <p>Reviewer-only notes kept inside the internal workspace.</p>
+                  </article>
+                </div>
+
+                <div className="comment-composer">
+                  <div className="comment-composer__header">
+                    <strong>Add review comment</strong>
+                    <span>
+                      Use applicant-visible comments before requesting more
+                      information so the correction path is explicit.
+                    </span>
+                  </div>
+
+                  <div className="form-grid">
+                    <label className="field">
+                      <span>Visibility</span>
+                      <select
+                        value={commentVisibility}
+                        onChange={(event) => {
+                          const nextVisibility = event.target
+                            .value as CommentVisibility;
+                          setCommentVisibility(nextVisibility);
+                          setCommentType(
+                            nextVisibility === "internal" ? "general" : "correction"
+                          );
+                        }}
+                        disabled={processingComment}
+                      >
+                        <option value="applicant">Applicant visible</option>
+                        <option value="internal">Internal only</option>
+                      </select>
+                    </label>
+
+                    <label className="field">
+                      <span>Related Section</span>
+                      <select
+                        value={commentSectionKey}
+                        onChange={(event) => setCommentSectionKey(event.target.value)}
+                        disabled={processingComment}
+                      >
+                        <option value="">General application note</option>
+                        {selectedApplication.sections.map((section) => (
+                          <option key={section.key} value={section.key}>
+                            {section.title}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="field">
+                      <span>Comment Type</span>
+                      <select
+                        value={commentType}
+                        onChange={(event) => setCommentType(event.target.value)}
+                        disabled={processingComment}
+                      >
+                        <option value="correction">Correction</option>
+                        <option value="document">Document</option>
+                        <option value="general">General</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <label className="field">
+                    <span>Comment</span>
+                    <textarea
+                      value={commentMessage}
+                      onChange={(event) => setCommentMessage(event.target.value)}
+                      placeholder="Example: Please replace the tax clearance certificate and confirm the bank account holder name."
+                      disabled={processingComment}
+                    />
+                  </label>
+
+                  <div className="form-actions">
+                    <button
+                      type="button"
+                      className="button button--primary"
+                      onClick={() => void handleCreateComment()}
+                      disabled={processingComment}
+                    >
+                      {processingComment ? "Saving..." : "Add Comment"}
+                    </button>
+                  </div>
+                </div>
+
+                {selectedApplication.comments.length === 0 ? (
+                  <div className="empty-state">
+                    <strong>No review comments yet</strong>
+                    <span>
+                      Add the first comment to capture reviewer guidance or
+                      applicant corrections in one thread.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="comment-thread">
+                    {selectedApplication.comments.map((comment) => (
+                      <article key={comment.id} className="comment-card">
+                        <div className="comment-card__header">
+                          <div>
+                            <strong>{comment.author.fullName}</strong>
+                            <span className="comment-card__meta">
+                              {comment.sectionKey
+                                ? humanize(comment.sectionKey)
+                                : "General note"}{" "}
+                              | {humanize(comment.commentType)} |{" "}
+                              {humanize(comment.visibility)} |{" "}
+                              {formatDate(comment.createdAt)}
+                            </span>
+                          </div>
+                          <span
+                            className={`status-chip${
+                              comment.isResolved
+                                ? " status-chip--brand"
+                                : comment.visibility === "internal"
+                                  ? " status-chip--danger"
+                                  : " status-chip--soft"
+                            }`}
+                          >
+                            {comment.isResolved
+                              ? "Resolved"
+                              : comment.visibility === "internal"
+                                ? "Internal"
+                                : "Open with applicant"}
+                          </span>
+                        </div>
+
+                        <p className="comment-card__message">{comment.message}</p>
+
+                        <div className="comment-card__actions">
+                          <button
+                            type="button"
+                            className="button button--ghost"
+                            onClick={() =>
+                              void handleToggleCommentResolution(
+                                comment.id,
+                                !comment.isResolved
+                              )
+                            }
+                            disabled={processingCommentId === comment.id}
+                          >
+                            {processingCommentId === comment.id
+                              ? "Saving..."
+                              : comment.isResolved
+                                ? "Reopen"
+                                : "Resolve"}
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="form-section">
+                <div className="form-section__header">
+                  <div>
                     <h3>Review Actions</h3>
                     <p>
-                      Add a note, then request more information, approve, or reject
-                      the merchant application.
+                      Add a note, then request corrections, approve, or reject
+                      the application. The request note will also be sent
+                      back into the applicant-visible comment thread.
                     </p>
                   </div>
                   <span className="status-chip">
@@ -1415,7 +1891,7 @@ function InternalReviewWorkspace(): JSX.Element {
                     onClick={() => openDecisionModal("request-info")}
                     disabled={processingAction || isDecisionLocked}
                   >
-                    Request More Info
+                    Request Corrections
                   </button>
                   <button
                     type="button"
@@ -1423,7 +1899,7 @@ function InternalReviewWorkspace(): JSX.Element {
                     onClick={() => openDecisionModal("reject")}
                     disabled={processingAction || isDecisionLocked}
                   >
-                    Reject
+                    Reject Application
                   </button>
                   <button
                     type="button"
@@ -1431,7 +1907,7 @@ function InternalReviewWorkspace(): JSX.Element {
                     onClick={() => openDecisionModal("approve")}
                     disabled={processingAction || isDecisionLocked || !canApproveApplication}
                   >
-                    {processingAction ? "Processing..." : "Approve"}
+                    {processingAction ? "Processing..." : "Approve Application"}
                   </button>
                 </div>
               </section>

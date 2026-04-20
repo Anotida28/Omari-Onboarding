@@ -332,6 +332,7 @@ export const listReviewApplications = async (
 
 const transitionReviewStatus = async (
   applicationId: string,
+  actorUserId: string,
   toStatus: string,
   note?: string
 ): Promise<ApplicationDetailResponse> => {
@@ -382,21 +383,21 @@ const transitionReviewStatus = async (
     });
 
     await transaction.applicationStatusHistory.create({
-      data: {
-        applicationId,
-        changedByUserId: null,
-        fromStatus: application.status,
-        toStatus,
-        reason: message
+        data: {
+          applicationId,
+          changedByUserId: actorUserId,
+          fromStatus: application.status,
+          toStatus,
+          reason: message
       }
     });
 
-    await transaction.auditLog.create({
-      data: {
-        actorUserId: null,
-        entityType: "application",
-        entityId: applicationId,
-        action: toStatus,
+      await transaction.auditLog.create({
+        data: {
+          actorUserId,
+          entityType: "application",
+          entityId: applicationId,
+          action: toStatus,
         summary: `Application moved to ${toStatus}.`,
         detailsJson: JSON.stringify({
           note: message,
@@ -405,6 +406,19 @@ const transitionReviewStatus = async (
         })
       }
     });
+
+    if (toStatus === APPLICATION_STATUSES.needsMoreInformation && message) {
+      await transaction.reviewComment.create({
+        data: {
+          applicationId,
+          authorUserId: actorUserId,
+          visibility: "applicant",
+          commentType: "correction",
+          message,
+          isResolved: false
+        }
+      });
+    }
 
     await updateReviewTaskState(transaction, applicationId, toStatus, message, now);
 
@@ -433,36 +447,43 @@ const transitionReviewStatus = async (
 
 export const requestApplicationInformation = async (
   applicationId: string,
+  actorUserId: string,
   payload: ReviewDecisionPayload
 ): Promise<ApplicationDetailResponse> =>
   transitionReviewStatus(
     applicationId,
+    actorUserId,
     APPLICATION_STATUSES.needsMoreInformation,
     requireDecisionNote(payload.note)
   );
 
 export const approveApplication = async (
   applicationId: string,
+  actorUserId: string,
   payload: ReviewDecisionPayload
 ): Promise<ApplicationDetailResponse> =>
   transitionReviewStatus(
     applicationId,
+    actorUserId,
     APPLICATION_STATUSES.approved,
     getDecisionNote(payload.note) || undefined
   );
 
 export const rejectApplication = async (
   applicationId: string,
+  actorUserId: string,
   payload: ReviewDecisionPayload
 ): Promise<ApplicationDetailResponse> =>
   transitionReviewStatus(
     applicationId,
+    actorUserId,
     APPLICATION_STATUSES.rejected,
     requireDecisionNote(payload.note)
   );
 
 export const reviewApplicationDocument = async (
   documentId: string,
+  actorUserId: string,
   payload: DocumentReviewPayload
 ): Promise<ApplicationDetailResponse> => {
   const normalizedStatus = payload.status.trim().toLowerCase();
@@ -488,22 +509,22 @@ export const reviewApplicationDocument = async (
 
     ensureReviewableStatus(document.application.status);
 
-    await transaction.document.update({
-      where: {
-        id: documentId
-      },
-      data: {
-        status: normalizedStatus,
-        reviewNotes: normalizedNote,
-        reviewedByUserId: null
-      }
-    });
+      await transaction.document.update({
+        where: {
+          id: documentId
+        },
+        data: {
+          status: normalizedStatus,
+          reviewNotes: normalizedNote,
+          reviewedByUserId: actorUserId
+        }
+      });
 
-    await transaction.auditLog.create({
-      data: {
-        actorUserId: null,
-        entityType: "document",
-        entityId: documentId,
+      await transaction.auditLog.create({
+        data: {
+          actorUserId,
+          entityType: "document",
+          entityId: documentId,
         action: `review_${normalizedStatus}`,
         summary: `Document marked as ${normalizedStatus}.`,
         detailsJson: JSON.stringify({

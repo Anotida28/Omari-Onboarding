@@ -1,8 +1,20 @@
 import { Router } from "express";
 import multer from "multer";
+import { requireApplicant, requireAuth } from "../middleware/auth";
 import {
+  createComment,
+  getActiveApplication,
   getApplication,
+  submitAgent,
+  submitPayer,
   submitMerchant,
+  updateCommentResolution,
+  upsertAgentContacts,
+  upsertAgentDraft,
+  upsertAgentOperations,
+  upsertPayerContacts,
+  upsertPayerDraft,
+  upsertPayerSettlement,
   upsertMerchantBanking,
   upsertMerchantContacts,
   uploadApplicationDocuments,
@@ -34,13 +46,26 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/merchant-draft", upsertMerchantDraft);
-router.post("/:applicationId/merchant-contacts", upsertMerchantContacts);
-router.post("/:applicationId/merchant-banking", upsertMerchantBanking);
-router.post("/:applicationId/merchant-submit", submitMerchant);
+router.use(requireAuth);
+router.get("/active", requireApplicant, getActiveApplication);
+router.post("/agent-draft", requireApplicant, upsertAgentDraft);
+router.post("/payer-draft", requireApplicant, upsertPayerDraft);
+router.post("/merchant-draft", requireApplicant, upsertMerchantDraft);
+router.post("/:applicationId/comments", createComment);
+router.patch("/comments/:commentId", updateCommentResolution);
+router.post("/:applicationId/agent-contacts", requireApplicant, upsertAgentContacts);
+router.post("/:applicationId/agent-operations", requireApplicant, upsertAgentOperations);
+router.post("/:applicationId/agent-submit", requireApplicant, submitAgent);
+router.post("/:applicationId/payer-contacts", requireApplicant, upsertPayerContacts);
+router.post("/:applicationId/payer-settlement", requireApplicant, upsertPayerSettlement);
+router.post("/:applicationId/payer-submit", requireApplicant, submitPayer);
+router.post("/:applicationId/merchant-contacts", requireApplicant, upsertMerchantContacts);
+router.post("/:applicationId/merchant-banking", requireApplicant, upsertMerchantBanking);
+router.post("/:applicationId/merchant-submit", requireApplicant, submitMerchant);
 router.get("/:applicationId", getApplication);
 router.post(
   "/:applicationId/documents",
+  requireApplicant,
   upload.array("files", 10),
   uploadApplicationDocuments
 );

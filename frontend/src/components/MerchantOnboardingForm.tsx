@@ -3,22 +3,27 @@ import {
   ApplicationDetailResponse,
   ApplicationSectionSummary,
   DocumentRequirementItem,
-  MerchantBankingPayload,
   MerchantContactPersonPayload,
   MerchantContactsPayload,
+  MerchantBankingPayload,
   MerchantDeclarationPayload,
   MerchantDraftPayload,
+  ReviewCommentItem,
   MerchantSignatoryPayload,
   MerchantTransactorPayload,
   UploadedApplicationDocument,
+  createApplicationComment,
+  getActiveApplicationByType,
   getApplication,
   getDocumentRequirements,
   saveMerchantBanking,
   saveMerchantContacts,
   saveMerchantDraft,
   submitMerchantApplication,
+  updateApplicationCommentResolution,
   uploadApplicationDocuments
 } from "../services/api";
+import { MERCHANT_APPLICATION_STORAGE_KEY } from "../constants/application";
 
 type MerchantStepKey =
   | "business_snapshot"
@@ -62,14 +67,12 @@ interface DeclarationSectionState {
   authorizedToAct: boolean;
 }
 
-const LOCAL_STORAGE_KEY = "omari-onboarding:merchant-application-id";
-
 const MERCHANT_STEPS: Array<{ key: MerchantStepKey; label: string }> = [
   { key: "business_snapshot", label: "Business Snapshot" },
   { key: "contacts_transactors", label: "Contacts & Transactors" },
   { key: "banking_details", label: "Banking Details" },
   { key: "supporting_documents", label: "Supporting Documents" },
-  { key: "declarations_review", label: "Review & Submit" }
+  { key: "declarations_review", label: "Review And Submit" }
 ];
 
 const defaultFormState: MerchantFormState = {
@@ -135,6 +138,22 @@ const humanize = (value: string): string =>
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+
+const formatDate = (value: string): string => {
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+};
 
 const groupUploadedDocuments = (
   documents: UploadedApplicationDocument[]
@@ -343,10 +362,15 @@ function MerchantOnboardingForm(): JSX.Element {
   const [uploadedDocuments, setUploadedDocuments] = useState<
     Record<string, UploadedApplicationDocument[]>
   >({});
+  const [comments, setComments] = useState<ReviewCommentItem[]>([]);
+  const [commentMessage, setCommentMessage] = useState("");
+  const [commentSectionKey, setCommentSectionKey] = useState("");
   const [loadingEntityTypes, setLoadingEntityTypes] = useState(true);
   const [loadingRequirements, setLoadingRequirements] = useState(false);
   const [loadingDraft, setLoadingDraft] = useState(true);
   const [savingStep, setSavingStep] = useState(false);
+  const [processingComment, setProcessingComment] = useState(false);
+  const [processingCommentId, setProcessingCommentId] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -372,8 +396,12 @@ function MerchantOnboardingForm(): JSX.Element {
     setBankingSection(buildBankingState(application));
     setDeclarationSection(buildDeclarationState(application));
     setUploadedDocuments(groupUploadedDocuments(application.uploadedDocuments));
+    setComments(application.comments);
     setActiveStep(getPreferredStep(application));
-    window.localStorage.setItem(LOCAL_STORAGE_KEY, application.applicationId);
+    window.localStorage.setItem(
+      MERCHANT_APPLICATION_STORAGE_KEY,
+      application.applicationId
+    );
   };
 
   useEffect(() => {
@@ -403,19 +431,29 @@ function MerchantOnboardingForm(): JSX.Element {
 
   useEffect(() => {
     const loadStoredDraft = async (): Promise<void> => {
-      const storedApplicationId = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-
-      if (!storedApplicationId) {
-        setLoadingDraft(false);
-        return;
-      }
+      const storedApplicationId = window.localStorage.getItem(
+        MERCHANT_APPLICATION_STORAGE_KEY
+      );
 
       try {
-        const application = await getApplication(storedApplicationId);
+        const application = storedApplicationId
+          ? await getApplication(storedApplicationId)
+          : await getActiveApplicationByType("merchant");
+
+        if (!application) {
+          setLoadingDraft(false);
+          return;
+        }
+
+        if (application.applicationType !== "merchant") {
+          setLoadingDraft(false);
+          return;
+        }
+
         syncApplicationState(application);
-        setMessage("Existing merchant draft loaded from your last session.");
+        setMessage("Existing merchant draft loaded successfully.");
       } catch (caughtError) {
-        window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+        window.localStorage.removeItem(MERCHANT_APPLICATION_STORAGE_KEY);
         setApplicationId("");
         setApplicationStatus("");
 
@@ -565,6 +603,41 @@ function MerchantOnboardingForm(): JSX.Element {
         0
       ),
     [uploadedDocuments]
+  );
+
+  const unresolvedComments = useMemo(
+    () => comments.filter((comment) => !comment.isResolved),
+    [comments]
+  );
+
+  const generalComments = useMemo(
+    () => comments.filter((comment) => !comment.sectionKey),
+    [comments]
+  );
+
+  const currentStepComments = useMemo(
+    () =>
+      comments.filter(
+        (comment) =>
+          comment.sectionKey === activeStep ||
+          (!comment.sectionKey && activeStep === "declarations_review")
+      ),
+    [activeStep, comments]
+  );
+
+  const unresolvedCommentCountByStep = useMemo(
+    () =>
+      comments.reduce<Record<string, number>>((accumulator, comment) => {
+        if (!comment.sectionKey || comment.isResolved) {
+          return accumulator;
+        }
+
+        return {
+          ...accumulator,
+          [comment.sectionKey]: (accumulator[comment.sectionKey] || 0) + 1
+        };
+      }, {}),
+    [comments]
   );
 
   const isSubmitted = applicationStatus === "submitted";
@@ -735,10 +808,13 @@ function MerchantOnboardingForm(): JSX.Element {
     setSections([]);
     setSelectedFiles({});
     setUploadedDocuments({});
+    setComments([]);
+    setCommentMessage("");
+    setCommentSectionKey("");
     setApplicationId("");
     setApplicationStatus("");
     setActiveStep("business_snapshot");
-    window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+    window.localStorage.removeItem(MERCHANT_APPLICATION_STORAGE_KEY);
     setMessage("Local draft state cleared. Saving again will create a fresh draft.");
     setError("");
   };
@@ -810,7 +886,9 @@ function MerchantOnboardingForm(): JSX.Element {
         }
 
         const contactsResponse = await saveMerchantContacts(
-          applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "",
+          applicationId ||
+            window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+            "",
           normalizedContacts
         );
         syncApplicationState(contactsResponse);
@@ -848,7 +926,9 @@ function MerchantOnboardingForm(): JSX.Element {
         }
 
         const bankingResponse = await saveMerchantBanking(
-          applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "",
+          applicationId ||
+            window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+            "",
           normalizedBanking
         );
         syncApplicationState(bankingResponse);
@@ -859,7 +939,9 @@ function MerchantOnboardingForm(): JSX.Element {
 
       if (activeStep === "declarations_review") {
         const currentApplicationId =
-          applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "";
+          applicationId ||
+          window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+          "";
 
         if (!currentApplicationId) {
           throw new Error(
@@ -885,7 +967,9 @@ function MerchantOnboardingForm(): JSX.Element {
       }
 
       const currentApplicationId =
-        applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "";
+        applicationId ||
+        window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+        "";
 
       if (!currentApplicationId) {
         if (
@@ -903,7 +987,9 @@ function MerchantOnboardingForm(): JSX.Element {
       }
 
       const draftId =
-        applicationId || window.localStorage.getItem(LOCAL_STORAGE_KEY) || "";
+        applicationId ||
+        window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+        "";
 
       const filesToUpload = Object.entries(selectedFiles).filter(
         ([, files]) => files.length > 0
@@ -947,6 +1033,79 @@ function MerchantOnboardingForm(): JSX.Element {
     }
   };
 
+  const handleCreateComment = async (): Promise<void> => {
+    const currentApplicationId =
+      applicationId ||
+      window.localStorage.getItem(MERCHANT_APPLICATION_STORAGE_KEY) ||
+      "";
+
+    if (!currentApplicationId) {
+      setError("Save your application first before responding to reviewer comments.");
+      return;
+    }
+
+    if (!commentMessage.trim()) {
+      setError("Enter a response before sending it back to the review team.");
+      return;
+    }
+
+    setProcessingComment(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await createApplicationComment(currentApplicationId, {
+        message: commentMessage,
+        sectionKey: commentSectionKey || activeStep,
+        commentType: "response"
+      });
+
+      syncApplicationState(response);
+      setCommentMessage("");
+      setCommentSectionKey("");
+      setMessage("Your response was added to the application review thread.");
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to send your response right now."
+      );
+    } finally {
+      setProcessingComment(false);
+    }
+  };
+
+  const handleToggleCommentResolution = async (
+    commentId: string,
+    isResolved: boolean
+  ): Promise<void> => {
+    setProcessingCommentId(commentId);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await updateApplicationCommentResolution(
+        commentId,
+        isResolved
+      );
+
+      syncApplicationState(response);
+      setMessage(
+        isResolved
+          ? "Comment marked as addressed."
+          : "Comment reopened for follow-up."
+      );
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to update the comment state."
+      );
+    } finally {
+      setProcessingCommentId("");
+    }
+  };
+
   const loadingState = loadingEntityTypes || loadingDraft;
 
   return (
@@ -954,10 +1113,10 @@ function MerchantOnboardingForm(): JSX.Element {
       <div className="panel-header">
         <div>
           <p className="panel-header__eyebrow">Applicant Portal</p>
-          <h2>New Merchant Application</h2>
+          <h2>Merchant Application</h2>
           <p className="panel-header__copy">
-            The merchant flow is now organized into real sections with progress
-            tracking and save points.
+            Complete your merchant onboarding in guided steps with clear progress,
+            save points, and a final review checkpoint before submission.
           </p>
         </div>
       </div>
@@ -968,6 +1127,7 @@ function MerchantOnboardingForm(): JSX.Element {
           const status = section?.status || (index === 0 ? "in_progress" : "not_started");
           const isCompleted = status === "completed";
           const isActive = activeStep === step.key;
+          const unresolvedCount = unresolvedCommentCountByStep[step.key] || 0;
 
           return (
             <button
@@ -980,7 +1140,14 @@ function MerchantOnboardingForm(): JSX.Element {
             >
               <span className="stepper__index">{index + 1}</span>
               <span className="stepper__content">
-                <strong className="stepper__label">{step.label}</strong>
+                <span className="stepper__copy">
+                  <strong className="stepper__label">{step.label}</strong>
+                  {unresolvedCount > 0 ? (
+                    <span className="stepper__note">
+                      {unresolvedCount} open {unresolvedCount === 1 ? "note" : "notes"}
+                    </span>
+                  ) : null}
+                </span>
               </span>
             </button>
           );
@@ -989,6 +1156,153 @@ function MerchantOnboardingForm(): JSX.Element {
 
       {error ? <p className="feedback feedback--error">{error}</p> : null}
       {message ? <p className="feedback feedback--success">{message}</p> : null}
+
+      {applicationStatus === "needs_more_information" || comments.length > 0 ? (
+        <section className="form-section">
+          <div className="form-section__header">
+            <div>
+              <h3>Reviewer Feedback</h3>
+              <p>
+                Use this thread to track requested changes, respond to the review
+                team, and mark items you have already addressed.
+              </p>
+            </div>
+            <span className="status-chip status-chip--soft">
+              {unresolvedComments.length} unresolved
+            </span>
+          </div>
+
+          {applicationStatus === "needs_more_information" ? (
+            <div className="feedback feedback--warning">
+              Internal review requested corrections before the merchant
+              application can move forward. Update the relevant sections below,
+              then reply here so the team knows what changed.
+            </div>
+          ) : null}
+
+          {currentStepComments.length > 0 ? (
+            <div className="comment-thread">
+              {currentStepComments.map((comment) => (
+                <article key={comment.id} className="comment-card">
+                  <div className="comment-card__header">
+                    <div>
+                      <strong>{comment.author.fullName}</strong>
+                      <span className="comment-card__meta">
+                        {comment.sectionKey
+                          ? humanize(comment.sectionKey)
+                          : "General application feedback"}{" "}
+                        | {humanize(comment.commentType)} |{" "}
+                        {formatDate(comment.createdAt)}
+                      </span>
+                    </div>
+                    <span
+                      className={`status-chip${
+                        comment.isResolved ? " status-chip--brand" : " status-chip--soft"
+                      }`}
+                    >
+                      {comment.isResolved ? "Resolved" : "Needs action"}
+                    </span>
+                  </div>
+
+                  <p className="comment-card__message">{comment.message}</p>
+
+                  {applicationStatus === "needs_more_information" ? (
+                    <div className="comment-card__actions">
+                      <button
+                        type="button"
+                        className="button button--ghost"
+                        onClick={() =>
+                          void handleToggleCommentResolution(
+                            comment.id,
+                            !comment.isResolved
+                          )
+                        }
+                        disabled={processingCommentId === comment.id}
+                      >
+                        {processingCommentId === comment.id
+                          ? "Saving..."
+                          : comment.isResolved
+                            ? "Reopen"
+                            : "Mark Fixed"}
+                      </button>
+                    </div>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <strong>No feedback tied to this section yet</strong>
+              <span>
+                Reviewer comments will appear here when the team requests
+                corrections or leaves updates on this application.
+              </span>
+            </div>
+          )}
+
+          {generalComments.length > 0 && activeStep !== "declarations_review" ? (
+            <div className="comment-summary-inline">
+              <strong>General notes</strong>
+              <span>
+                {generalComments.length} application-wide{" "}
+                {generalComments.length === 1 ? "comment is" : "comments are"} on
+                file. Open the review step to see the full thread.
+              </span>
+            </div>
+          ) : null}
+
+          {applicationStatus === "needs_more_information" ? (
+            <div className="comment-composer">
+              <div className="comment-composer__header">
+                <strong>Reply to reviewer</strong>
+                <span>
+                  Add a short update after editing a section or replacing a
+                  document.
+                </span>
+              </div>
+
+              <div className="form-grid">
+                <label className="field">
+                  <span>Related Section</span>
+                  <select
+                    value={commentSectionKey}
+                    onChange={(event) => setCommentSectionKey(event.target.value)}
+                    disabled={processingComment}
+                  >
+                    <option value="">Current step ({humanize(activeStep)})</option>
+                    {MERCHANT_STEPS.map((step) => (
+                      <option key={step.key} value={step.key}>
+                        {step.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <label className="field">
+                <span>Response</span>
+                <textarea
+                  value={commentMessage}
+                  onChange={(event) => setCommentMessage(event.target.value)}
+                  placeholder="Example: We replaced the tax clearance certificate and updated the primary contact phone number."
+                  disabled={processingComment}
+                />
+              </label>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="button button--primary"
+                  onClick={() => void handleCreateComment()}
+                  disabled={processingComment}
+                >
+                  {processingComment ? "Sending..." : "Send Response"}
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       {activeStep === "business_snapshot" ? (
         <section className="form-section">
@@ -1119,7 +1433,7 @@ function MerchantOnboardingForm(): JSX.Element {
               </p>
             </div>
             <span className="status-chip">
-              {applicationId ? "Live contact draft" : "Business save needed"}
+              {applicationId ? "Draft linked" : "Save business details first"}
             </span>
           </div>
 
@@ -1454,7 +1768,7 @@ function MerchantOnboardingForm(): JSX.Element {
               </p>
             </div>
             <span className="status-chip">
-              {applicationId ? "Live banking draft" : "Previous steps first"}
+              {applicationId ? "Draft linked" : "Complete earlier steps first"}
             </span>
           </div>
 
@@ -1682,7 +1996,7 @@ function MerchantOnboardingForm(): JSX.Element {
               <h3>Declarations & Review</h3>
               <p>
                 Review the merchant profile, confirm the declarations, and
-                submit the application for internal OMDS review.
+                submit when everything is complete and ready for internal review.
               </p>
             </div>
             <span className="status-chip status-chip--soft">
@@ -1856,8 +2170,8 @@ function MerchantOnboardingForm(): JSX.Element {
 
             {isSubmitted ? (
               <div className="submit-banner">
-                This merchant application has already been submitted and is now
-                waiting for internal review.
+                This application has already been submitted and is now in the
+                internal review queue.
               </div>
             ) : null}
           </div>
@@ -1872,7 +2186,7 @@ function MerchantOnboardingForm(): JSX.Element {
               className="button button--ghost"
               onClick={() => setActiveStep(previousStep)}
             >
-              Previous Step
+              Back
             </button>
           ) : null}
 
@@ -1882,7 +2196,7 @@ function MerchantOnboardingForm(): JSX.Element {
               className="button button--ghost"
               onClick={() => setActiveStep(nextStep)}
             >
-              Next Step
+              Continue
             </button>
           ) : null}
         </div>
@@ -1893,7 +2207,7 @@ function MerchantOnboardingForm(): JSX.Element {
             className="button button--ghost"
             onClick={handleReset}
           >
-            Clear Local Draft
+            Reset Local Draft Pointer
           </button>
           <button
             type="submit"
@@ -1903,16 +2217,16 @@ function MerchantOnboardingForm(): JSX.Element {
             {savingStep
               ? "Saving..."
               : isSubmitted
-                ? "Application Submitted"
+                ? "Already Submitted"
                 : activeStep === "business_snapshot"
-                ? "Save Business Snapshot"
+                ? "Save And Continue"
                 : activeStep === "contacts_transactors"
-                  ? "Save Contacts Section"
+                  ? "Save Contacts And Signatories"
                   : activeStep === "declarations_review"
-                    ? "Submit Merchant Application"
+                    ? "Submit For Internal Review"
                     : activeStep === "banking_details"
-                      ? "Save Banking Details"
-                      : `Save Documents${stagedUploadCount > 0 ? " & Upload" : ""}`}
+                      ? "Save Banking Step"
+                      : `Save Document Step${stagedUploadCount > 0 ? " And Upload" : ""}`}
           </button>
         </div>
       </div>

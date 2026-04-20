@@ -10,6 +10,55 @@ export interface User {
   email: string;
 }
 
+export interface AuthenticatedOrganization {
+  id: string;
+  legalName: string;
+  tradingName: string | null;
+  entityType: string;
+}
+
+export interface AuthenticatedUser {
+  id: string;
+  fullName: string;
+  email: string | null;
+  mobileNumber: string;
+  role: string;
+  status: string;
+  mobileVerified: boolean;
+  emailVerified: boolean;
+  organization: AuthenticatedOrganization | null;
+}
+
+export interface AuthResponse {
+  user: AuthenticatedUser | null;
+}
+
+export interface RegisterPayload {
+  fullName: string;
+  organizationName: string;
+  mobileNumber: string;
+  email?: string;
+  password: string;
+}
+
+export interface LoginPayload {
+  identifier: string;
+  password: string;
+}
+
+export interface UpdateProfilePayload {
+  fullName: string;
+  mobileNumber: string;
+  email?: string | null;
+  organizationName?: string;
+  tradingName?: string | null;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface DocumentRequirementItem {
   code: string;
   label: string;
@@ -27,7 +76,7 @@ export interface DocumentRequirementResponse {
   requirements: DocumentRequirementItem[];
 }
 
-export interface MerchantDraftPayload {
+export interface BusinessSnapshotPayload {
   applicationId?: string;
   entityType: string;
   legalName: string;
@@ -35,10 +84,22 @@ export interface MerchantDraftPayload {
   contactPerson: string;
   businessEmail: string;
   businessPhone?: string;
-  projectedTransactions?: string;
   businessAddress?: string;
+  projectedTransactions?: string;
   productsDescription?: string;
+  registrationNumber?: string;
+  taxNumber?: string;
+  yearsInOperation?: string;
+  serviceCoverage?: string;
+  outletCountEstimate?: string;
+  complianceContact?: string;
 }
+
+export interface MerchantDraftPayload extends BusinessSnapshotPayload {}
+
+export interface AgentDraftPayload extends BusinessSnapshotPayload {}
+
+export interface PayerDraftPayload extends BusinessSnapshotPayload {}
 
 export interface UploadedApplicationDocument {
   id: string;
@@ -111,6 +172,22 @@ export interface MerchantContactsPayload {
   signatories: MerchantSignatoryPayload[];
 }
 
+export interface AgentDirectorPayload extends MerchantSignatoryPayload {
+  isPrimaryDirector?: boolean;
+}
+
+export interface AgentContactsPayload {
+  primaryContact: MerchantContactPersonPayload;
+  authorizedTransactors: MerchantTransactorPayload[];
+  directors: AgentDirectorPayload[];
+}
+
+export interface PayerContactsPayload {
+  primaryContact: MerchantContactPersonPayload;
+  operationsContacts: MerchantTransactorPayload[];
+  signatories: MerchantSignatoryPayload[];
+}
+
 export interface MerchantBankingPayload {
   accountName: string;
   bankName: string;
@@ -119,6 +196,28 @@ export interface MerchantBankingPayload {
   accountNumber: string;
   accountType?: string;
   currency?: string;
+}
+
+export interface AgentOutletPayload {
+  name: string;
+  code?: string;
+  phoneNumber?: string;
+  email?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  province?: string;
+  country?: string;
+}
+
+export interface AgentOperationsPayload extends MerchantBankingPayload {
+  outlets: AgentOutletPayload[];
+}
+
+export interface PayerSettlementPayload extends MerchantBankingPayload {
+  settlementMethod?: string;
+  reconciliationEmail?: string;
+  integrationNotes?: string;
 }
 
 export interface MerchantDeclarationPayload {
@@ -144,6 +243,22 @@ export interface ReviewTaskItem {
   notes: string | null;
   createdAt: string;
   completedAt: string | null;
+}
+
+export interface ReviewCommentItem {
+  id: string;
+  sectionKey: string | null;
+  visibility: string;
+  commentType: string;
+  message: string;
+  isResolved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: string;
+    fullName: string;
+    role: string;
+  };
 }
 
 export interface ReviewQueueItem {
@@ -189,13 +304,20 @@ export interface ApplicationDetailResponse {
     businessAddress: string | null;
   };
   sections: ApplicationSectionSummary[];
-  businessSnapshot: MerchantDraftPayload | null;
+  businessSnapshot: BusinessSnapshotPayload | null;
   merchantContacts: MerchantContactsPayload | null;
   merchantBanking: MerchantBankingPayload | null;
   merchantDeclaration: MerchantDeclarationPayload | null;
+  agentContacts: AgentContactsPayload | null;
+  agentOperations: AgentOperationsPayload | null;
+  agentDeclaration: MerchantDeclarationPayload | null;
+  payerContacts: PayerContactsPayload | null;
+  payerSettlement: PayerSettlementPayload | null;
+  payerDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedApplicationDocument[];
   documentChecklist: DocumentChecklistSummaryItem[];
   documentReviewSummary: DocumentReviewSummary;
+  comments: ReviewCommentItem[];
   statusHistory: ApplicationStatusHistoryItem[];
   reviewTasks: ReviewTaskItem[];
 }
@@ -223,21 +345,89 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   return (await response.json()) as T;
 };
 
-export const getHealth = async (): Promise<HealthResponse> => {
-  const response = await fetch(`${API_BASE_URL}/health`);
-  return handleResponse<HealthResponse>(response);
+const apiFetch = async <T>(
+  path: string,
+  init?: RequestInit
+): Promise<T> => {
+  const isFormDataPayload =
+    typeof FormData !== "undefined" && init?.body instanceof FormData;
+  const headers = isFormDataPayload
+    ? init?.headers
+    : {
+        Accept: "application/json",
+        ...(init?.headers || {})
+      };
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    credentials: "include",
+    ...init,
+    headers
+  });
+
+  return handleResponse<T>(response);
 };
 
-export const getUsers = async (): Promise<User[]> => {
-  const response = await fetch(`${API_BASE_URL}/users`);
-  return handleResponse<User[]>(response);
-};
+export const getHealth = async (): Promise<HealthResponse> =>
+  apiFetch<HealthResponse>("/health");
+
+export const getUsers = async (): Promise<User[]> => apiFetch<User[]>("/users");
 
 export const testEndpoint = async (path: string): Promise<unknown> => {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const response = await fetch(`${API_BASE_URL}${normalizedPath}`);
-  return handleResponse<unknown>(response);
+  return apiFetch<unknown>(normalizedPath);
 };
+
+export const getCurrentUser = async (): Promise<AuthResponse> =>
+  apiFetch<AuthResponse>("/auth/me");
+
+export const registerUser = async (
+  payload: RegisterPayload
+): Promise<AuthResponse> =>
+  apiFetch<AuthResponse>("/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const loginUser = async (
+  payload: LoginPayload
+): Promise<AuthResponse> =>
+  apiFetch<AuthResponse>("/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const logoutUser = async (): Promise<{ message: string }> =>
+  apiFetch<{ message: string }>("/auth/logout", {
+    method: "POST"
+  });
+
+export const updateCurrentProfile = async (
+  payload: UpdateProfilePayload
+): Promise<AuthResponse> =>
+  apiFetch<AuthResponse>("/auth/profile", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const changeCurrentPassword = async (
+  payload: ChangePasswordPayload
+): Promise<{ message: string }> =>
+  apiFetch<{ message: string }>("/auth/change-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
 
 export const getDocumentRequirements = async (
   applicationType: string,
@@ -251,17 +441,15 @@ export const getDocumentRequirements = async (
     params.set("entityType", entityType);
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/document-requirements?${params.toString()}`
+  return apiFetch<DocumentRequirementResponse>(
+    `/document-requirements?${params.toString()}`
   );
-
-  return handleResponse<DocumentRequirementResponse>(response);
 };
 
 export const saveMerchantDraft = async (
   payload: MerchantDraftPayload
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(`${API_BASE_URL}/applications/merchant-draft`, {
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>("/applications/merchant-draft", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -269,15 +457,78 @@ export const saveMerchantDraft = async (
     body: JSON.stringify(payload)
   });
 
-  return handleResponse<ApplicationDetailResponse>(response);
-};
+export const saveAgentDraft = async (
+  payload: AgentDraftPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>("/applications/agent-draft", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const savePayerDraft = async (
+  payload: PayerDraftPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>("/applications/payer-draft", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
 
 export const getApplication = async (
   applicationId: string
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(`${API_BASE_URL}/applications/${applicationId}`);
-  return handleResponse<ApplicationDetailResponse>(response);
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(`/applications/${applicationId}`);
+
+export const getActiveApplication = async (): Promise<ApplicationDetailResponse | null> =>
+  apiFetch<ApplicationDetailResponse | null>("/applications/active");
+
+export const getActiveApplicationByType = async (
+  applicationType: string
+): Promise<ApplicationDetailResponse | null> => {
+  const params = new URLSearchParams({
+    applicationType
+  });
+
+  return apiFetch<ApplicationDetailResponse | null>(
+    `/applications/active?${params.toString()}`
+  );
 };
+
+export const createApplicationComment = async (
+  applicationId: string,
+  payload: {
+    message: string;
+    sectionKey?: string;
+    visibility?: "applicant" | "internal";
+    commentType?: string;
+  }
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(`/applications/${applicationId}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const updateApplicationCommentResolution = async (
+  commentId: string,
+  isResolved: boolean
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(`/applications/comments/${commentId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      isResolved
+    })
+  });
 
 export const uploadApplicationDocuments = async (
   applicationId: string,
@@ -291,23 +542,21 @@ export const uploadApplicationDocuments = async (
     formData.append("files", file);
   });
 
-  const response = await fetch(
-    `${API_BASE_URL}/applications/${applicationId}/documents`,
+  return apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/documents`,
     {
       method: "POST",
       body: formData
     }
   );
-
-  return handleResponse<ApplicationDetailResponse>(response);
 };
 
 export const saveMerchantContacts = async (
   applicationId: string,
   payload: MerchantContactsPayload
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/applications/${applicationId}/merchant-contacts`,
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/merchant-contacts`,
     {
       method: "POST",
       headers: {
@@ -316,16 +565,13 @@ export const saveMerchantContacts = async (
       body: JSON.stringify(payload)
     }
   );
-
-  return handleResponse<ApplicationDetailResponse>(response);
-};
 
 export const saveMerchantBanking = async (
   applicationId: string,
   payload: MerchantBankingPayload
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/applications/${applicationId}/merchant-banking`,
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/merchant-banking`,
     {
       method: "POST",
       headers: {
@@ -335,15 +581,72 @@ export const saveMerchantBanking = async (
     }
   );
 
-  return handleResponse<ApplicationDetailResponse>(response);
-};
+export const saveAgentContacts = async (
+  applicationId: string,
+  payload: AgentContactsPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/agent-contacts`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+export const saveAgentOperations = async (
+  applicationId: string,
+  payload: AgentOperationsPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/agent-operations`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+export const savePayerContacts = async (
+  applicationId: string,
+  payload: PayerContactsPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/payer-contacts`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+export const savePayerSettlement = async (
+  applicationId: string,
+  payload: PayerSettlementPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/payer-settlement`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
 
 export const submitMerchantApplication = async (
   applicationId: string,
   payload: MerchantDeclarationPayload
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/applications/${applicationId}/merchant-submit`,
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/merchant-submit`,
     {
       method: "POST",
       headers: {
@@ -353,8 +656,35 @@ export const submitMerchantApplication = async (
     }
   );
 
-  return handleResponse<ApplicationDetailResponse>(response);
-};
+export const submitAgentApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/agent-submit`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+export const submitPayerApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/payer-submit`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
 
 export const getReviewQueue = async (
   scope = "pending"
@@ -362,17 +692,17 @@ export const getReviewQueue = async (
   const params = new URLSearchParams({
     scope
   });
-  const response = await fetch(`${API_BASE_URL}/review/applications?${params.toString()}`);
-  return handleResponse<ReviewQueueResponse>(response);
+
+  return apiFetch<ReviewQueueResponse>(`/review/applications?${params.toString()}`);
 };
 
 const postReviewAction = async (
   applicationId: string,
   action: "request-info" | "approve" | "reject",
   note: string
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/review/applications/${applicationId}/${action}`,
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/review/applications/${applicationId}/${action}`,
     {
       method: "POST",
       headers: {
@@ -383,9 +713,6 @@ const postReviewAction = async (
       })
     }
   );
-
-  return handleResponse<ApplicationDetailResponse>(response);
-};
 
 export const requestApplicationInfo = async (
   applicationId: string,
@@ -411,17 +738,11 @@ export const reviewApplicationDocument = async (
     status: "pending" | "accepted" | "rejected";
     note: string;
   }
-): Promise<ApplicationDetailResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/review/documents/${documentId}/review`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    }
-  );
-
-  return handleResponse<ApplicationDetailResponse>(response);
-};
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(`/review/documents/${documentId}/review`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });

@@ -8,25 +8,31 @@ datasource db {
 }
 
 model User {
-  id                String                   @id @default(uuid()) @db.UniqueIdentifier
-  email             String                   @unique @db.VarChar(191)
-  passwordHash      String                   @db.VarChar(255)
-  fullName          String                   @db.VarChar(191)
-  phoneNumber       String?                  @db.VarChar(50)
-  role              String                   @default("applicant") @db.VarChar(50)
-  status            String                   @default("active") @db.VarChar(50)
-  lastLoginAt       DateTime?
-  organizationOwner Organization?            @relation("OrganizationOwner")
-  createdApplications Application[]          @relation("ApplicationCreatedBy")
-  uploadedDocuments Document[]               @relation("DocumentUploadedBy")
-  reviewedDocuments Document[]               @relation("DocumentReviewedBy")
-  authoredComments  ReviewComment[]          @relation("CommentAuthor")
+  id                  String                     @id @default(uuid()) @db.UniqueIdentifier
+  email               String?                    @db.VarChar(191)
+  mobileNumber        String                     @unique @db.VarChar(50)
+  passwordHash        String                     @db.VarChar(255)
+  fullName            String                     @db.VarChar(191)
+  role                String                     @default("applicant") @db.VarChar(50)
+  status              String                     @default("active") @db.VarChar(50)
+  mobileVerified      Boolean                    @default(false)
+  emailVerified       Boolean                    @default(false)
+  preferredOtpChannel String?                    @db.VarChar(20)
+  lastLoginAt         DateTime?
+  organizationOwner   Organization?              @relation("OrganizationOwner")
+  createdApplications Application[]             @relation("ApplicationCreatedBy")
+  uploadedDocuments   Document[]                 @relation("DocumentUploadedBy")
+  reviewedDocuments   Document[]                 @relation("DocumentReviewedBy")
+  authoredComments    ReviewComment[]            @relation("CommentAuthor")
   statusChanges     ApplicationStatusHistory[] @relation("StatusChangedBy")
-  assignedReviewTasks ReviewTask[]           @relation("ReviewTaskAssignedTo")
-  createdAt         DateTime                 @default(now())
-  updatedAt         DateTime                 @updatedAt
+  assignedReviewTasks ReviewTask[]              @relation("ReviewTaskAssignedTo")
+  authSessions       AuthSession[]
+  otpChallenges      OtpChallenge[]
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
 
   @@index([role, status])
+  @@index([email])
 }
 
 model Organization {
@@ -298,4 +304,36 @@ model AuditLog {
   createdAt   DateTime @default(now())
 
   @@index([entityType, entityId, createdAt])
+}
+
+model AuthSession {
+  id         String   @id @default(uuid()) @db.UniqueIdentifier
+  userId     String   @db.UniqueIdentifier
+  tokenHash  String   @unique @db.VarChar(255)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  ipAddress  String?  @db.VarChar(100)
+  userAgent  String?  @db.VarChar(255)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, expiresAt])
+}
+
+model OtpChallenge {
+  id           String   @id @default(uuid()) @db.UniqueIdentifier
+  userId       String   @db.UniqueIdentifier
+  channel      String   @db.VarChar(20)
+  purpose      String   @db.VarChar(50)
+  codeHash     String   @db.VarChar(255)
+  destination  String   @db.VarChar(191)
+  expiresAt    DateTime
+  consumedAt   DateTime?
+  attemptCount Int      @default(0)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId, purpose, channel, expiresAt])
 }

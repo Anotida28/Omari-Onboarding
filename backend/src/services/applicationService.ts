@@ -1,13 +1,15 @@
 import { randomUUID } from "crypto";
 import { writeFile } from "fs/promises";
 import path from "path";
-import { Prisma } from "@prisma/client";
+import { Prisma, type Application as PrismaApplication } from "@prisma/client";
 import {
   ACTIVE_APPLICATION_STATUSES,
   APPLICATION_STATUSES,
-  APPLICATION_TYPES
+  APPLICATION_TYPES,
+  USER_ROLES
 } from "../constants/application";
 import { prisma } from "../lib/prisma";
+import type { AuthenticatedUser } from "../types/auth";
 import { deleteStoredFile, ensureUploadDirectory } from "../lib/uploads";
 
 const SECTION_KEYS = {
@@ -18,15 +20,125 @@ const SECTION_KEYS = {
   declarations: "declarations_review"
 } as const;
 
-type PrismaWriteClient = Prisma.TransactionClient | typeof prisma;
+const SECTION_BLUEPRINTS: Record<
+  string,
+  Array<{
+    key: string;
+    title: string;
+    sortOrder: number;
+    status: string;
+  }>
+> = {
+  [APPLICATION_TYPES.merchant]: [
+    {
+      key: SECTION_KEYS.businessSnapshot,
+      title: "Business Snapshot",
+      sortOrder: 1,
+      status: "in_progress"
+    },
+    {
+      key: SECTION_KEYS.contactsTransactors,
+      title: "Contacts & Authorized Transactors",
+      sortOrder: 2,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.bankingDetails,
+      title: "Banking Details",
+      sortOrder: 3,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.supportingDocuments,
+      title: "Supporting Documents",
+      sortOrder: 4,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.declarations,
+      title: "Declarations and Review",
+      sortOrder: 5,
+      status: "not_started"
+    }
+  ],
+  [APPLICATION_TYPES.agent]: [
+    {
+      key: SECTION_KEYS.businessSnapshot,
+      title: "Business Snapshot",
+      sortOrder: 1,
+      status: "in_progress"
+    },
+    {
+      key: SECTION_KEYS.contactsTransactors,
+      title: "Directors & Authorized Transactors",
+      sortOrder: 2,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.bankingDetails,
+      title: "Outlets & Banking",
+      sortOrder: 3,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.supportingDocuments,
+      title: "Supporting Documents",
+      sortOrder: 4,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.declarations,
+      title: "Declarations and Review",
+      sortOrder: 5,
+      status: "not_started"
+    }
+  ],
+  [APPLICATION_TYPES.payer]: [
+    {
+      key: SECTION_KEYS.businessSnapshot,
+      title: "Business Snapshot",
+      sortOrder: 1,
+      status: "in_progress"
+    },
+    {
+      key: SECTION_KEYS.contactsTransactors,
+      title: "Billing Contacts & Signatories",
+      sortOrder: 2,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.bankingDetails,
+      title: "Settlement & Banking",
+      sortOrder: 3,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.supportingDocuments,
+      title: "Supporting Documents",
+      sortOrder: 4,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.declarations,
+      title: "Declarations and Review",
+      sortOrder: 5,
+      status: "not_started"
+    }
+  ]
+};
 
-const DEFAULT_PLACEHOLDER_PASSWORD = "PENDING_ACCOUNT_SETUP";
+type PrismaWriteClient = Prisma.TransactionClient | typeof prisma;
+type ApplicationActor = Pick<
+  AuthenticatedUser,
+  "id" | "role" | "organization"
+>;
+
 const TRANSACTION_OPTIONS = {
   maxWait: 15000,
   timeout: 60000
 } as const;
 
-export interface MerchantDraftPayload {
+export interface BusinessSnapshotPayload {
   applicationId?: string;
   entityType: string;
   legalName: string;
@@ -34,10 +146,22 @@ export interface MerchantDraftPayload {
   contactPerson: string;
   businessEmail: string;
   businessPhone?: string;
-  projectedTransactions?: string;
   businessAddress?: string;
+  projectedTransactions?: string;
   productsDescription?: string;
+  registrationNumber?: string;
+  taxNumber?: string;
+  yearsInOperation?: string;
+  serviceCoverage?: string;
+  outletCountEstimate?: string;
+  complianceContact?: string;
 }
+
+export interface MerchantDraftPayload extends BusinessSnapshotPayload {}
+
+export interface AgentDraftPayload extends BusinessSnapshotPayload {}
+
+export interface PayerDraftPayload extends BusinessSnapshotPayload {}
 
 interface UploadedDocumentSummary {
   id: string;
@@ -87,6 +211,22 @@ export interface MerchantContactsPayload {
   signatories: MerchantSignatoryPayload[];
 }
 
+export interface AgentDirectorPayload extends MerchantSignatoryPayload {
+  isPrimaryDirector?: boolean;
+}
+
+export interface AgentContactsPayload {
+  primaryContact: MerchantContactPersonPayload;
+  authorizedTransactors: MerchantTransactorPayload[];
+  directors: AgentDirectorPayload[];
+}
+
+export interface PayerContactsPayload {
+  primaryContact: MerchantContactPersonPayload;
+  operationsContacts: MerchantTransactorPayload[];
+  signatories: MerchantSignatoryPayload[];
+}
+
 export interface MerchantBankingPayload {
   accountName: string;
   bankName: string;
@@ -95,6 +235,28 @@ export interface MerchantBankingPayload {
   accountNumber: string;
   accountType?: string;
   currency?: string;
+}
+
+export interface AgentOutletPayload {
+  name: string;
+  code?: string;
+  phoneNumber?: string;
+  email?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  province?: string;
+  country?: string;
+}
+
+export interface AgentOperationsPayload extends MerchantBankingPayload {
+  outlets: AgentOutletPayload[];
+}
+
+export interface PayerSettlementPayload extends MerchantBankingPayload {
+  settlementMethod?: string;
+  reconciliationEmail?: string;
+  integrationNotes?: string;
 }
 
 export interface MerchantDeclarationPayload {
@@ -111,6 +273,22 @@ interface ApplicationStatusHistorySummary {
   toStatus: string;
   reason: string | null;
   createdAt: string;
+}
+
+export interface ReviewCommentSummary {
+  id: string;
+  sectionKey: string | null;
+  visibility: string;
+  commentType: string;
+  message: string;
+  isResolved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: string;
+    fullName: string;
+    role: string;
+  };
 }
 
 interface ReviewTaskSummary {
@@ -161,15 +339,29 @@ export interface ApplicationDetailResponse {
     businessAddress: string | null;
   };
   sections: ApplicationSectionSummary[];
-  businessSnapshot: MerchantDraftPayload | null;
+  businessSnapshot: BusinessSnapshotPayload | null;
   merchantContacts: MerchantContactsPayload | null;
   merchantBanking: MerchantBankingPayload | null;
   merchantDeclaration: MerchantDeclarationPayload | null;
+  agentContacts: AgentContactsPayload | null;
+  agentOperations: AgentOperationsPayload | null;
+  agentDeclaration: MerchantDeclarationPayload | null;
+  payerContacts: PayerContactsPayload | null;
+  payerSettlement: PayerSettlementPayload | null;
+  payerDeclaration: MerchantDeclarationPayload | null;
   uploadedDocuments: UploadedDocumentSummary[];
   documentChecklist: DocumentChecklistSummaryItem[];
   documentReviewSummary: DocumentReviewSummary;
+  comments: ReviewCommentSummary[];
   statusHistory: ApplicationStatusHistorySummary[];
   reviewTasks: ReviewTaskSummary[];
+}
+
+export interface ApplicationCommentPayload {
+  message: string;
+  sectionKey?: string;
+  visibility?: string;
+  commentType?: string;
 }
 
 const normalizeString = (value: string): string => value.trim();
@@ -188,6 +380,20 @@ const normalizeEmail = (value: string): string => value.trim().toLowerCase();
 const isActiveStatus = (status: string): boolean =>
   ACTIVE_APPLICATION_STATUSES.has(status);
 
+const isAdminActor = (actor: ApplicationActor): boolean =>
+  actor.role === USER_ROLES.admin;
+
+const COMMENT_VISIBILITIES = {
+  applicant: "applicant",
+  internal: "internal"
+} as const;
+
+const VALID_COMMENT_VISIBILITIES = new Set<string>(
+  Object.values(COMMENT_VISIBILITIES)
+);
+
+const VALID_SECTION_KEYS = new Set<string>(Object.values(SECTION_KEYS));
+
 const assertApplicationEditable = (status: string): void => {
   if (
     status !== APPLICATION_STATUSES.draft &&
@@ -200,6 +406,47 @@ const assertApplicationEditable = (status: string): void => {
 const normalizeOptionalEmail = (value?: string): string | null => {
   const normalized = normalizeOptionalString(value);
   return normalized ? normalized.toLowerCase() : null;
+};
+
+const assertApplicantOwnsApplication = (
+  actor: ApplicationActor,
+  application: {
+    createdByUserId: string;
+    organization: {
+      ownerUserId: string;
+    };
+  }
+): void => {
+  if (isAdminActor(actor)) {
+    return;
+  }
+
+  if (
+    application.createdByUserId !== actor.id &&
+    application.organization.ownerUserId !== actor.id
+  ) {
+    throw new Error("You do not have access to this application.");
+  }
+};
+
+const getOwnedOrganization = async (
+  client: PrismaWriteClient,
+  actor: ApplicationActor
+) => {
+  const organization = await client.organization.findUnique({
+    where: {
+      ownerUserId: actor.id
+    },
+    include: {
+      activeApplication: true
+    }
+  });
+
+  if (!organization) {
+    throw new Error("No organization is linked to the current account.");
+  }
+
+  return organization;
 };
 
 const parseSectionData = <T>(value: string | null): T | null => {
@@ -279,12 +526,70 @@ const normalizeDeclaration = (
   authorizedToAct: Boolean(payload.authorizedToAct)
 });
 
+const normalizeAgentDirectors = (
+  directors: AgentDirectorPayload[]
+): AgentDirectorPayload[] =>
+  directors
+    .map((director) => ({
+      ...(normalizeParticipants([director])[0] || {
+        fullName: ""
+      }),
+      isPrimaryDirector: Boolean(director.isPrimaryDirector)
+    }))
+    .filter((director) => Boolean(director.fullName));
+
+const normalizeOutlets = (outlets: AgentOutletPayload[]): AgentOutletPayload[] =>
+  outlets
+    .map((outlet) => ({
+      name: normalizeOptionalString(outlet.name) || "",
+      code: normalizeOptionalString(outlet.code) || undefined,
+      phoneNumber: normalizeOptionalString(outlet.phoneNumber) || undefined,
+      email: normalizeOptionalEmail(outlet.email) || undefined,
+      addressLine1: normalizeOptionalString(outlet.addressLine1) || undefined,
+      addressLine2: normalizeOptionalString(outlet.addressLine2) || undefined,
+      city: normalizeOptionalString(outlet.city) || undefined,
+      province: normalizeOptionalString(outlet.province) || undefined,
+      country: normalizeOptionalString(outlet.country) || "Zimbabwe"
+    }))
+    .filter((outlet) => Boolean(outlet.name));
+
+const normalizePayerSettlement = (
+  payload: PayerSettlementPayload
+): PayerSettlementPayload => ({
+  ...normalizeBanking(payload),
+  settlementMethod: normalizeOptionalString(payload.settlementMethod) || undefined,
+  reconciliationEmail: normalizeOptionalEmail(payload.reconciliationEmail) || undefined,
+  integrationNotes: normalizeOptionalString(payload.integrationNotes) || undefined
+});
+
+const getSectionBlueprints = (applicationType: string) =>
+  SECTION_BLUEPRINTS[applicationType] || SECTION_BLUEPRINTS[APPLICATION_TYPES.merchant];
+
 const applicationDetailInclude = Prisma.validator<Prisma.ApplicationInclude>()({
   organization: true,
   sections: true,
+  comments: {
+    orderBy: {
+      createdAt: "desc"
+    },
+    include: {
+      authorUser: {
+        select: {
+          id: true,
+          fullName: true,
+          role: true
+        }
+      }
+    }
+  },
   authorizedTransactors: true,
   directorsSignatories: true,
   bankAccounts: {
+    orderBy: {
+      createdAt: "asc"
+    }
+  },
+  outlets: {
     orderBy: {
       createdAt: "asc"
     }
@@ -352,7 +657,8 @@ const getDocumentRequirementsForApplication = async (
 };
 
 const mapApplicationDetail = async (
-  application: ApplicationDetailRecord
+  application: ApplicationDetailRecord,
+  viewerRole: string = USER_ROLES.admin
 ): Promise<ApplicationDetailResponse> => {
   const businessSnapshotSection = application.sections.find(
     (section) => section.sectionKey === SECTION_KEYS.businessSnapshot
@@ -370,6 +676,15 @@ const mapApplicationDetail = async (
   const declarationSectionData = parseSectionData<MerchantDeclarationPayload>(
     declarationSection?.dataJson || null
   );
+  const operationsSection = application.sections.find(
+    (section) => section.sectionKey === SECTION_KEYS.bankingDetails
+  );
+  const operationsSectionData = parseSectionData<{
+    outlets?: AgentOutletPayload[];
+    settlementMethod?: string;
+    reconciliationEmail?: string;
+    integrationNotes?: string;
+  }>(operationsSection?.dataJson || null);
   const primaryBankAccount =
     application.bankAccounts.find((bankAccount) => bankAccount.isPrimary) ||
     application.bankAccounts[0];
@@ -463,6 +778,63 @@ const mapApplicationDetail = async (
   const acceptedRequiredDocuments = requiredChecklist.filter(
     (item) => item.status === "accepted"
   ).length;
+  const comments = application.comments
+    .filter((comment) =>
+      viewerRole === USER_ROLES.admin
+        ? true
+        : comment.visibility !== COMMENT_VISIBILITIES.internal
+    )
+    .map((comment) => ({
+      id: comment.id,
+      sectionKey: comment.sectionKey,
+      visibility: comment.visibility,
+      commentType: comment.commentType,
+      message: comment.message,
+      isResolved: comment.isResolved,
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.updatedAt.toISOString(),
+      author: {
+        id: comment.authorUser.id,
+        fullName: comment.authorUser.fullName,
+        role: comment.authorUser.role
+      }
+    }));
+  const mappedAuthorizedTransactors = application.authorizedTransactors
+    .slice()
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((transactor) => ({
+      fullName: transactor.fullName,
+      designation: transactor.designation || undefined,
+      email: transactor.email || undefined,
+      phoneNumber: transactor.phoneNumber || undefined,
+      nationalIdNumber: transactor.nationalIdNumber || undefined,
+      residentialAddress: transactor.residentialAddress || undefined
+    }));
+  const mappedDirectorsSignatories = application.directorsSignatories
+    .slice()
+    .sort((left, right) => left.sortOrder - right.sortOrder);
+  const mappedSignatories = mappedDirectorsSignatories
+    .filter((person) => person.roleTitle !== "director")
+    .map((signatory) => ({
+      fullName: signatory.fullName,
+      designation: signatory.designation || undefined,
+      email: signatory.email || undefined,
+      phoneNumber: signatory.phoneNumber || undefined,
+      nationalIdNumber: signatory.nationalIdNumber || undefined,
+      residentialAddress: signatory.residentialAddress || undefined,
+      isPrimarySignatory: signatory.isPrimarySignatory
+    }));
+  const mappedOutlets = application.outlets.map((outlet) => ({
+    name: outlet.name,
+    code: outlet.code || undefined,
+    phoneNumber: outlet.phoneNumber || undefined,
+    email: outlet.email || undefined,
+    addressLine1: outlet.addressLine1 || undefined,
+    addressLine2: outlet.addressLine2 || undefined,
+    city: outlet.city || undefined,
+    province: outlet.province || undefined,
+    country: outlet.country
+  }));
 
   return {
     applicationId: application.id,
@@ -493,7 +865,7 @@ const mapApplicationDetail = async (
           ? section.lastEditedAt.toISOString()
           : null
       })),
-    businessSnapshot: parseSectionData<MerchantDraftPayload>(
+    businessSnapshot: parseSectionData<BusinessSnapshotPayload>(
       businessSnapshotSection?.dataJson || null
     ),
     merchantContacts: contactsSection
@@ -503,29 +875,8 @@ const mapApplicationDetail = async (
             email: "",
             phoneNumber: ""
           },
-          authorizedTransactors: application.authorizedTransactors
-            .slice()
-            .sort((left, right) => left.sortOrder - right.sortOrder)
-            .map((transactor) => ({
-              fullName: transactor.fullName,
-              designation: transactor.designation || undefined,
-              email: transactor.email || undefined,
-              phoneNumber: transactor.phoneNumber || undefined,
-              nationalIdNumber: transactor.nationalIdNumber || undefined,
-              residentialAddress: transactor.residentialAddress || undefined
-            })),
-          signatories: application.directorsSignatories
-            .slice()
-            .sort((left, right) => left.sortOrder - right.sortOrder)
-            .map((signatory) => ({
-              fullName: signatory.fullName,
-              designation: signatory.designation || undefined,
-              email: signatory.email || undefined,
-              phoneNumber: signatory.phoneNumber || undefined,
-              nationalIdNumber: signatory.nationalIdNumber || undefined,
-              residentialAddress: signatory.residentialAddress || undefined,
-              isPrimarySignatory: signatory.isPrimarySignatory
-            }))
+          authorizedTransactors: mappedAuthorizedTransactors,
+          signatories: mappedSignatories
         }
       : null,
     merchantBanking: primaryBankAccount
@@ -540,6 +891,80 @@ const mapApplicationDetail = async (
         }
       : null,
     merchantDeclaration: declarationSectionData,
+    agentContacts: contactsSection
+      ? {
+          primaryContact: contactSectionData?.primaryContact || {
+            fullName: "",
+            email: "",
+            phoneNumber: ""
+          },
+          authorizedTransactors: mappedAuthorizedTransactors,
+          directors: mappedDirectorsSignatories
+            .filter((person) => person.roleTitle === "director")
+            .map((director) => ({
+              fullName: director.fullName,
+              designation: director.designation || undefined,
+              email: director.email || undefined,
+              phoneNumber: director.phoneNumber || undefined,
+              nationalIdNumber: director.nationalIdNumber || undefined,
+              residentialAddress: director.residentialAddress || undefined,
+              isPrimaryDirector: director.isPrimarySignatory
+            }))
+        }
+      : null,
+    agentOperations: primaryBankAccount
+      ? {
+          accountName: primaryBankAccount.accountName,
+          bankName: primaryBankAccount.bankName,
+          branchName: primaryBankAccount.branchName || undefined,
+          branchCode: primaryBankAccount.branchCode || undefined,
+          accountNumber: primaryBankAccount.accountNumber,
+          accountType: primaryBankAccount.accountType || undefined,
+          currency: primaryBankAccount.currency,
+          outlets:
+            operationsSectionData?.outlets && operationsSectionData.outlets.length > 0
+              ? operationsSectionData.outlets
+              : mappedOutlets
+        }
+      : mappedOutlets.length > 0
+        ? {
+            accountName: "",
+            bankName: "",
+            branchName: undefined,
+            branchCode: undefined,
+            accountNumber: "",
+            accountType: undefined,
+            currency: "USD",
+            outlets: mappedOutlets
+          }
+        : null,
+    agentDeclaration: declarationSectionData,
+    payerContacts: contactsSection
+      ? {
+          primaryContact: contactSectionData?.primaryContact || {
+            fullName: "",
+            email: "",
+            phoneNumber: ""
+          },
+          operationsContacts: mappedAuthorizedTransactors,
+          signatories: mappedSignatories
+        }
+      : null,
+    payerSettlement: primaryBankAccount
+      ? {
+          accountName: primaryBankAccount.accountName,
+          bankName: primaryBankAccount.bankName,
+          branchName: primaryBankAccount.branchName || undefined,
+          branchCode: primaryBankAccount.branchCode || undefined,
+          accountNumber: primaryBankAccount.accountNumber,
+          accountType: primaryBankAccount.accountType || undefined,
+          currency: primaryBankAccount.currency,
+          settlementMethod: operationsSectionData?.settlementMethod,
+          reconciliationEmail: operationsSectionData?.reconciliationEmail,
+          integrationNotes: operationsSectionData?.integrationNotes
+        }
+      : null,
+    payerDeclaration: declarationSectionData,
     uploadedDocuments,
     documentChecklist,
     documentReviewSummary: {
@@ -559,6 +984,7 @@ const mapApplicationDetail = async (
         (item) => item.status === "pending"
       )
     },
+    comments,
     statusHistory: application.statusHistory.map((item) => ({
       id: item.id,
       fromStatus: item.fromStatus,
@@ -579,111 +1005,37 @@ const mapApplicationDetail = async (
 
 const ensureDefaultSections = async (
   client: PrismaWriteClient,
-  applicationId: string
+  applicationId: string,
+  applicationType: string = APPLICATION_TYPES.merchant
 ): Promise<void> => {
-  await client.applicationSection.upsert({
-    where: {
-      applicationId_sectionKey: {
-        applicationId,
-        sectionKey: SECTION_KEYS.businessSnapshot
-      }
-    },
-    create: {
-      applicationId,
-      sectionKey: SECTION_KEYS.businessSnapshot,
-      title: "Business Snapshot",
-      status: "in_progress",
-      sortOrder: 1
-    },
-    update: {
-      title: "Business Snapshot",
-      sortOrder: 1
-    }
-  });
+  const blueprints = getSectionBlueprints(applicationType);
 
-  await client.applicationSection.upsert({
-    where: {
-      applicationId_sectionKey: {
+  for (const blueprint of blueprints) {
+    await client.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: blueprint.key
+        }
+      },
+      create: {
         applicationId,
-        sectionKey: SECTION_KEYS.contactsTransactors
+        sectionKey: blueprint.key,
+        title: blueprint.title,
+        status: blueprint.status,
+        sortOrder: blueprint.sortOrder
+      },
+      update: {
+        title: blueprint.title,
+        sortOrder: blueprint.sortOrder
       }
-    },
-    create: {
-      applicationId,
-      sectionKey: SECTION_KEYS.contactsTransactors,
-      title: "Contacts & Authorized Transactors",
-      status: "not_started",
-      sortOrder: 2
-    },
-    update: {
-      title: "Contacts & Authorized Transactors",
-      sortOrder: 2
-    }
-  });
-
-  await client.applicationSection.upsert({
-    where: {
-      applicationId_sectionKey: {
-        applicationId,
-        sectionKey: SECTION_KEYS.bankingDetails
-      }
-    },
-    create: {
-      applicationId,
-      sectionKey: SECTION_KEYS.bankingDetails,
-      title: "Banking Details",
-      status: "not_started",
-      sortOrder: 3
-    },
-    update: {
-      title: "Banking Details",
-      sortOrder: 3
-    }
-  });
-
-  await client.applicationSection.upsert({
-    where: {
-      applicationId_sectionKey: {
-        applicationId,
-        sectionKey: SECTION_KEYS.supportingDocuments
-      }
-    },
-    create: {
-      applicationId,
-      sectionKey: SECTION_KEYS.supportingDocuments,
-      title: "Supporting Documents",
-      status: "not_started",
-      sortOrder: 4
-    },
-    update: {
-      title: "Supporting Documents",
-      sortOrder: 4
-    }
-  });
-
-  await client.applicationSection.upsert({
-    where: {
-      applicationId_sectionKey: {
-        applicationId,
-        sectionKey: SECTION_KEYS.declarations
-      }
-    },
-    create: {
-      applicationId,
-      sectionKey: SECTION_KEYS.declarations,
-      title: "Declarations and Review",
-      status: "not_started",
-      sortOrder: 5
-    },
-    update: {
-      title: "Declarations and Review",
-      sortOrder: 5
-    }
-  });
+    });
+  }
 };
 
 const getApplicationWithDetails = async (
-  applicationId: string
+  applicationId: string,
+  viewerRole: string = USER_ROLES.admin
 ): Promise<ApplicationDetailResponse | null> => {
   const application = await prisma.application.findUnique({
     where: {
@@ -692,7 +1044,7 @@ const getApplicationWithDetails = async (
     include: applicationDetailInclude
   });
 
-  return application ? await mapApplicationDetail(application) : null;
+  return application ? await mapApplicationDetail(application, viewerRole) : null;
 };
 
 export const getApplicationDetail = async (
@@ -700,8 +1052,309 @@ export const getApplicationDetail = async (
 ): Promise<ApplicationDetailResponse | null> =>
   getApplicationWithDetails(applicationId);
 
+export const getApplicationDetailForUser = async (
+  applicationId: string,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse | null> => {
+  const application = await prisma.application.findUnique({
+    where: {
+      id: applicationId
+    },
+    include: {
+      organization: true
+    }
+  });
+
+  if (!application) {
+    return null;
+  }
+
+  assertApplicantOwnsApplication(actor, application);
+  return getApplicationWithDetails(applicationId, actor.role);
+};
+
+export const getActiveApplicationDetailForUser = async (
+  actor: ApplicationActor,
+  applicationType?: string
+): Promise<ApplicationDetailResponse | null> => {
+  if (isAdminActor(actor)) {
+    throw new Error("Only applicant accounts have an active application.");
+  }
+
+  const organization = await getOwnedOrganization(prisma, actor);
+
+  if (!organization.activeApplicationId || !organization.activeApplication) {
+    return null;
+  }
+
+  if (
+    applicationType &&
+    organization.activeApplication.applicationType !== applicationType
+  ) {
+    return null;
+  }
+
+  if (!isActiveStatus(organization.activeApplication.status)) {
+    await prisma.organization.update({
+      where: {
+        id: organization.id
+      },
+      data: {
+        activeApplicationId: null
+      }
+    });
+
+    return null;
+  }
+
+  return getApplicationWithDetails(organization.activeApplicationId, actor.role);
+};
+
+const resolveOwnedActiveApplication = async (
+  client: PrismaWriteClient,
+  organization: {
+    id: string;
+    activeApplicationId: string | null;
+    activeApplication?: PrismaApplication | null;
+  },
+  expectedApplicationType: string
+): Promise<PrismaApplication | null> => {
+  if (!organization.activeApplication) {
+    return null;
+  }
+
+  if (!isActiveStatus(organization.activeApplication.status)) {
+    await client.organization.update({
+      where: {
+        id: organization.id
+      },
+      data: {
+        activeApplicationId: null
+      }
+    });
+
+    return null;
+  }
+
+  if (organization.activeApplication.applicationType !== expectedApplicationType) {
+    throw new Error(
+      `Finish or close your current ${organization.activeApplication.applicationType} application before starting a ${expectedApplicationType} application.`
+    );
+  }
+
+  return organization.activeApplication;
+};
+
+const normalizeCommentVisibility = (
+  value: string | undefined,
+  actor: ApplicationActor
+): string => {
+  if (!isAdminActor(actor)) {
+    return COMMENT_VISIBILITIES.applicant;
+  }
+
+  const normalized = normalizeOptionalString(value)?.toLowerCase();
+
+  if (!normalized) {
+    return COMMENT_VISIBILITIES.applicant;
+  }
+
+  if (!VALID_COMMENT_VISIBILITIES.has(normalized)) {
+    throw new Error("Comment visibility must be applicant or internal.");
+  }
+
+  return normalized;
+};
+
+const normalizeCommentSectionKey = (value?: string): string | null => {
+  const normalized = normalizeOptionalString(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  if (!VALID_SECTION_KEYS.has(normalized)) {
+    throw new Error("Comment section must match a valid application section.");
+  }
+
+  return normalized;
+};
+
+const ensureCommentsEditable = (
+  actor: ApplicationActor,
+  application: {
+    status: string;
+  },
+  visibility: string
+): void => {
+  if (
+    application.status === APPLICATION_STATUSES.approved ||
+    application.status === APPLICATION_STATUSES.rejected ||
+    application.status === APPLICATION_STATUSES.activated ||
+    application.status === APPLICATION_STATUSES.archived
+  ) {
+    throw new Error("Comments are locked once the application is closed.");
+  }
+
+  if (!isAdminActor(actor)) {
+    if (visibility === COMMENT_VISIBILITIES.internal) {
+      throw new Error("Applicants cannot view or manage internal comments.");
+    }
+
+    if (application.status !== APPLICATION_STATUSES.needsMoreInformation) {
+      throw new Error(
+        "Applicants can only comment when more information has been requested."
+      );
+    }
+  } else if (application.status === APPLICATION_STATUSES.draft) {
+    throw new Error("Comments can only be added after the application is submitted.");
+  }
+};
+
+export const createApplicationComment = async (
+  applicationId: string,
+  payload: ApplicationCommentPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const message = normalizeOptionalString(payload.message);
+
+  if (!message) {
+    throw new Error("A comment message is required.");
+  }
+
+  const visibility = normalizeCommentVisibility(payload.visibility, actor);
+  const sectionKey = normalizeCommentSectionKey(payload.sectionKey);
+  const commentType = normalizeOptionalString(payload.commentType)
+    ? normalizeString(payload.commentType as string).toLowerCase()
+    : isAdminActor(actor)
+      ? "general"
+      : "response";
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    ensureCommentsEditable(actor, application, visibility);
+
+    await transaction.reviewComment.create({
+      data: {
+        applicationId,
+        authorUserId: actor.id,
+        sectionKey,
+        visibility,
+        commentType,
+        message,
+        isResolved: false
+      }
+    });
+
+    await transaction.auditLog.create({
+      data: {
+        actorUserId: actor.id,
+        entityType: "application_comment",
+        entityId: applicationId,
+        action: "comment_created",
+        summary: "Application comment added.",
+        detailsJson: JSON.stringify({
+          sectionKey,
+          visibility,
+          commentType
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const updateApplicationCommentResolution = async (
+  commentId: string,
+  isResolved: boolean,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const response = await prisma.$transaction(async (transaction) => {
+    const comment = await transaction.reviewComment.findUnique({
+      where: {
+        id: commentId
+      },
+      include: {
+        application: {
+          include: {
+            organization: true
+          }
+        }
+      }
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, comment.application);
+    ensureCommentsEditable(actor, comment.application, comment.visibility);
+
+    await transaction.reviewComment.update({
+      where: {
+        id: commentId
+      },
+      data: {
+        isResolved
+      }
+    });
+
+    await transaction.auditLog.create({
+      data: {
+        actorUserId: actor.id,
+        entityType: "application_comment",
+        entityId: commentId,
+        action: isResolved ? "comment_resolved" : "comment_reopened",
+        summary: isResolved
+          ? "Application comment marked as resolved."
+          : "Application comment marked as unresolved.",
+        detailsJson: JSON.stringify({
+          applicationId: comment.applicationId,
+          visibility: comment.visibility,
+          sectionKey: comment.sectionKey
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: comment.applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
 export const saveMerchantDraft = async (
-  payload: MerchantDraftPayload
+  payload: MerchantDraftPayload,
+  actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
   const entityType = normalizeString(payload.entityType);
   const legalName = normalizeString(payload.legalName);
@@ -721,120 +1374,63 @@ export const saveMerchantDraft = async (
 
   const response = await prisma.$transaction(
     async (transaction) => {
-      let user = payload.applicationId
-        ? await transaction.user.findFirst({
-            where: {
-              createdApplications: {
-                some: {
-                  id: payload.applicationId
-                }
-              }
-            }
-          })
-        : await transaction.user.findUnique({
-            where: {
-              email: businessEmail
-            }
-          });
+      const organization = await getOwnedOrganization(transaction, actor);
 
-      if (!user) {
-        user = await transaction.user.create({
-          data: {
-            email: businessEmail,
-            passwordHash: DEFAULT_PLACEHOLDER_PASSWORD,
-            fullName: contactPerson,
-            phoneNumber: businessPhone,
-            role: "applicant"
-          }
-        });
-      } else {
-        user = await transaction.user.update({
+      let application: PrismaApplication | null = null;
+
+      if (payload.applicationId) {
+        const requestedApplication = await transaction.application.findUnique({
           where: {
-            id: user.id
+            id: payload.applicationId
           },
-          data: {
-            email: businessEmail,
-            fullName: contactPerson,
-            phoneNumber: businessPhone
+          include: {
+            organization: true
           }
         });
+
+        if (requestedApplication) {
+          assertApplicantOwnsApplication(actor, requestedApplication);
+
+          if (
+            requestedApplication.applicationType !== APPLICATION_TYPES.merchant
+          ) {
+            throw new Error("The requested application is not a merchant application.");
+          }
+
+          application = requestedApplication;
+        }
       }
 
-      let organization = await transaction.organization.findUnique({
+      const updatedOrganization = await transaction.organization.update({
         where: {
-          ownerUserId: user.id
+          id: organization.id
+        },
+        data: {
+          legalName,
+          tradingName,
+          entityType,
+          businessEmail,
+          businessPhone,
+          physicalAddressLine1: businessAddress
         },
         include: {
           activeApplication: true
         }
       });
 
-      if (!organization) {
-        organization = await transaction.organization.create({
-          data: {
-            ownerUserId: user.id,
-            legalName,
-            tradingName,
-            entityType,
-            businessEmail,
-            businessPhone,
-            physicalAddressLine1: businessAddress
-          },
-          include: {
-            activeApplication: true
-          }
-        });
-      } else {
-        organization = await transaction.organization.update({
-          where: {
-            id: organization.id
-          },
-          data: {
-            legalName,
-            tradingName,
-            entityType,
-            businessEmail,
-            businessPhone,
-            physicalAddressLine1: businessAddress
-          },
-          include: {
-            activeApplication: true
-          }
-        });
-      }
-
-      let application =
-        payload.applicationId &&
-        (await transaction.application.findUnique({
-          where: {
-            id: payload.applicationId
-          }
-        }));
-
-      if (!application && organization.activeApplication) {
-        if (
-          organization.activeApplication.applicationType ===
-            APPLICATION_TYPES.merchant &&
-          isActiveStatus(organization.activeApplication.status)
-        ) {
-          application = organization.activeApplication;
-        } else if (!isActiveStatus(organization.activeApplication.status)) {
-          await transaction.organization.update({
-            where: {
-              id: organization.id
-            },
-            data: {
-              activeApplicationId: null
-            }
-          });
-        }
+      if (!application) {
+        application = await resolveOwnedActiveApplication(
+          transaction,
+          updatedOrganization,
+          APPLICATION_TYPES.merchant
+        );
       }
 
       if (!application) {
         application = await transaction.application.create({
           data: {
-            organizationId: organization.id,
-            createdByUserId: user.id,
+            organizationId: updatedOrganization.id,
+            createdByUserId: actor.id,
             applicationType: APPLICATION_TYPES.merchant,
             status: APPLICATION_STATUSES.draft,
             currentStep: SECTION_KEYS.contactsTransactors
@@ -844,7 +1440,7 @@ export const saveMerchantDraft = async (
         await transaction.applicationStatusHistory.create({
           data: {
             applicationId: application.id,
-            changedByUserId: user.id,
+            changedByUserId: actor.id,
             fromStatus: null,
             toStatus: APPLICATION_STATUSES.draft,
             reason: "Merchant draft created."
@@ -853,7 +1449,7 @@ export const saveMerchantDraft = async (
 
         await transaction.organization.update({
           where: {
-            id: organization.id
+            id: updatedOrganization.id
           },
           data: {
             activeApplicationId: application.id
@@ -927,7 +1523,7 @@ export const saveMerchantDraft = async (
           include: applicationDetailInclude
         });
 
-      return await mapApplicationDetail(detailedApplication);
+      return await mapApplicationDetail(detailedApplication, actor.role);
     },
     TRANSACTION_OPTIONS
   );
@@ -937,7 +1533,8 @@ export const saveMerchantDraft = async (
 
 export const saveMerchantContacts = async (
   applicationId: string,
-  payload: MerchantContactsPayload
+  payload: MerchantContactsPayload,
+  actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
   const primaryContact = normalizeContactPerson(payload.primaryContact);
   const authorizedTransactors = normalizeParticipants(
@@ -950,6 +1547,9 @@ export const saveMerchantContacts = async (
     const application = await transaction.application.findUnique({
       where: {
         id: applicationId
+      },
+      include: {
+        organization: true
       }
     });
 
@@ -957,6 +1557,7 @@ export const saveMerchantContacts = async (
       throw new Error("Application not found.");
     }
 
+    assertApplicantOwnsApplication(actor, application);
     assertApplicationEditable(application.status);
     await ensureDefaultSections(transaction, applicationId);
 
@@ -1047,7 +1648,7 @@ export const saveMerchantContacts = async (
       include: applicationDetailInclude
     });
 
-    return await mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication, actor.role);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -1055,7 +1656,8 @@ export const saveMerchantContacts = async (
 
 export const saveMerchantBanking = async (
   applicationId: string,
-  payload: MerchantBankingPayload
+  payload: MerchantBankingPayload,
+  actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
   const bankingDetails = normalizeBanking(payload);
   const now = new Date();
@@ -1064,6 +1666,9 @@ export const saveMerchantBanking = async (
     const application = await transaction.application.findUnique({
       where: {
         id: applicationId
+      },
+      include: {
+        organization: true
       }
     });
 
@@ -1071,6 +1676,7 @@ export const saveMerchantBanking = async (
       throw new Error("Application not found.");
     }
 
+    assertApplicantOwnsApplication(actor, application);
     assertApplicationEditable(application.status);
     await ensureDefaultSections(transaction, applicationId);
 
@@ -1133,7 +1739,7 @@ export const saveMerchantBanking = async (
       include: applicationDetailInclude
     });
 
-    return await mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication, actor.role);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -1142,6 +1748,7 @@ export const saveMerchantBanking = async (
 export const submitMerchantApplication = async (
   applicationId: string,
   payload: MerchantDeclarationPayload,
+  actor: ApplicationActor,
   acceptanceIp?: string
 ): Promise<ApplicationDetailResponse> => {
   const declaration = normalizeDeclaration(payload);
@@ -1164,6 +1771,7 @@ export const submitMerchantApplication = async (
       throw new Error("Application not found.");
     }
 
+    assertApplicantOwnsApplication(actor, application);
     if (
       application.status !== APPLICATION_STATUSES.draft &&
       application.status !== APPLICATION_STATUSES.needsMoreInformation
@@ -1246,7 +1854,7 @@ export const submitMerchantApplication = async (
         agreementType: "merchant_terms_v1",
         versionLabel: "v1",
         title: "Omari Merchant Terms and Declarations",
-        acceptedByUserId: application.createdByUserId,
+        acceptedByUserId: actor.id,
         acceptanceIp: normalizeOptionalString(acceptanceIp) || null,
         snapshotText: JSON.stringify(declaration),
         acceptedAt: now
@@ -1267,7 +1875,7 @@ export const submitMerchantApplication = async (
     await transaction.applicationStatusHistory.create({
       data: {
         applicationId,
-        changedByUserId: application.createdByUserId,
+        changedByUserId: actor.id,
         fromStatus: application.status,
         toStatus: APPLICATION_STATUSES.submitted,
         reason: "Merchant application submitted by applicant."
@@ -1300,7 +1908,1213 @@ export const submitMerchantApplication = async (
       include: applicationDetailInclude
     });
 
-    return await mapApplicationDetail(detailedApplication);
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const saveAgentDraft = async (
+  payload: AgentDraftPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const entityType = normalizeString(payload.entityType);
+  const legalName = normalizeString(payload.legalName);
+  const tradingName = normalizeOptionalString(payload.tradingName);
+  const contactPerson = normalizeString(payload.contactPerson);
+  const businessEmail = normalizeEmail(payload.businessEmail);
+  const businessPhone = normalizeOptionalString(payload.businessPhone);
+  const businessAddress = normalizeOptionalString(payload.businessAddress);
+  const registrationNumber = normalizeOptionalString(payload.registrationNumber);
+  const taxNumber = normalizeOptionalString(payload.taxNumber);
+  const yearsInOperation = normalizeOptionalString(payload.yearsInOperation);
+  const serviceCoverage = normalizeOptionalString(payload.serviceCoverage);
+  const outletCountEstimate = normalizeOptionalString(payload.outletCountEstimate);
+  const complianceContact = normalizeOptionalString(payload.complianceContact);
+  const now = new Date();
+
+  const response = await prisma.$transaction(
+    async (transaction) => {
+      const organization = await getOwnedOrganization(transaction, actor);
+
+      let application: PrismaApplication | null = null;
+
+      if (payload.applicationId) {
+        const requestedApplication = await transaction.application.findUnique({
+          where: {
+            id: payload.applicationId
+          },
+          include: {
+            organization: true
+          }
+        });
+
+        if (requestedApplication) {
+          assertApplicantOwnsApplication(actor, requestedApplication);
+
+          if (requestedApplication.applicationType !== APPLICATION_TYPES.agent) {
+            throw new Error("The requested application is not an agent application.");
+          }
+
+          application = requestedApplication;
+        }
+      }
+
+      const updatedOrganization = await transaction.organization.update({
+        where: {
+          id: organization.id
+        },
+        data: {
+          legalName,
+          tradingName,
+          entityType,
+          registrationNumber,
+          taxNumber,
+          businessEmail,
+          businessPhone,
+          physicalAddressLine1: businessAddress
+        },
+        include: {
+          activeApplication: true
+        }
+      });
+
+      if (!application) {
+        application = await resolveOwnedActiveApplication(
+          transaction,
+          updatedOrganization,
+          APPLICATION_TYPES.agent
+        );
+      }
+
+      if (!application) {
+        application = await transaction.application.create({
+          data: {
+            organizationId: updatedOrganization.id,
+            createdByUserId: actor.id,
+            applicationType: APPLICATION_TYPES.agent,
+            status: APPLICATION_STATUSES.draft,
+            currentStep: SECTION_KEYS.contactsTransactors
+          }
+        });
+
+        await transaction.applicationStatusHistory.create({
+          data: {
+            applicationId: application.id,
+            changedByUserId: actor.id,
+            fromStatus: null,
+            toStatus: APPLICATION_STATUSES.draft,
+            reason: "Agent draft created."
+          }
+        });
+
+        await transaction.organization.update({
+          where: {
+            id: updatedOrganization.id
+          },
+          data: {
+            activeApplicationId: application.id
+          }
+        });
+      } else {
+        assertApplicationEditable(application.status);
+
+        application = await transaction.application.update({
+          where: {
+            id: application.id
+          },
+          data: {
+            currentStep: SECTION_KEYS.contactsTransactors
+          }
+        });
+      }
+
+      await ensureDefaultSections(transaction, application.id, APPLICATION_TYPES.agent);
+
+      await transaction.applicationSection.upsert({
+        where: {
+          applicationId_sectionKey: {
+            applicationId: application.id,
+            sectionKey: SECTION_KEYS.businessSnapshot
+          }
+        },
+        create: {
+          applicationId: application.id,
+          sectionKey: SECTION_KEYS.businessSnapshot,
+          title: "Business Snapshot",
+          status: "completed",
+          sortOrder: 1,
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            businessAddress,
+            registrationNumber,
+            taxNumber,
+            yearsInOperation,
+            serviceCoverage,
+            outletCountEstimate,
+            complianceContact
+          })
+        },
+        update: {
+          status: "completed",
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            businessAddress,
+            registrationNumber,
+            taxNumber,
+            yearsInOperation,
+            serviceCoverage,
+            outletCountEstimate,
+            complianceContact
+          })
+        }
+      });
+
+      const detailedApplication =
+        await transaction.application.findUniqueOrThrow({
+          where: {
+            id: application.id
+          },
+          include: applicationDetailInclude
+        });
+
+      return await mapApplicationDetail(detailedApplication, actor.role);
+    },
+    TRANSACTION_OPTIONS
+  );
+
+  return response;
+};
+
+export const saveAgentContacts = async (
+  applicationId: string,
+  payload: AgentContactsPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const primaryContact = normalizeContactPerson(payload.primaryContact);
+  const authorizedTransactors = normalizeParticipants(
+    payload.authorizedTransactors || []
+  );
+  const directors = normalizeAgentDirectors(payload.directors || []);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.agent) {
+      throw new Error("The requested application is not an agent application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.agent);
+
+    await transaction.authorizedTransactor.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.directorSignatory.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    if (authorizedTransactors.length > 0) {
+      await transaction.authorizedTransactor.createMany({
+        data: authorizedTransactors.map((transactor, index) => ({
+          applicationId,
+          fullName: transactor.fullName,
+          designation: transactor.designation || null,
+          email: transactor.email || null,
+          phoneNumber: transactor.phoneNumber || null,
+          nationalIdNumber: transactor.nationalIdNumber || null,
+          residentialAddress: transactor.residentialAddress || null,
+          sortOrder: index + 1
+        }))
+      });
+    }
+
+    if (directors.length > 0) {
+      await transaction.directorSignatory.createMany({
+        data: directors.map((director, index) => ({
+          applicationId,
+          fullName: director.fullName,
+          roleTitle: "director",
+          designation: director.designation || null,
+          email: director.email || null,
+          phoneNumber: director.phoneNumber || null,
+          nationalIdNumber: director.nationalIdNumber || null,
+          residentialAddress: director.residentialAddress || null,
+          isPrimarySignatory: Boolean(director.isPrimaryDirector),
+          sortOrder: index + 1
+        }))
+      });
+    }
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.bankingDetails
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.contactsTransactors
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.contactsTransactors,
+        title: "Directors & Authorized Transactors",
+        status: "completed",
+        sortOrder: 2,
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          primaryContact
+        })
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          primaryContact
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const saveAgentOperations = async (
+  applicationId: string,
+  payload: AgentOperationsPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const bankingDetails = normalizeBanking(payload);
+  const outlets = normalizeOutlets(payload.outlets || []);
+  const now = new Date();
+
+  if (outlets.length === 0) {
+    throw new Error("At least one outlet is required for an agent application.");
+  }
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.agent) {
+      throw new Error("The requested application is not an agent application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.agent);
+
+    await transaction.bankAccount.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.outlet.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.bankAccount.create({
+      data: {
+        applicationId,
+        accountName: bankingDetails.accountName,
+        bankName: bankingDetails.bankName,
+        branchName: bankingDetails.branchName || null,
+        branchCode: bankingDetails.branchCode || null,
+        accountNumber: bankingDetails.accountNumber,
+        accountType: bankingDetails.accountType || null,
+        currency: bankingDetails.currency || "USD",
+        isPrimary: true
+      }
+    });
+
+    await transaction.outlet.createMany({
+      data: outlets.map((outlet) => ({
+        applicationId,
+        name: outlet.name,
+        code: outlet.code || null,
+        phoneNumber: outlet.phoneNumber || null,
+        email: outlet.email || null,
+        addressLine1: outlet.addressLine1 || null,
+        addressLine2: outlet.addressLine2 || null,
+        city: outlet.city || null,
+        province: outlet.province || null,
+        country: outlet.country || "Zimbabwe",
+        status: "active"
+      }))
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.supportingDocuments
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.bankingDetails
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.bankingDetails,
+        title: "Outlets & Banking",
+        status: "completed",
+        sortOrder: 3,
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          outlets
+        })
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          outlets
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const submitAgentApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload,
+  actor: ApplicationActor,
+  acceptanceIp?: string
+): Promise<ApplicationDetailResponse> => {
+  const declaration = normalizeDeclaration(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true,
+        sections: true,
+        documents: true,
+        bankAccounts: true,
+        outlets: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+
+    if (application.applicationType !== APPLICATION_TYPES.agent) {
+      throw new Error("The requested application is not an agent application.");
+    }
+
+    if (
+      application.status !== APPLICATION_STATUSES.draft &&
+      application.status !== APPLICATION_STATUSES.needsMoreInformation
+    ) {
+      throw new Error("Only draft or returned applications can be submitted.");
+    }
+
+    if (
+      !declaration.acceptedTerms ||
+      !declaration.certifiedInformation ||
+      !declaration.authorizedToAct
+    ) {
+      throw new Error(
+        "All declaration confirmations must be accepted before submission."
+      );
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.agent);
+
+    const sectionStatusByKey = new Map(
+      application.sections.map((section) => [section.sectionKey, section.status])
+    );
+
+    const missingSections = [
+      SECTION_KEYS.businessSnapshot,
+      SECTION_KEYS.contactsTransactors,
+      SECTION_KEYS.bankingDetails
+    ].filter((sectionKey) => sectionStatusByKey.get(sectionKey) !== "completed");
+
+    if (missingSections.length > 0) {
+      throw new Error(
+        "Complete the business, directors, and outlets sections before submitting."
+      );
+    }
+
+    if (
+      !application.bankAccounts.length ||
+      !application.outlets.length ||
+      sectionStatusByKey.get(SECTION_KEYS.supportingDocuments) !== "completed"
+    ) {
+      throw new Error(
+        "All required supporting documents, outlets, and banking details must be completed before submission."
+      );
+    }
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.declarations
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.declarations,
+        title: "Declarations and Review",
+        status: "completed",
+        sortOrder: 5,
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      }
+    });
+
+    await transaction.applicationAgreement.deleteMany({
+      where: {
+        applicationId,
+        agreementType: "agent_terms_v1"
+      }
+    });
+
+    await transaction.applicationAgreement.create({
+      data: {
+        applicationId,
+        agreementType: "agent_terms_v1",
+        versionLabel: "v1",
+        title: "Omari Agent Terms and Declarations",
+        acceptedByUserId: actor.id,
+        acceptanceIp: normalizeOptionalString(acceptanceIp) || null,
+        snapshotText: JSON.stringify(declaration),
+        acceptedAt: now
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        status: APPLICATION_STATUSES.submitted,
+        currentStep: SECTION_KEYS.declarations,
+        submittedAt: now
+      }
+    });
+
+    await transaction.applicationStatusHistory.create({
+      data: {
+        applicationId,
+        changedByUserId: actor.id,
+        fromStatus: application.status,
+        toStatus: APPLICATION_STATUSES.submitted,
+        reason: "Agent application submitted by applicant."
+      }
+    });
+
+    const existingOpenReviewTask = await transaction.reviewTask.findFirst({
+      where: {
+        applicationId,
+        taskType: "initial_review",
+        status: "open"
+      }
+    });
+
+    if (!existingOpenReviewTask) {
+      await transaction.reviewTask.create({
+        data: {
+          applicationId,
+          taskType: "initial_review",
+          status: "open",
+          notes: "New agent application awaiting internal review."
+        }
+      });
+    }
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const savePayerDraft = async (
+  payload: PayerDraftPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const entityType = normalizeString(payload.entityType);
+  const legalName = normalizeString(payload.legalName);
+  const tradingName = normalizeOptionalString(payload.tradingName);
+  const contactPerson = normalizeString(payload.contactPerson);
+  const businessEmail = normalizeEmail(payload.businessEmail);
+  const businessPhone = normalizeOptionalString(payload.businessPhone);
+  const businessAddress = normalizeOptionalString(payload.businessAddress);
+  const projectedTransactions = normalizeOptionalString(
+    payload.projectedTransactions
+  );
+  const productsDescription = normalizeOptionalString(
+    payload.productsDescription
+  );
+  const registrationNumber = normalizeOptionalString(payload.registrationNumber);
+  const taxNumber = normalizeOptionalString(payload.taxNumber);
+  const serviceCoverage = normalizeOptionalString(payload.serviceCoverage);
+  const now = new Date();
+
+  const response = await prisma.$transaction(
+    async (transaction) => {
+      const organization = await getOwnedOrganization(transaction, actor);
+
+      let application: PrismaApplication | null = null;
+
+      if (payload.applicationId) {
+        const requestedApplication = await transaction.application.findUnique({
+          where: {
+            id: payload.applicationId
+          },
+          include: {
+            organization: true
+          }
+        });
+
+        if (requestedApplication) {
+          assertApplicantOwnsApplication(actor, requestedApplication);
+
+          if (requestedApplication.applicationType !== APPLICATION_TYPES.payer) {
+            throw new Error("The requested application is not a payer application.");
+          }
+
+          application = requestedApplication;
+        }
+      }
+
+      const updatedOrganization = await transaction.organization.update({
+        where: {
+          id: organization.id
+        },
+        data: {
+          legalName,
+          tradingName,
+          entityType,
+          registrationNumber,
+          taxNumber,
+          businessEmail,
+          businessPhone,
+          physicalAddressLine1: businessAddress
+        },
+        include: {
+          activeApplication: true
+        }
+      });
+
+      if (!application) {
+        application = await resolveOwnedActiveApplication(
+          transaction,
+          updatedOrganization,
+          APPLICATION_TYPES.payer
+        );
+      }
+
+      if (!application) {
+        application = await transaction.application.create({
+          data: {
+            organizationId: updatedOrganization.id,
+            createdByUserId: actor.id,
+            applicationType: APPLICATION_TYPES.payer,
+            status: APPLICATION_STATUSES.draft,
+            currentStep: SECTION_KEYS.contactsTransactors
+          }
+        });
+
+        await transaction.applicationStatusHistory.create({
+          data: {
+            applicationId: application.id,
+            changedByUserId: actor.id,
+            fromStatus: null,
+            toStatus: APPLICATION_STATUSES.draft,
+            reason: "Payer application draft created."
+          }
+        });
+
+        await transaction.organization.update({
+          where: {
+            id: updatedOrganization.id
+          },
+          data: {
+            activeApplicationId: application.id
+          }
+        });
+      } else {
+        assertApplicationEditable(application.status);
+
+        application = await transaction.application.update({
+          where: {
+            id: application.id
+          },
+          data: {
+            currentStep: SECTION_KEYS.contactsTransactors
+          }
+        });
+      }
+
+      await ensureDefaultSections(transaction, application.id, APPLICATION_TYPES.payer);
+
+      await transaction.applicationSection.upsert({
+        where: {
+          applicationId_sectionKey: {
+            applicationId: application.id,
+            sectionKey: SECTION_KEYS.businessSnapshot
+          }
+        },
+        create: {
+          applicationId: application.id,
+          sectionKey: SECTION_KEYS.businessSnapshot,
+          title: "Business Snapshot",
+          status: "completed",
+          sortOrder: 1,
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            businessAddress,
+            projectedTransactions,
+            productsDescription,
+            registrationNumber,
+            taxNumber,
+            serviceCoverage
+          })
+        },
+        update: {
+          status: "completed",
+          lastEditedAt: now,
+          dataJson: JSON.stringify({
+            applicationId: application.id,
+            entityType,
+            legalName,
+            tradingName,
+            contactPerson,
+            businessEmail,
+            businessPhone,
+            businessAddress,
+            projectedTransactions,
+            productsDescription,
+            registrationNumber,
+            taxNumber,
+            serviceCoverage
+          })
+        }
+      });
+
+      const detailedApplication =
+        await transaction.application.findUniqueOrThrow({
+          where: {
+            id: application.id
+          },
+          include: applicationDetailInclude
+        });
+
+      return await mapApplicationDetail(detailedApplication, actor.role);
+    },
+    TRANSACTION_OPTIONS
+  );
+
+  return response;
+};
+
+export const savePayerContacts = async (
+  applicationId: string,
+  payload: PayerContactsPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const primaryContact = normalizeContactPerson(payload.primaryContact);
+  const operationsContacts = normalizeParticipants(
+    payload.operationsContacts || []
+  );
+  const signatories = normalizeSignatories(payload.signatories || []);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.payer) {
+      throw new Error("The requested application is not a payer application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.payer);
+
+    await transaction.authorizedTransactor.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.directorSignatory.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    if (operationsContacts.length > 0) {
+      await transaction.authorizedTransactor.createMany({
+        data: operationsContacts.map((contact, index) => ({
+          applicationId,
+          fullName: contact.fullName,
+          designation: contact.designation || null,
+          email: contact.email || null,
+          phoneNumber: contact.phoneNumber || null,
+          nationalIdNumber: contact.nationalIdNumber || null,
+          residentialAddress: contact.residentialAddress || null,
+          sortOrder: index + 1
+        }))
+      });
+    }
+
+    if (signatories.length > 0) {
+      await transaction.directorSignatory.createMany({
+        data: signatories.map((signatory, index) => ({
+          applicationId,
+          fullName: signatory.fullName,
+          roleTitle: "signatory",
+          designation: signatory.designation || null,
+          email: signatory.email || null,
+          phoneNumber: signatory.phoneNumber || null,
+          nationalIdNumber: signatory.nationalIdNumber || null,
+          residentialAddress: signatory.residentialAddress || null,
+          isPrimarySignatory: Boolean(signatory.isPrimarySignatory),
+          sortOrder: index + 1
+        }))
+      });
+    }
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.bankingDetails
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.contactsTransactors
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.contactsTransactors,
+        title: "Billing Contacts & Signatories",
+        status: "completed",
+        sortOrder: 2,
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          primaryContact
+        })
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          primaryContact
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const savePayerSettlement = async (
+  applicationId: string,
+  payload: PayerSettlementPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const settlementDetails = normalizePayerSettlement(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.payer) {
+      throw new Error("The requested application is not a payer application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.payer);
+
+    await transaction.bankAccount.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.bankAccount.create({
+      data: {
+        applicationId,
+        accountName: settlementDetails.accountName,
+        bankName: settlementDetails.bankName,
+        branchName: settlementDetails.branchName || null,
+        branchCode: settlementDetails.branchCode || null,
+        accountNumber: settlementDetails.accountNumber,
+        accountType: settlementDetails.accountType || null,
+        currency: settlementDetails.currency || "USD",
+        isPrimary: true
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.supportingDocuments
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.bankingDetails
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.bankingDetails,
+        title: "Settlement & Banking",
+        status: "completed",
+        sortOrder: 3,
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          settlementMethod: settlementDetails.settlementMethod,
+          reconciliationEmail: settlementDetails.reconciliationEmail,
+          integrationNotes: settlementDetails.integrationNotes
+        })
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          settlementMethod: settlementDetails.settlementMethod,
+          reconciliationEmail: settlementDetails.reconciliationEmail,
+          integrationNotes: settlementDetails.integrationNotes
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const submitPayerApplication = async (
+  applicationId: string,
+  payload: MerchantDeclarationPayload,
+  actor: ApplicationActor,
+  acceptanceIp?: string
+): Promise<ApplicationDetailResponse> => {
+  const declaration = normalizeDeclaration(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true,
+        sections: true,
+        documents: true,
+        bankAccounts: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+
+    if (application.applicationType !== APPLICATION_TYPES.payer) {
+      throw new Error("The requested application is not a payer application.");
+    }
+
+    if (
+      application.status !== APPLICATION_STATUSES.draft &&
+      application.status !== APPLICATION_STATUSES.needsMoreInformation
+    ) {
+      throw new Error("Only draft or returned applications can be submitted.");
+    }
+
+    if (
+      !declaration.acceptedTerms ||
+      !declaration.certifiedInformation ||
+      !declaration.authorizedToAct
+    ) {
+      throw new Error(
+        "All declaration confirmations must be accepted before submission."
+      );
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.payer);
+
+    const sectionStatusByKey = new Map(
+      application.sections.map((section) => [section.sectionKey, section.status])
+    );
+
+    const missingSections = [
+      SECTION_KEYS.businessSnapshot,
+      SECTION_KEYS.contactsTransactors,
+      SECTION_KEYS.bankingDetails
+    ].filter((sectionKey) => sectionStatusByKey.get(sectionKey) !== "completed");
+
+    if (missingSections.length > 0) {
+      throw new Error(
+        "Complete the business, billing contacts, and settlement sections before submitting."
+      );
+    }
+
+    if (
+      !application.bankAccounts.length ||
+      sectionStatusByKey.get(SECTION_KEYS.supportingDocuments) !== "completed"
+    ) {
+      throw new Error(
+        "All required supporting documents and settlement details must be completed before submission."
+      );
+    }
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.declarations
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.declarations,
+        title: "Declarations and Review",
+        status: "completed",
+        sortOrder: 5,
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify(declaration)
+      }
+    });
+
+    await transaction.applicationAgreement.deleteMany({
+      where: {
+        applicationId,
+        agreementType: "payer_terms_v1"
+      }
+    });
+
+    await transaction.applicationAgreement.create({
+      data: {
+        applicationId,
+        agreementType: "payer_terms_v1",
+        versionLabel: "v1",
+        title: "Omari Payments Agreement Terms and Declarations",
+        acceptedByUserId: actor.id,
+        acceptanceIp: normalizeOptionalString(acceptanceIp) || null,
+        snapshotText: JSON.stringify(declaration),
+        acceptedAt: now
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        status: APPLICATION_STATUSES.submitted,
+        currentStep: SECTION_KEYS.declarations,
+        submittedAt: now
+      }
+    });
+
+    await transaction.applicationStatusHistory.create({
+      data: {
+        applicationId,
+        changedByUserId: actor.id,
+        fromStatus: application.status,
+        toStatus: APPLICATION_STATUSES.submitted,
+        reason: "Payer application submitted by applicant."
+      }
+    });
+
+    const existingOpenReviewTask = await transaction.reviewTask.findFirst({
+      where: {
+        applicationId,
+        taskType: "initial_review",
+        status: "open"
+      }
+    });
+
+    if (!existingOpenReviewTask) {
+      await transaction.reviewTask.create({
+        data: {
+          applicationId,
+          taskType: "initial_review",
+          status: "open",
+          notes: "New payer application awaiting internal review."
+        }
+      });
+    }
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
   }, TRANSACTION_OPTIONS);
 
   return response;
@@ -1368,7 +3182,8 @@ const updateDocumentSectionStatus = async (
 export const replaceApplicationDocuments = async (
   applicationId: string,
   requirementCode: string,
-  files: Express.Multer.File[]
+  files: Express.Multer.File[],
+  actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
   const normalizedRequirementCode = normalizeString(requirementCode);
 
@@ -1385,6 +3200,7 @@ export const replaceApplicationDocuments = async (
     throw new Error("Application not found.");
   }
 
+  assertApplicantOwnsApplication(actor, application);
   assertApplicationEditable(application.status);
   await prisma.application.update({
     where: {
@@ -1453,7 +3269,7 @@ export const replaceApplicationDocuments = async (
     await prisma.document.create({
       data: {
         applicationId,
-        uploadedByUserId: application.createdByUserId,
+        uploadedByUserId: actor.id,
         sectionKey: SECTION_KEYS.supportingDocuments,
         requirementCode: normalizedRequirementCode,
         label: requirement.label,
@@ -1472,7 +3288,10 @@ export const replaceApplicationDocuments = async (
 
   await updateDocumentSectionStatus(applicationId);
 
-  const detailedApplication = await getApplicationWithDetails(applicationId);
+  const detailedApplication = await getApplicationWithDetails(
+    applicationId,
+    actor.role
+  );
 
   if (!detailedApplication) {
     throw new Error("Application not found after upload.");

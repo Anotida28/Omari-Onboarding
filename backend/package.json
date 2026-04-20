@@ -11,7 +11,8 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.js"
+    "prisma:seed": "node prisma/seed.js",
+    "admin:create": "npm run build && node dist/scripts/createAdmin.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

@@ -10,6 +10,14 @@ import {
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
+const getAuthenticatedActorId = (req: Request): string => {
+  if (!req.currentUser) {
+    throw new Error("Authentication is required.");
+  }
+
+  return req.currentUser.id;
+};
+
 const getErrorStatusCode = (error: unknown): number => {
   if (!(error instanceof Error)) {
     return 500;
@@ -107,9 +115,13 @@ export const requestInfo = async (
   }
 
   try {
-    const response = await requestApplicationInformation(applicationId, {
-      note: getActionNote((req.body as Record<string, unknown>).note)
-    });
+    const response = await requestApplicationInformation(
+      applicationId,
+      getAuthenticatedActorId(req),
+      {
+        note: getActionNote((req.body as Record<string, unknown>).note)
+      }
+    );
     res.status(200).json(response);
   } catch (error) {
     console.error("Failed to request more information.", error);
@@ -131,9 +143,13 @@ export const approve = async (
   }
 
   try {
-    const response = await approveApplication(applicationId, {
-      note: getActionNote((req.body as Record<string, unknown>).note)
-    });
+    const response = await approveApplication(
+      applicationId,
+      getAuthenticatedActorId(req),
+      {
+        note: getActionNote((req.body as Record<string, unknown>).note)
+      }
+    );
     res.status(200).json(response);
   } catch (error) {
     console.error("Failed to approve application.", error);
@@ -155,9 +171,13 @@ export const reject = async (
   }
 
   try {
-    const response = await rejectApplication(applicationId, {
-      note: getActionNote((req.body as Record<string, unknown>).note)
-    });
+    const response = await rejectApplication(
+      applicationId,
+      getAuthenticatedActorId(req),
+      {
+        note: getActionNote((req.body as Record<string, unknown>).note)
+      }
+    );
     res.status(200).json(response);
   } catch (error) {
     console.error("Failed to reject application.", error);
@@ -188,10 +208,14 @@ export const reviewDocument = async (
   }
 
   try {
-    const response = await reviewApplicationDocument(documentId, {
-      status,
-      note: getActionNote(body.note)
-    });
+    const response = await reviewApplicationDocument(
+      documentId,
+      getAuthenticatedActorId(req),
+      {
+        status,
+        note: getActionNote(body.note)
+      }
+    );
     res.status(200).json(response);
   } catch (error) {
     console.error("Failed to review document.", error);

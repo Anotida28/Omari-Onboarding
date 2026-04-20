@@ -1,79 +1,61 @@
-type PortalView = "applicant" | "review";
+import { NavLink } from "react-router-dom";
 
-interface PortalSidebarProps {
-  activeView: PortalView;
-  onSelectView: (view: PortalView) => void;
+export interface PortalNavItem {
+  label: string;
+  to: string;
+  end?: boolean;
 }
 
-const buildNavGroups = (activeView: PortalView) => [
-  {
-    title: "Workspace",
-    items: [
-      {
-        label: "Applicant Setup",
-        view: "applicant" as const,
-        active: activeView === "applicant"
-      },
-      {
-        label: "Internal Review",
-        view: "review" as const,
-        active: activeView === "review"
-      }
-    ]
-  },
-  {
-    title: "Workflow",
-    items: [
-      {
-        label: activeView === "applicant" ? "Merchant Onboarding" : "Review Queue",
-        view: activeView,
-        active: true
-      },
-      {
-        label:
-          activeView === "applicant" ? "Supporting Documents" : "Decision Actions",
-        view: activeView,
-        active: false
-      }
-    ]
-  },
-  {
-    title: "Settings",
-    items: [{ label: "Support", view: activeView, active: false }]
-  }
-];
+export interface PortalNavGroup {
+  title: string;
+  items: PortalNavItem[];
+}
+
+interface PortalSidebarProps {
+  groups: PortalNavGroup[];
+  currentUserName: string;
+  currentUserMeta: string;
+  onLogout: () => void;
+  isLoggingOut: boolean;
+}
 
 function PortalSidebar({
-  activeView,
-  onSelectView
+  groups,
+  currentUserName,
+  currentUserMeta,
+  onLogout,
+  isLoggingOut
 }: PortalSidebarProps): JSX.Element {
-  const navGroups = buildNavGroups(activeView);
-
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
         <div className="sidebar__brand-mark">
           <img src="/omari-logo.png" alt="Omari logo" />
         </div>
+
+        <div>
+          <p className="sidebar__eyebrow">Omari</p>
+          <h1>Onboarding</h1>
+        </div>
       </div>
 
       <nav className="sidebar__nav" aria-label="Primary">
-        {navGroups.map((group) => (
+        {groups.map((group) => (
           <section key={group.title} className="sidebar__group">
             <p className="sidebar__group-title">{group.title}</p>
             <ul className="sidebar__list">
               {group.items.map((item) => (
-                <li key={item.label}>
-                  <button
-                    type="button"
-                    className={`sidebar__item${
-                      item.active ? " sidebar__item--active" : ""
-                    }`}
-                    onClick={() => onSelectView(item.view)}
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) =>
+                      `sidebar__item${isActive ? " sidebar__item--active" : ""}`
+                    }
                   >
                     <span className="sidebar__icon" aria-hidden="true" />
                     <span>{item.label}</span>
-                  </button>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -82,8 +64,18 @@ function PortalSidebar({
       </nav>
 
       <div className="sidebar__account">
-        <p>Account</p>
-        <strong>Lourence Ruhwaya</strong>
+        <p>Signed in as</p>
+        <strong>{currentUserName}</strong>
+        <span className="sidebar__account-meta">{currentUserMeta}</span>
+
+        <button
+          type="button"
+          className="sidebar__action"
+          onClick={onLogout}
+          disabled={isLoggingOut}
+        >
+          {isLoggingOut ? "Signing Out..." : "Sign Out"}
+        </button>
       </div>
     </aside>
   );
