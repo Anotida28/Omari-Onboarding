@@ -740,7 +740,7 @@ function OnboardingWizardPage(): JSX.Element {
   return (
     <PortalShell
       title="Omari - Onboarding System"
-      eyebrow="Application workspace"
+      eyebrow="Applicant Portal"
       heading={applicationTypeLabel}
       description="Complete your application step-by-step, save your progress anytime, and submit when ready for review."
       navGroups={APPLICANT_NAV_GROUPS}

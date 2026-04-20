@@ -18,25 +18,33 @@ export const Stepper: React.FC<StepperProps> = ({
   onStepClick
 }) => {
   return (
-    <div className="stepper">
+    <div className="stepper" aria-label="Application progress">
       <div className="stepper-track">
         {steps.map((step) => {
           const isCompleted = step.number < currentStep;
           const isActive = step.number === currentStep;
 
           return (
-            <div
+            <button
+              type="button"
               key={step.id}
               className={`stepper-item ${
                 isCompleted ? "stepper-item--completed" : ""
               } ${isActive ? "stepper-item--active" : ""}`}
               onClick={() => onStepClick?.(step.number)}
+              aria-current={isActive ? "step" : undefined}
+              aria-label={`Step ${step.number}: ${step.label}`}
             >
-              <div className="stepper-dot">
+              <div className="stepper-dot" aria-hidden="true">
                 {isCompleted ? "✓" : step.number}
               </div>
-              <div className="stepper-label">{step.label}</div>
-            </div>
+              <div className="stepper-copy">
+                <div className="stepper-kicker">
+                  {isCompleted ? "Completed" : isActive ? "In Progress" : `Step ${step.number}`}
+                </div>
+                <div className="stepper-label">{step.label}</div>
+              </div>
+            </button>
           );
         })}
       </div>

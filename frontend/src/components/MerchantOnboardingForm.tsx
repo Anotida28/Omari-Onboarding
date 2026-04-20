@@ -1122,36 +1122,39 @@ function MerchantOnboardingForm(): JSX.Element {
       </div>
 
       <div className="stepper">
-        {MERCHANT_STEPS.map((step, index) => {
-          const section = sectionMap[step.key];
-          const status = section?.status || (index === 0 ? "in_progress" : "not_started");
-          const isCompleted = status === "completed";
-          const isActive = activeStep === step.key;
-          const unresolvedCount = unresolvedCommentCountByStep[step.key] || 0;
+        <div className="stepper-track">
+          {MERCHANT_STEPS.map((step, index) => {
+            const section = sectionMap[step.key];
+            const status = section?.status || (index === 0 ? "in_progress" : "not_started");
+            const isCompleted = status === "completed";
+            const isActive = activeStep === step.key;
+            const unresolvedCount = unresolvedCommentCountByStep[step.key] || 0;
 
-          return (
-            <button
-              key={step.key}
-              type="button"
-              className={`stepper__item${
-                isActive ? " stepper__item--active" : ""
-              }${isCompleted ? " stepper__item--completed" : ""}`}
-              onClick={() => setActiveStep(step.key)}
-            >
-              <span className="stepper__index">{index + 1}</span>
-              <span className="stepper__content">
-                <span className="stepper__copy">
-                  <strong className="stepper__label">{step.label}</strong>
+            return (
+              <button
+                key={step.key}
+                type="button"
+                className={`stepper-item${
+                  isActive ? " stepper-item--active" : ""
+                }${isCompleted ? " stepper-item--completed" : ""}`}
+                onClick={() => setActiveStep(step.key)}
+              >
+                <div className="stepper-dot">{index + 1}</div>
+                <div className="stepper-copy">
+                  <div className="stepper-kicker">
+                    {isCompleted ? "Completed" : isActive ? "In Progress" : `Step ${index + 1}`}
+                  </div>
+                  <div className="stepper-label">{step.label}</div>
                   {unresolvedCount > 0 ? (
-                    <span className="stepper__note">
+                    <div className="stepper-note">
                       {unresolvedCount} open {unresolvedCount === 1 ? "note" : "notes"}
-                    </span>
+                    </div>
                   ) : null}
-                </span>
-              </span>
-            </button>
-          );
-        })}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {error ? <p className="feedback feedback--error">{error}</p> : null}

@@ -50,18 +50,33 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
   return (
     <div className="wizard-container">
       <div className="wizard-header">
-        <Stepper steps={stepperSteps} currentStep={currentStepIndex + 1} />
-
-        <div className="wizard-progress">
-          <span>{progress}% Complete</span>
-          <div className="wizard-progress-bar">
-            <div
-              className="wizard-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
+        <div className="wizard-header__panel">
+          <div className="wizard-header__copy">
+            <p className="wizard-header__eyebrow">Application flow</p>
+            <h2 className="wizard-header__title">Complete your application in order</h2>
+            <p className="wizard-header__description">
+              Save progress as you go. The current step is highlighted and completed steps stay marked for quick review.
+            </p>
           </div>
-          <span>Step {currentStepIndex + 1} of {steps.length}</span>
+
+          <div className="wizard-progress">
+            <div className="wizard-progress__meta">
+              <span className="wizard-progress__label">Progress</span>
+              <strong>{progress}%</strong>
+            </div>
+            <div className="wizard-progress-bar" aria-hidden="true">
+              <div
+                className="wizard-progress-fill"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="wizard-progress__step-count">
+              Step {currentStepIndex + 1} of {steps.length}
+            </span>
+          </div>
         </div>
+
+        <Stepper steps={stepperSteps} currentStep={currentStepIndex + 1} />
       </div>
 
       <div className="wizard-content">

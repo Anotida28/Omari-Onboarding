@@ -939,35 +939,50 @@ function AgentOnboardingForm(): JSX.Element {
         </div>
 
         <div className="panel-header__summary">
-          <span>Application</span>
-          <strong>{applicationId ? "Live" : "New"}</strong>
-          <span>
+          <span className="panel-header__summary-label">Application</span>
+          <strong
+            className={`panel-header__summary-badge ${
+              applicationId ? "panel-header__summary-badge--live" : "panel-header__summary-badge--draft"
+            }`}
+          >
+            {applicationId ? "Live" : "New"}
+          </strong>
+          <span className="panel-header__summary-hint">
             {applicationStatus ? humanize(applicationStatus) : "Draft not created yet"}
           </span>
         </div>
       </div>
 
       <div className="stepper">
-        {AGENT_STEPS.map((step) => {
-          const section = sectionMap[step.key];
+        <div className="stepper-track">
+          {AGENT_STEPS.map((step) => {
+            const section = sectionMap[step.key];
+            const isCompleted = section?.status === "completed";
+            const isActive = activeStep === step.key;
 
-          return (
-            <button
-              key={step.key}
-              type="button"
-              className={`stepper__item${
-                activeStep === step.key ? " stepper__item--active" : ""
-              }`}
-              onClick={() => setActiveStep(step.key)}
-            >
-              <span className="stepper__index">{findStepIndex(step.key) + 1}</span>
-              <span className="stepper__label">{step.label}</span>
-              <span className="stepper__copy">
-                {section?.status ? humanize(section.status) : "Not started"}
-              </span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={step.key}
+                type="button"
+                className={`stepper-item${
+                  isActive ? " stepper-item--active" : ""
+                }${isCompleted ? " stepper-item--completed" : ""}`}
+                onClick={() => setActiveStep(step.key)}
+              >
+                <div className="stepper-dot">{findStepIndex(step.key) + 1}</div>
+                <div className="stepper-copy">
+                  <div className="stepper-kicker">
+                    {isCompleted ? "Completed" : isActive ? "In Progress" : `Step ${findStepIndex(step.key) + 1}`}
+                  </div>
+                  <div className="stepper-label">{step.label}</div>
+                  <div className="stepper-note">
+                    {section?.status ? humanize(section.status) : "Not started"}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {activeStep === "business_snapshot" ? (
