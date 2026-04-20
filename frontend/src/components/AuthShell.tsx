@@ -10,28 +10,23 @@ interface AuthShellProps {
 
 const AUTH_STAGE_CONTENT = {
   login: {
-    badge: "Returning applicant or reviewer",
-    headline: "Pick up your Omari onboarding journey in one secure step.",
-    copy:
-      "Applicants can resume merchant onboarding while internal teams move straight into review, all inside the same Omari workspace.",
+    badge: "Returning users",
     statLabel: "Live flow",
-    statValue: "Merchant onboarding",
-    supportLabel: "Ready next",
-    supportValue: "OTP verification later",
-    footer:
-      "A calm, secure entry into applicant onboarding and internal review."
+    statValue: "Unified onboarding",
+    supportLabel: "Secure access",
+    supportValue: "Mobile or email sign-in"
   },
   register: {
-    badge: "Fast account creation",
-    headline: "Create your Omari account and move into onboarding right away.",
+    badge: "Create account",
+    headline: "Start your Omari onboarding in a calm, guided setup.",
     copy:
-      "We keep sign-up light so your business can get straight into the merchant form, save progress, and return safely any time.",
+      "We keep sign-up light so applicants can enter once, save progress, and return to the same branded experience later.",
     statLabel: "Signup fields",
     statValue: "5 quick details",
     supportLabel: "Future-ready",
     supportValue: "SMS or email OTP",
     footer:
-      "Built for quick onboarding today, with verification ready when you want it."
+      "Built for fast onboarding today, with verification ready when you need it."
   }
 } as const;
 
@@ -61,6 +56,11 @@ function AuthShell({
 
           <p className="auth-panel__copy">{description}</p>
 
+          <div className="auth-panel__badge-row">
+            <span className="auth-pill">Applicant login</span>
+            <span className="auth-pill">Admin review access</span>
+          </div>
+
           <div className="auth-visual-stage">
             <span className="auth-visual-stage__badge">{stageContent.badge}</span>
 
@@ -70,7 +70,7 @@ function AuthShell({
             <article className="auth-floating-card auth-floating-card--top">
               <p className="auth-floating-card__eyebrow">{stageContent.statLabel}</p>
               <strong>{stageContent.statValue}</strong>
-              <span>Applicant and internal review access share the same Omari portal.</span>
+              <span>Applicant and internal review access share one branded portal.</span>
             </article>
 
             <div className="auth-device-card">
@@ -84,19 +84,23 @@ function AuthShell({
             <article className="auth-floating-card auth-floating-card--bottom">
               <p className="auth-floating-card__eyebrow">{stageContent.supportLabel}</p>
               <strong>{stageContent.supportValue}</strong>
-              <span>Mobile-first account identity keeps the sign-in flow simple.</span>
+              <span>Mobile-first identity keeps the sign-in flow simple.</span>
             </article>
           </div>
 
-          <div className="auth-panel__highlights">
-            <article className="auth-panel__highlight auth-panel__highlight--wide">
-              <p className="auth-floating-card__eyebrow">Omari workspace</p>
-              <strong>{stageContent.headline}</strong>
-              <span>{stageContent.copy}</span>
-            </article>
-          </div>
+          {"headline" in stageContent && "copy" in stageContent ? (
+            <div className="auth-panel__highlights">
+              <article className="auth-panel__highlight auth-panel__highlight--wide">
+                <p className="auth-floating-card__eyebrow">Omari workspace</p>
+                <strong>{stageContent.headline}</strong>
+                <span>{stageContent.copy}</span>
+              </article>
+            </div>
+          ) : null}
 
-          <p className="auth-panel__footer">{stageContent.footer}</p>
+          {"footer" in stageContent ? (
+            <p className="auth-panel__footer">{stageContent.footer}</p>
+          ) : null}
         </section>
 
         <section className="auth-card">{children}</section>

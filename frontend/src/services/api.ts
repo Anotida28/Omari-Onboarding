@@ -325,24 +325,100 @@ export interface ApplicationDetailResponse {
 export const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
 
+export class ApiRequestError extends Error {
+  status: number;
+  payload?: unknown;
+
+  constructor(message: string, status: number, payload?: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.payload = payload;
+  }
+}
+
 const handleResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
+    let errorPayload: unknown;
 
     try {
-      const errorPayload = (await response.json()) as { message?: string };
+      errorPayload = (await response.json()) as { message?: string };
 
-      if (typeof errorPayload.message === "string" && errorPayload.message) {
-        message = errorPayload.message;
+      if (
+        typeof (errorPayload as { message?: string }).message === "string" &&
+        (errorPayload as { message?: string }).message
+      ) {
+        message = (errorPayload as { message?: string }).message as string;
       }
     } catch {
       // Ignore payload parsing issues and fall back to the status message.
     }
 
-    throw new Error(message);
+    throw new ApiRequestError(message, response.status, errorPayload);
+  }
+
+  // Support endpoints that intentionally return no JSON body.
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!contentType.includes("application/json")) {
+    return undefined as T;
   }
 
   return (await response.json()) as T;
+};
+
+export const buildApiUrl = (path: string): string => {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}`;
+};
+
+export const apiRequest = async <T>(
+  path: string,
+  init?: RequestInit
+): Promise<T> => apiFetch<T>(path.startsWith("/") ? path : `/${path}`, init);
+
+export const apiFormData = async <T>(
+  path: string,
+  formData: FormData,
+  init?: Omit<RequestInit, "body" | "headers">
+): Promise<T> =>
+  apiFetch<T>(path.startsWith("/") ? path : `/${path}`, {
+    method: init?.method || "POST",
+    ...init,
+    body: formData
+  });
+
+export const downloadApiFile = async (
+  path: string,
+  fileName: string,
+  init?: RequestInit
+): Promise<void> => {
+  const response = await fetch(buildApiUrl(path), {
+    credentials: "include",
+    ...init
+  });
+
+  if (!response.ok) {
+    throw new ApiRequestError(
+      `Download failed with status ${response.status}`,
+      response.status
+    );
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(objectUrl);
 };
 
 const apiFetch = async <T>(

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
 
@@ -42,27 +42,28 @@ function LoginPage(): JSX.Element {
 
   return (
     <div className="auth-page auth-page--minimal">
+      <img
+        className="auth-page__bg-art"
+        src="/omari-auth-hero.png"
+        alt=""
+        aria-hidden="true"
+      />
       <div className="auth-page__veil" aria-hidden="true" />
 
-      <section className="auth-minimal-card" aria-label="Omari login">
+      <section className="auth-minimal-card" aria-label="Sign in">
         <div className="auth-minimal-card__brand">
           <img src="/omari-logo.png" alt="Omari logo" />
-        </div>
-
-        <div className="auth-minimal-card__header">
-          <h1>Sign In</h1>
-          <p>Use your mobile number or email plus password to continue.</p>
         </div>
 
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 
         <form className="auth-form auth-form--minimal" onSubmit={handleSubmit}>
           <label className="field">
-            <span>Mobile Number or Email</span>
+            <span>Username</span>
             <input
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
-              placeholder="Enter mobile number or email"
+              placeholder="Enter your username"
               autoComplete="username"
             />
           </label>
@@ -73,7 +74,7 @@ function LoginPage(): JSX.Element {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter password"
+              placeholder="Enter your password"
               autoComplete="current-password"
             />
           </label>
@@ -83,13 +84,9 @@ function LoginPage(): JSX.Element {
             className="button button--primary auth-form__submit"
             disabled={submitting}
           >
-            {submitting ? "Signing You In..." : "Sign In"}
+            {submitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
-
-        <p className="auth-card__footer auth-card__footer--minimal">
-          New here? <Link to="/auth/register">Create an account</Link>
-        </p>
       </section>
     </div>
   );

@@ -1637,6 +1637,12 @@
   line-height: 1.7;
 }
 
+.auth-panel__badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .auth-panel__highlights {
   display: grid;
   gap: 14px;
@@ -1844,42 +1850,50 @@
   place-items: center;
   overflow: hidden;
   background:
-    linear-gradient(rgba(235, 245, 243, 0.9), rgba(235, 245, 243, 0.9)),
-    radial-gradient(circle at 14% 18%, rgba(35, 177, 116, 0.16), transparent 36%),
-    radial-gradient(circle at 84% 80%, rgba(20, 145, 116, 0.14), transparent 34%),
-    linear-gradient(180deg, #edf5f2 0%, #e3efeb 100%);
+    linear-gradient(180deg, #d9e7e8 0%, #cddde0 100%);
+}
+
+.auth-page__bg-art {
+  position: absolute;
+  inset: -4vh -3vw;
+  width: calc(100vw + 6vw);
+  height: calc(100vh + 8vh);
+  object-fit: cover;
+  opacity: 0.2;
+  filter: saturate(0.75);
+  pointer-events: none;
 }
 
 .auth-page__veil {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 10%, rgba(35, 177, 116, 0.2), transparent 34%),
-    radial-gradient(circle at 80% 80%, rgba(20, 145, 116, 0.15), transparent 34%);
+    radial-gradient(circle at 20% 10%, rgba(214, 242, 231, 0.5), transparent 36%),
+    linear-gradient(rgba(226, 238, 239, 0.58), rgba(226, 238, 239, 0.58));
   pointer-events: none;
 }
 
 .auth-minimal-card {
   position: relative;
   z-index: 1;
-  width: min(460px, 100%);
-  padding: 34px 30px 26px;
-  border-radius: 16px;
+  width: min(500px, 100%);
+  padding: 50px 38px 36px;
+  border-radius: 14px;
   border: 1px solid rgba(13, 111, 89, 0.12);
-  background: rgba(255, 255, 255, 0.93);
-  box-shadow: 0 24px 56px rgba(6, 34, 27, 0.16);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 24px 56px rgba(6, 34, 27, 0.14);
   display: grid;
-  gap: 16px;
+  gap: 20px;
 }
 
 .auth-minimal-card__brand {
   display: grid;
   place-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
 }
 
 .auth-minimal-card__brand img {
-  width: min(220px, 75%);
+  width: min(260px, 78%);
   height: auto;
 }
 
@@ -1905,25 +1919,29 @@
 }
 
 .auth-form--minimal {
-  gap: 14px;
+  gap: 18px;
 }
 
 .auth-form--minimal .field span {
   font-weight: 700;
   color: var(--text-900);
+  font-size: 1.08rem;
 }
 
 .auth-form--minimal .field input {
-  min-height: 50px;
-  border-radius: 13px;
+  min-height: 54px;
+  border-radius: 14px;
+  background: #eff5f4;
+  border: 1px solid #c3d6d1;
 }
 
 .auth-form--minimal .auth-form__submit {
-  margin-top: 6px;
-  min-height: 50px;
+  margin-top: 8px;
+  min-height: 54px;
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: 0.01em;
+  box-shadow: 0 10px 24px rgba(20, 142, 112, 0.28);
 }
 
 .auth-card__footer--minimal {
@@ -2133,8 +2151,8 @@
   }
 
   .auth-minimal-card {
-    width: min(440px, 100%);
-    padding: 24px 18px 20px;
+    width: min(460px, 100%);
+    padding: 28px 18px 22px;
     border-radius: 14px;
   }
 
