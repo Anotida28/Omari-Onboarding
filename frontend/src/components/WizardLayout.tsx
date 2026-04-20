@@ -14,6 +14,7 @@ interface WizardLayoutProps {
   currentStepIndex: number;
   onNextStep: () => void;
   onPreviousStep: () => void;
+  onSaveDraft?: () => void | Promise<void>;
   onSubmit: () => void | Promise<void>;
   isLoading?: boolean;
   canSubmit?: boolean;
@@ -25,6 +26,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
   currentStepIndex,
   onNextStep,
   onPreviousStep,
+  onSaveDraft,
   onSubmit,
   isLoading = false,
   canSubmit = true,
@@ -55,7 +57,8 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
             <p className="wizard-header__eyebrow">Application flow</p>
             <h2 className="wizard-header__title">Complete your application in order</h2>
             <p className="wizard-header__description">
-              Save progress as you go. The current step is highlighted and completed steps stay marked for quick review.
+              Save progress as you go. The current step stays highlighted and completed steps stay
+              marked for quick review.
             </p>
           </div>
 
@@ -65,10 +68,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
               <strong>{progress}%</strong>
             </div>
             <div className="wizard-progress-bar" aria-hidden="true">
-              <div
-                className="wizard-progress-fill"
-                style={{ width: `${progress}%` }}
-              />
+              <div className="wizard-progress-fill" style={{ width: `${progress}%` }} />
             </div>
             <span className="wizard-progress__step-count">
               Step {currentStepIndex + 1} of {steps.length}
@@ -83,9 +83,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
         {steps.map((step, index) => (
           <div
             key={step.id}
-            className={`wizard-step ${
-              index === currentStepIndex ? "wizard-step--active" : ""
-            }`}
+            className={`wizard-step ${index === currentStepIndex ? "wizard-step--active" : ""}`}
           >
             <div className="wizard-step-title">{step.label}</div>
             {step.content}
@@ -93,24 +91,26 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
         ))}
       </div>
 
-      <div
-        className={`wizard-actions ${
-          isLastStep ? "wizard-actions--end" : ""
-        }`}
-      >
+      <div className={`wizard-actions ${isLastStep ? "wizard-actions--end" : ""}`}>
         {!isLastStep && (
           <button
             className="btn btn--ghost"
             onClick={onPreviousStep}
             disabled={!canGoPrevious}
+            type="button"
           >
-            ← Back
+            Back
           </button>
         )}
 
-        <div style={{ display: "flex", gap: "var(--space-3)" }}>
-          <button className="btn btn--secondary" disabled={isLoading}>
-            Save Draft
+        <div className="wizard-actions__group">
+          <button
+            className="btn btn--secondary"
+            disabled={isLoading || !onSaveDraft}
+            onClick={onSaveDraft}
+            type="button"
+          >
+            Save draft
           </button>
 
           {!showSubmitButton && (

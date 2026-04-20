@@ -55,15 +55,20 @@ function LoginPage(): JSX.Element {
           <img src="/omari-logo.png" alt="Omari logo" />
         </div>
 
+        <div className="auth-minimal-card__header">
+          <h1>Welcome back</h1>
+          <p>Sign in with your mobile number or email to continue your Omari onboarding.</p>
+        </div>
+
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 
         <form className="auth-form auth-form--minimal" onSubmit={handleSubmit}>
           <label className="field">
-            <span>Username</span>
+            <span>Mobile number or email</span>
             <input
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
-              placeholder="Enter your username"
+              placeholder="Enter your mobile number or email"
               autoComplete="username"
             />
           </label>

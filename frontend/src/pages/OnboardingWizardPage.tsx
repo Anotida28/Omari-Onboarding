@@ -737,6 +737,20 @@ function OnboardingWizardPage(): JSX.Element {
     }
   };
 
+  const handleSaveDraft = async (): Promise<void> => {
+    const currentStep = wizardSteps[currentStepIndex];
+
+    if (!currentStep.onSave || isSaving) {
+      return;
+    }
+
+    try {
+      await currentStep.onSave();
+    } catch {
+      // The step save handler already sets the relevant UI feedback.
+    }
+  };
+
   return (
     <PortalShell
       title="Omari - Onboarding System"
@@ -769,6 +783,7 @@ function OnboardingWizardPage(): JSX.Element {
             currentStepIndex={currentStepIndex}
             onNextStep={handleNextStep}
             onPreviousStep={handlePreviousStep}
+            onSaveDraft={handleSaveDraft}
             onSubmit={submitApplication}
             isLoading={isSaving}
             canSubmit={declarations.acceptedTerms && declarations.certifiedInformation && declarations.authorizedToAct}

@@ -59,10 +59,19 @@ function PortalShell({
 
         <main className="workspace-main">
           <header className="topbar">
-            <strong className="topbar__title">{title}</strong>
+            <div className="topbar__copy">
+              <p className="topbar__eyebrow">{eyebrow}</p>
+              <strong className="topbar__title">{title}</strong>
+            </div>
 
             <div className="topbar__meta">
-              <strong className="topbar__user-name">{user.fullName}</strong>
+              <div className="topbar__profile">
+                <span className="topbar__profile-label">
+                  {user.role === "admin" ? "Internal reviewer" : "Applicant account"}
+                </span>
+                <strong className="topbar__user-name">{user.fullName}</strong>
+                <span className="topbar__user-meta">{profileMeta}</span>
+              </div>
             </div>
           </header>
 

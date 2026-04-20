@@ -2,14 +2,11 @@ import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute, PublicOnlyRoute, RoleRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
-import AgentOnboardingPage from "./pages/AgentOnboardingPage";
 import ApplicantDashboardPage from "./pages/ApplicantDashboardPage";
 import ApplicationStatusPage from "./pages/ApplicationStatusPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import MerchantOnboardingPage from "./pages/MerchantOnboardingPage";
 import OnboardingWizardPage from "./pages/OnboardingWizardPage";
-import PayerOnboardingPage from "./pages/PayerOnboardingPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import ReviewPage from "./pages/ReviewPage";
@@ -31,12 +28,19 @@ function App(): JSX.Element {
 
             <Route element={<RoleRoute allowedRole="applicant" />}>
               <Route path="/dashboard" element={<ApplicantDashboardPage />} />
-              {/* New unified wizard-based onboarding */}
               <Route path="/applications/wizard" element={<OnboardingWizardPage />} />
-              {/* Legacy routes - preserved for backward compatibility */}
-              <Route path="/applications/agent" element={<AgentOnboardingPage />} />
-              <Route path="/applications/merchant" element={<MerchantOnboardingPage />} />
-              <Route path="/applications/payer" element={<PayerOnboardingPage />} />
+              <Route
+                path="/applications/agent"
+                element={<Navigate to="/applications/wizard?type=agent" replace />}
+              />
+              <Route
+                path="/applications/merchant"
+                element={<Navigate to="/applications/wizard?type=merchant" replace />}
+              />
+              <Route
+                path="/applications/payer"
+                element={<Navigate to="/applications/wizard?type=payer" replace />}
+              />
               <Route path="/applications/status" element={<ApplicationStatusPage />} />
               <Route
                 path="/applications/:applicationId/status"
@@ -50,10 +54,14 @@ function App(): JSX.Element {
                 path="/applications/new/payer"
                 element={<Navigate to="/applications/wizard?type=payer" replace />}
               />
+              <Route
+                path="/applications/new/agent"
+                element={<Navigate to="/applications/wizard?type=agent" replace />}
+              />
             </Route>
 
             <Route element={<RoleRoute allowedRole="admin" />}>
-              <Route path="/dashboard" element={<ApplicantDashboardPage />} />
+              <Route path="/dashboard" element={<Navigate to="/review" replace />} />
               <Route path="/review" element={<ReviewPage />} />
             </Route>
           </Route>

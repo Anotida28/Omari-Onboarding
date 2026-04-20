@@ -18,6 +18,7 @@ const getStatusLabel = (status: string): string => {
     activated: "Activated",
     archived: "Archived"
   };
+
   return labels[status] || status;
 };
 
@@ -27,7 +28,28 @@ const getApplicationTypeLabel = (type: string): string => {
     agent: "Agent Application",
     payer: "Payer / Biller Application"
   };
+
   return labels[type] || type;
+};
+
+const getStatusVariant = (status: string): string => {
+  if (status === "draft") {
+    return "draft";
+  }
+
+  if (status === "needs_more_information") {
+    return "action-required";
+  }
+
+  if (["submitted", "initial_review", "document_check", "compliance_review"].includes(status)) {
+    return "in-progress";
+  }
+
+  if (status === "approved") {
+    return "approved";
+  }
+
+  return "rejected";
 };
 
 function ApplicantDashboardPage(): JSX.Element {
@@ -39,6 +61,7 @@ function ApplicantDashboardPage(): JSX.Element {
   useEffect(() => {
     const loadApplication = async (): Promise<void> => {
       setIsLoading(true);
+
       try {
         const response = await getActiveApplication();
         setApplication(response);
@@ -52,187 +75,211 @@ function ApplicantDashboardPage(): JSX.Element {
     void loadApplication();
   }, []);
 
+  const completedSections =
+    application?.sections.filter((section) => section.status === "completed").length || 0;
+  const nextIncompleteSection = application?.sections.find(
+    (section) => section.status !== "completed"
+  );
+  const progressLabel = application
+    ? `${completedSections} of ${application.sections.length} sections complete`
+    : "No active application";
+
   return (
     <PortalShell
       title="Omari - Onboarding System"
       eyebrow="Applicant workspace"
       heading="Dashboard"
-      description="Manage your applications and track their progress through our review process."
+      description="Manage your applications, continue saved work, and keep review feedback in one place."
       navGroups={APPLICANT_NAV_GROUPS}
     >
       {isLoading ? (
         <div className="empty-state">
-          <div className="empty-state-icon">⏳</div>
+          <div className="empty-state-icon">...</div>
           <h3>Loading your dashboard...</h3>
         </div>
       ) : application ? (
-        <div style={{ display: "grid", gap: "var(--space-6)" }}>
-          {/* Current Application Status */}
-          <div className="status-hero">
-            <div style={{ display: "grid", gap: "var(--space-2)" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "var(--space-3)"
-                }}
-              >
-                <div>
-                  <h2 style={{ margin: "0 0 var(--space-2) 0" }}>
-                    {getApplicationTypeLabel(application.applicationType)}
-                  </h2>
-                  <p style={{ margin: 0, color: "var(--text-700)" }}>
-                    {user?.organization?.legalName}
-                  </p>
-                </div>
-                <span
-                  className={`status-badge status-badge--${
-                    application.status === "draft"
-                      ? "draft"
-                      : application.status === "needs_more_information"
-                        ? "action-required"
-                        : ["submitted", "initial_review", "document_check", "compliance_review"].includes(
-                            application.status
-                          )
-                          ? "in-progress"
-                          : application.status === "approved"
-                            ? "approved"
-                            : "rejected"
-                  }`}
-                >
-                  {getStatusLabel(application.status)}
-                </span>
-              </div>
-            </div>
+        <div className="dashboard-stack">
+          <div className="dashboard-grid">
+            <article className="dashboard-card dashboard-card--hero">
+              <span className="dashboard-card__eyebrow">Active application</span>
 
-            <div className="status-hero-meta">
-              <div className="status-meta-item">
-                <div className="status-meta-label">Last Updated</div>
-                <div className="status-meta-value">
-                  {application.submittedAt
-                    ? new Date(application.submittedAt).toLocaleDateString()
-                    : "Draft"}
+              <div className="dashboard-status-row">
+                <div>
+                  <h2>{getApplicationTypeLabel(application.applicationType)}</h2>
+                  <p>{user?.organization?.legalName}</p>
+                </div>
+
+                <div className="dashboard-badges">
+                  <span
+                    className={`status-badge status-badge--${getStatusVariant(application.status)}`}
+                  >
+                    {getStatusLabel(application.status)}
+                  </span>
+                  <span className="section-tracker__health">{progressLabel}</span>
                 </div>
               </div>
-              <div className="status-meta-item">
-                <div className="status-meta-label">Progress</div>
-                <div className="status-meta-value">
-                  {application.sections.filter((s) => s.status === "completed").length} of{" "}
-                  {application.sections.length} sections
+
+              <div className="status-hero-meta">
+                <div className="status-meta-item">
+                  <div className="status-meta-label">Submitted</div>
+                  <div className="status-meta-value">
+                    {application.submittedAt
+                      ? new Date(application.submittedAt).toLocaleDateString()
+                      : "Not submitted yet"}
+                  </div>
+                </div>
+                <div className="status-meta-item">
+                  <div className="status-meta-label">Next step</div>
+                  <div className="status-meta-value">
+                    {application.status === "needs_more_information"
+                      ? "Address reviewer feedback"
+                      : nextIncompleteSection?.title || "Ready for review"}
+                  </div>
+                </div>
+                <div className="status-meta-item">
+                  <div className="status-meta-label">Current stage</div>
+                  <div className="status-meta-value">{getStatusLabel(application.status)}</div>
                 </div>
               </div>
-            </div>
+
+              <div className="dashboard-actions">
+                <button
+                  className="btn btn--primary"
+                  onClick={() =>
+                    navigate(`/applications/wizard?type=${application.applicationType}`)
+                  }
+                >
+                  {application.status === "needs_more_information"
+                    ? "Address feedback"
+                    : "Continue application"}
+                </button>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() =>
+                    navigate(`/applications/${application.applicationId}/status`)
+                  }
+                >
+                  Track status
+                </button>
+              </div>
+            </article>
+
+            <article className="dashboard-card dashboard-card--stat">
+              <span className="dashboard-card__eyebrow">Completion</span>
+              <strong className="dashboard-card__value">{completedSections}</strong>
+              <p>Completed sections in your current application.</p>
+
+              <div className="dashboard-card__meta-list">
+                <div className="dashboard-card__meta-item">
+                  <span>Total steps</span>
+                  <strong>{application.sections.length}</strong>
+                </div>
+                <div className="dashboard-card__meta-item">
+                  <span>Outstanding</span>
+                  <strong>{Math.max(application.sections.length - completedSections, 0)}</strong>
+                </div>
+              </div>
+            </article>
           </div>
 
-          {/* Continue Application CTA */}
-          {application.status === "draft" && (
-            <div
-              style={{
-                padding: "var(--space-5)",
-                background: "rgba(36, 191, 117, 0.08)",
-                border: "1px solid rgba(36, 191, 117, 0.3)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "var(--space-4)"
-              }}
-            >
-              <div>
-                <h3 style={{ margin: "0 0 var(--space-1) 0", color: "var(--text-900)" }}>
-                  Continue your application
-                </h3>
-                <p style={{ margin: 0, color: "var(--text-700)" }}>
-                  You're on step{" "}
-                  {
-                    application.sections.find((s) => s.status !== "completed")
-                      ?.sortOrder
-                  }{" "}
-                  of {application.sections.length}. Pick up where you left off.
-                </p>
-              </div>
+          <div className="dashboard-grid dashboard-grid--quick">
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Application details</span>
+              <strong>Continue from your latest saved step</strong>
+              <p>
+                Pick up at {nextIncompleteSection?.title || "the review stage"} and keep your
+                submission moving forward.
+              </p>
               <button
-                className="btn btn--primary"
+                className="btn btn--ghost dashboard-card__link"
                 onClick={() =>
-                  navigate(
-                    `/applications/wizard?type=${application.applicationType}`
-                  )
+                  navigate(`/applications/wizard?type=${application.applicationType}`)
                 }
               >
-                Continue →
+                Open application
               </button>
-            </div>
-          )}
+            </article>
 
-          {/* Quick Actions */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "var(--space-4)"
-            }}
-          >
-            <div
-              className="form-section-card"
-              style={{ cursor: "pointer" }}
-              onClick={() =>
-                navigate(`/applications/wizard?type=${application.applicationType}`)
-              }
-            >
-              <div className="form-section-card__title">Edit Application</div>
-              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
-                Update your application details and progress through remaining sections.
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Reviewer feedback</span>
+              <strong>
+                {application.status === "needs_more_information"
+                  ? "Updates requested"
+                  : "Status and history"}
+              </strong>
+              <p>
+                Review timelines, comments, and anything your team still needs to address.
               </p>
-            </div>
+              <button
+                className="btn btn--ghost dashboard-card__link"
+                onClick={() => navigate(`/applications/${application.applicationId}/status`)}
+              >
+                View application status
+              </button>
+            </article>
 
-            <div
-              className="form-section-card"
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/applications/${application.applicationId}/status`)}
-            >
-              <div className="form-section-card__title">View Status</div>
-              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
-                Track your application progress and reviewer feedback.
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Account</span>
+              <strong>Keep your profile up to date</strong>
+              <p>
+                Manage your contact details, password, and organization summary in one place.
               </p>
-            </div>
-
-            <div
-              className="form-section-card"
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/profile")}
-            >
-              <div className="form-section-card__title">Account Settings</div>
-              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
-                Update your personal information and preferences.
-              </p>
-            </div>
+              <button
+                className="btn btn--ghost dashboard-card__link"
+                onClick={() => navigate("/profile")}
+              >
+                Open profile
+              </button>
+            </article>
           </div>
         </div>
       ) : (
-        <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
-          <h3>No active application</h3>
-          <p>Start a new merchant, agent, or payer / biller application to get started.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "var(--space-3)", maxWidth: "500px" }}>
-            <button
-              className="btn btn--primary"
-              onClick={() => navigate("/applications/wizard?type=merchant")}
-            >
-              Merchant
-            </button>
-            <button
-              className="btn btn--primary"
-              onClick={() => navigate("/applications/wizard?type=agent")}
-            >
-              Agent
-            </button>
-            <button
-              className="btn btn--primary"
-              onClick={() => navigate("/applications/wizard?type=payer")}
-            >
-              Payer
-            </button>
+        <div className="dashboard-stack">
+          <article className="dashboard-card dashboard-card--hero">
+            <span className="dashboard-card__eyebrow">Get started</span>
+            <h2>Start your first Omari onboarding application</h2>
+            <p>
+              Choose the type that matches your business and complete the guided wizard in one
+              unified portal.
+            </p>
+          </article>
+
+          <div className="dashboard-grid dashboard-grid--quick">
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Merchant</span>
+              <strong>Accept payments with Omari</strong>
+              <p>Set up business details, contacts, banking, and supporting documents.</p>
+              <button
+                className="btn btn--primary dashboard-card__link"
+                onClick={() => navigate("/applications/wizard?type=merchant")}
+              >
+                Start merchant application
+              </button>
+            </article>
+
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Agent</span>
+              <strong>Launch an agent outlet network</strong>
+              <p>Capture directors, operational outlets, banking details, and agent paperwork.</p>
+              <button
+                className="btn btn--primary dashboard-card__link"
+                onClick={() => navigate("/applications/wizard?type=agent")}
+              >
+                Start agent application
+              </button>
+            </article>
+
+            <article className="dashboard-card dashboard-card--action">
+              <span className="dashboard-card__eyebrow">Payer / Biller</span>
+              <strong>Set up biller and settlement onboarding</strong>
+              <p>Prepare settlement details, signatories, and supporting documents.</p>
+              <button
+                className="btn btn--primary dashboard-card__link"
+                onClick={() => navigate("/applications/wizard?type=payer")}
+              >
+                Start payer application
+              </button>
+            </article>
           </div>
         </div>
       )}

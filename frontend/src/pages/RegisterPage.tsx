@@ -6,8 +6,7 @@ import { getDefaultPathForUser } from "../utils/auth";
 function RegisterPage(): JSX.Element {
   const { isAuthenticated, isLoading, register, user } = useAuth();
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -25,8 +24,6 @@ function RegisterPage(): JSX.Element {
     setSubmitting(true);
     setError("");
 
-    const fullName = `${firstName} ${lastName}`.trim();
-
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       setSubmitting(false);
@@ -35,9 +32,9 @@ function RegisterPage(): JSX.Element {
 
     try {
       const authenticatedUser = await register({
-        fullName,
-        organizationName,
-        mobileNumber,
+        fullName: fullName.trim(),
+        organizationName: organizationName.trim(),
+        mobileNumber: mobileNumber.trim(),
         email: email.trim() || undefined,
         password
       });
@@ -71,67 +68,63 @@ function RegisterPage(): JSX.Element {
           <img src="/omari-logo.png" alt="Omari logo" />
         </div>
 
+        <div className="auth-minimal-card__header">
+          <h1>Create your account</h1>
+          <p>
+            Keep registration light with just the essentials. Mobile is required and email can be
+            added now or later.
+          </p>
+        </div>
+
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 
         <form className="auth-form auth-form--minimal auth-form--signup" onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Name*</span>
+          <label className="field auth-field--full">
+            <span>Full name</span>
             <input
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
-              placeholder="Enter first name"
-              autoComplete="given-name"
-              required
-            />
-          </label>
-
-          <label className="field">
-            <span>Last Name*</span>
-            <input
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
-              placeholder="Enter last name"
-              autoComplete="family-name"
-              required
-            />
-          </label>
-
-          <label className="field">
-            <span>Email*</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Enter your email"
-              autoComplete="email"
-              required
-            />
-          </label>
-
-          <label className="field">
-            <span>Phone*</span>
-            <input
-              value={mobileNumber}
-              onChange={(event) => setMobileNumber(event.target.value)}
-              placeholder="Enter phone number"
-              autoComplete="tel"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              placeholder="Enter your full name"
+              autoComplete="name"
               required
             />
           </label>
 
           <label className="field auth-field--full">
-            <span>Organization*</span>
+            <span>Organization name</span>
             <input
               value={organizationName}
               onChange={(event) => setOrganizationName(event.target.value)}
-              placeholder="Enter organization name"
+              placeholder="Enter your organization name"
               autoComplete="organization"
               required
             />
           </label>
 
           <label className="field">
-            <span>Password*</span>
+            <span>Mobile number</span>
+            <input
+              value={mobileNumber}
+              onChange={(event) => setMobileNumber(event.target.value)}
+              placeholder="Enter your mobile number"
+              autoComplete="tel"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Email (optional)</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Enter your email"
+              autoComplete="email"
+            />
+          </label>
+
+          <label className="field">
+            <span>Password</span>
             <input
               type="password"
               value={password}
@@ -143,12 +136,12 @@ function RegisterPage(): JSX.Element {
           </label>
 
           <label className="field">
-            <span>Repeat Password*</span>
+            <span>Confirm password</span>
             <input
               type="password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="Repeat your password"
+              placeholder="Confirm your password"
               autoComplete="new-password"
               required
             />
@@ -159,7 +152,7 @@ function RegisterPage(): JSX.Element {
             className="button button--primary auth-form__submit"
             disabled={submitting}
           >
-            {submitting ? "Creating Account..." : "Create Account"}
+            {submitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 
