@@ -10,12 +10,18 @@ import {
 } from "../constants/application";
 import { prisma } from "../lib/prisma";
 import type { AuthenticatedUser } from "../types/auth";
-import { deleteStoredFile, ensureUploadDirectory } from "../lib/uploads";
+import {
+  deleteStoredFile,
+  ensureStoredFileExists,
+  ensureUploadDirectory,
+  resolveStoredFilePath
+} from "../lib/uploads";
 
 const SECTION_KEYS = {
   businessSnapshot: "business_snapshot",
   contactsTransactors: "contacts_transactors",
   bankingDetails: "banking_details",
+  operations: "operations_configuration",
   supportingDocuments: "supporting_documents",
   declarations: "declarations_review"
 } as const;
@@ -76,20 +82,26 @@ const SECTION_BLUEPRINTS: Record<
     },
     {
       key: SECTION_KEYS.bankingDetails,
-      title: "Outlets & Banking",
+      title: "Banking Details",
       sortOrder: 3,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.operations,
+      title: "Outlets & Operations",
+      sortOrder: 4,
       status: "not_started"
     },
     {
       key: SECTION_KEYS.supportingDocuments,
       title: "Supporting Documents",
-      sortOrder: 4,
+      sortOrder: 5,
       status: "not_started"
     },
     {
       key: SECTION_KEYS.declarations,
       title: "Declarations and Review",
-      sortOrder: 5,
+      sortOrder: 6,
       status: "not_started"
     }
   ],
@@ -108,20 +120,26 @@ const SECTION_BLUEPRINTS: Record<
     },
     {
       key: SECTION_KEYS.bankingDetails,
-      title: "Settlement & Banking",
+      title: "Banking Details",
       sortOrder: 3,
+      status: "not_started"
+    },
+    {
+      key: SECTION_KEYS.operations,
+      title: "Settlement Configuration",
+      sortOrder: 4,
       status: "not_started"
     },
     {
       key: SECTION_KEYS.supportingDocuments,
       title: "Supporting Documents",
-      sortOrder: 4,
+      sortOrder: 5,
       status: "not_started"
     },
     {
       key: SECTION_KEYS.declarations,
       title: "Declarations and Review",
-      sortOrder: 5,
+      sortOrder: 6,
       status: "not_started"
     }
   ]
@@ -239,6 +257,8 @@ export interface MerchantBankingPayload {
 
 export interface AgentOutletPayload {
   name: string;
+  location?: string;
+  contactPerson?: string;
   code?: string;
   phoneNumber?: string;
   email?: string;
@@ -249,15 +269,29 @@ export interface AgentOutletPayload {
   country?: string;
 }
 
-export interface AgentOperationsPayload extends MerchantBankingPayload {
+export interface AgentBankingPayload extends MerchantBankingPayload {}
+
+export interface AgentOperationsStepPayload {
   outlets: AgentOutletPayload[];
+  complianceContact?: string;
+  operationalDetails?: string;
 }
 
-export interface PayerSettlementPayload extends MerchantBankingPayload {
+export interface AgentOperationsPayload extends MerchantBankingPayload, AgentOperationsStepPayload {
+}
+
+export interface PayerBankingPayload extends MerchantBankingPayload {
+}
+
+export interface PayerSettlementStepPayload {
   settlementMethod?: string;
   reconciliationEmail?: string;
   integrationNotes?: string;
 }
+
+export interface PayerSettlementPayload
+  extends MerchantBankingPayload,
+    PayerSettlementStepPayload {}
 
 export interface MerchantDeclarationPayload {
   signerName: string;
@@ -542,10 +576,19 @@ const normalizeOutlets = (outlets: AgentOutletPayload[]): AgentOutletPayload[] =
   outlets
     .map((outlet) => ({
       name: normalizeOptionalString(outlet.name) || "",
+      location:
+        normalizeOptionalString(outlet.location) ||
+        normalizeOptionalString(outlet.addressLine1) ||
+        undefined,
+      contactPerson:
+        normalizeOptionalString(outlet.contactPerson) || undefined,
       code: normalizeOptionalString(outlet.code) || undefined,
       phoneNumber: normalizeOptionalString(outlet.phoneNumber) || undefined,
       email: normalizeOptionalEmail(outlet.email) || undefined,
-      addressLine1: normalizeOptionalString(outlet.addressLine1) || undefined,
+      addressLine1:
+        normalizeOptionalString(outlet.addressLine1) ||
+        normalizeOptionalString(outlet.location) ||
+        undefined,
       addressLine2: normalizeOptionalString(outlet.addressLine2) || undefined,
       city: normalizeOptionalString(outlet.city) || undefined,
       province: normalizeOptionalString(outlet.province) || undefined,
@@ -554,9 +597,8 @@ const normalizeOutlets = (outlets: AgentOutletPayload[]): AgentOutletPayload[] =
     .filter((outlet) => Boolean(outlet.name));
 
 const normalizePayerSettlement = (
-  payload: PayerSettlementPayload
-): PayerSettlementPayload => ({
-  ...normalizeBanking(payload),
+  payload: PayerSettlementStepPayload
+): PayerSettlementStepPayload => ({
   settlementMethod: normalizeOptionalString(payload.settlementMethod) || undefined,
   reconciliationEmail: normalizeOptionalEmail(payload.reconciliationEmail) || undefined,
   integrationNotes: normalizeOptionalString(payload.integrationNotes) || undefined
@@ -677,10 +719,12 @@ const mapApplicationDetail = async (
     declarationSection?.dataJson || null
   );
   const operationsSection = application.sections.find(
-    (section) => section.sectionKey === SECTION_KEYS.bankingDetails
+    (section) => section.sectionKey === SECTION_KEYS.operations
   );
   const operationsSectionData = parseSectionData<{
     outlets?: AgentOutletPayload[];
+    complianceContact?: string;
+    operationalDetails?: string;
     settlementMethod?: string;
     reconciliationEmail?: string;
     integrationNotes?: string;
@@ -709,7 +753,7 @@ const mapApplicationDetail = async (
       status: normalizedStatus,
       isRequired: requirement?.isRequired || false,
       reviewNotes: document.reviewNotes,
-      downloadUrl: `/uploads/${document.storagePath}`,
+      downloadUrl: `/applications/documents/${document.id}/download`,
       uploadedAt: document.createdAt.toISOString(),
       reviewedAt:
         normalizedStatus === "accepted" || normalizedStatus === "rejected"
@@ -826,6 +870,8 @@ const mapApplicationDetail = async (
     }));
   const mappedOutlets = application.outlets.map((outlet) => ({
     name: outlet.name,
+    location: outlet.addressLine1 || undefined,
+    contactPerson: undefined,
     code: outlet.code || undefined,
     phoneNumber: outlet.phoneNumber || undefined,
     email: outlet.email || undefined,
@@ -921,6 +967,8 @@ const mapApplicationDetail = async (
           accountNumber: primaryBankAccount.accountNumber,
           accountType: primaryBankAccount.accountType || undefined,
           currency: primaryBankAccount.currency,
+          complianceContact: operationsSectionData?.complianceContact,
+          operationalDetails: operationsSectionData?.operationalDetails,
           outlets:
             operationsSectionData?.outlets && operationsSectionData.outlets.length > 0
               ? operationsSectionData.outlets
@@ -935,6 +983,8 @@ const mapApplicationDetail = async (
             accountNumber: "",
             accountType: undefined,
             currency: "USD",
+            complianceContact: operationsSectionData?.complianceContact,
+            operationalDetails: operationsSectionData?.operationalDetails,
             outlets: mappedOutlets
           }
         : null,
@@ -2230,11 +2280,14 @@ export const saveAgentContacts = async (
 
 export const saveAgentOperations = async (
   applicationId: string,
-  payload: AgentOperationsPayload,
+  payload: AgentOperationsStepPayload,
   actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
-  const bankingDetails = normalizeBanking(payload);
   const outlets = normalizeOutlets(payload.outlets || []);
+  const complianceContact =
+    normalizeOptionalString(payload.complianceContact) || undefined;
+  const operationalDetails =
+    normalizeOptionalString(payload.operationalDetails) || undefined;
   const now = new Date();
 
   if (outlets.length === 0) {
@@ -2264,29 +2317,20 @@ export const saveAgentOperations = async (
 
     await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.agent);
 
-    await transaction.bankAccount.deleteMany({
+    const primaryBankAccount = await transaction.bankAccount.findFirst({
       where: {
-        applicationId
+        applicationId,
+        isPrimary: true
       }
     });
+
+    if (!primaryBankAccount) {
+      throw new Error("Save banking details before completing operations.");
+    }
 
     await transaction.outlet.deleteMany({
       where: {
         applicationId
-      }
-    });
-
-    await transaction.bankAccount.create({
-      data: {
-        applicationId,
-        accountName: bankingDetails.accountName,
-        bankName: bankingDetails.bankName,
-        branchName: bankingDetails.branchName || null,
-        branchCode: bankingDetails.branchCode || null,
-        accountNumber: bankingDetails.accountNumber,
-        accountType: bankingDetails.accountType || null,
-        currency: bankingDetails.currency || "USD",
-        isPrimary: true
       }
     });
 
@@ -2319,26 +2363,126 @@ export const saveAgentOperations = async (
       where: {
         applicationId_sectionKey: {
           applicationId,
-          sectionKey: SECTION_KEYS.bankingDetails
+          sectionKey: SECTION_KEYS.operations
         }
       },
       create: {
         applicationId,
-        sectionKey: SECTION_KEYS.bankingDetails,
-        title: "Outlets & Banking",
+        sectionKey: SECTION_KEYS.operations,
+        title: "Outlets & Operations",
         status: "completed",
-        sortOrder: 3,
+        sortOrder: 4,
         lastEditedAt: now,
         dataJson: JSON.stringify({
-          outlets
+          outlets,
+          complianceContact,
+          operationalDetails
         })
       },
       update: {
         status: "completed",
         lastEditedAt: now,
         dataJson: JSON.stringify({
-          outlets
+          outlets,
+          complianceContact,
+          operationalDetails
         })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const saveAgentBanking = async (
+  applicationId: string,
+  payload: AgentBankingPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const bankingDetails = normalizeBanking(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.agent) {
+      throw new Error("The requested application is not an agent application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.agent);
+
+    await transaction.bankAccount.deleteMany({
+      where: {
+        applicationId
+      }
+    });
+
+    await transaction.bankAccount.create({
+      data: {
+        applicationId,
+        accountName: bankingDetails.accountName,
+        bankName: bankingDetails.bankName,
+        branchName: bankingDetails.branchName || null,
+        branchCode: bankingDetails.branchCode || null,
+        accountNumber: bankingDetails.accountNumber,
+        accountType: bankingDetails.accountType || null,
+        currency: bankingDetails.currency || "USD",
+        isPrimary: true
+      }
+    });
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.operations
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.bankingDetails
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.bankingDetails,
+        title: "Banking Details",
+        status: "completed",
+        sortOrder: 3,
+        lastEditedAt: now,
+        dataJson: JSON.stringify(bankingDetails)
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify(bankingDetails)
       }
     });
 
@@ -2414,12 +2558,13 @@ export const submitAgentApplication = async (
     const missingSections = [
       SECTION_KEYS.businessSnapshot,
       SECTION_KEYS.contactsTransactors,
-      SECTION_KEYS.bankingDetails
+      SECTION_KEYS.bankingDetails,
+      SECTION_KEYS.operations
     ].filter((sectionKey) => sectionStatusByKey.get(sectionKey) !== "completed");
 
     if (missingSections.length > 0) {
       throw new Error(
-        "Complete the business, directors, and outlets sections before submitting."
+        "Complete the business, directors, banking, and operations sections before submitting."
       );
     }
 
@@ -2846,10 +2991,105 @@ export const savePayerContacts = async (
 
 export const savePayerSettlement = async (
   applicationId: string,
-  payload: PayerSettlementPayload,
+  payload: PayerSettlementStepPayload,
   actor: ApplicationActor
 ): Promise<ApplicationDetailResponse> => {
   const settlementDetails = normalizePayerSettlement(payload);
+  const now = new Date();
+
+  const response = await prisma.$transaction(async (transaction) => {
+    const application = await transaction.application.findUnique({
+      where: {
+        id: applicationId
+      },
+      include: {
+        organization: true
+      }
+    });
+
+    if (!application) {
+      throw new Error("Application not found.");
+    }
+
+    assertApplicantOwnsApplication(actor, application);
+    assertApplicationEditable(application.status);
+
+    if (application.applicationType !== APPLICATION_TYPES.payer) {
+      throw new Error("The requested application is not a payer application.");
+    }
+
+    await ensureDefaultSections(transaction, applicationId, APPLICATION_TYPES.payer);
+
+    const primaryBankAccount = await transaction.bankAccount.findFirst({
+      where: {
+        applicationId,
+        isPrimary: true
+      }
+    });
+
+    if (!primaryBankAccount) {
+      throw new Error("Save banking details before completing settlement configuration.");
+    }
+
+    await transaction.application.update({
+      where: {
+        id: applicationId
+      },
+      data: {
+        currentStep: SECTION_KEYS.supportingDocuments
+      }
+    });
+
+    await transaction.applicationSection.upsert({
+      where: {
+        applicationId_sectionKey: {
+          applicationId,
+          sectionKey: SECTION_KEYS.operations
+        }
+      },
+      create: {
+        applicationId,
+        sectionKey: SECTION_KEYS.operations,
+        title: "Settlement Configuration",
+        status: "completed",
+        sortOrder: 4,
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          settlementMethod: settlementDetails.settlementMethod,
+          reconciliationEmail: settlementDetails.reconciliationEmail,
+          integrationNotes: settlementDetails.integrationNotes
+        })
+      },
+      update: {
+        status: "completed",
+        lastEditedAt: now,
+        dataJson: JSON.stringify({
+          settlementMethod: settlementDetails.settlementMethod,
+          reconciliationEmail: settlementDetails.reconciliationEmail,
+          integrationNotes: settlementDetails.integrationNotes
+        })
+      }
+    });
+
+    const detailedApplication = await transaction.application.findUniqueOrThrow({
+      where: {
+        id: applicationId
+      },
+      include: applicationDetailInclude
+    });
+
+    return await mapApplicationDetail(detailedApplication, actor.role);
+  }, TRANSACTION_OPTIONS);
+
+  return response;
+};
+
+export const savePayerBanking = async (
+  applicationId: string,
+  payload: PayerBankingPayload,
+  actor: ApplicationActor
+): Promise<ApplicationDetailResponse> => {
+  const bankingDetails = normalizeBanking(payload);
   const now = new Date();
 
   const response = await prisma.$transaction(async (transaction) => {
@@ -2884,13 +3124,13 @@ export const savePayerSettlement = async (
     await transaction.bankAccount.create({
       data: {
         applicationId,
-        accountName: settlementDetails.accountName,
-        bankName: settlementDetails.bankName,
-        branchName: settlementDetails.branchName || null,
-        branchCode: settlementDetails.branchCode || null,
-        accountNumber: settlementDetails.accountNumber,
-        accountType: settlementDetails.accountType || null,
-        currency: settlementDetails.currency || "USD",
+        accountName: bankingDetails.accountName,
+        bankName: bankingDetails.bankName,
+        branchName: bankingDetails.branchName || null,
+        branchCode: bankingDetails.branchCode || null,
+        accountNumber: bankingDetails.accountNumber,
+        accountType: bankingDetails.accountType || null,
+        currency: bankingDetails.currency || "USD",
         isPrimary: true
       }
     });
@@ -2900,7 +3140,7 @@ export const savePayerSettlement = async (
         id: applicationId
       },
       data: {
-        currentStep: SECTION_KEYS.supportingDocuments
+        currentStep: SECTION_KEYS.operations
       }
     });
 
@@ -2914,24 +3154,16 @@ export const savePayerSettlement = async (
       create: {
         applicationId,
         sectionKey: SECTION_KEYS.bankingDetails,
-        title: "Settlement & Banking",
+        title: "Banking Details",
         status: "completed",
         sortOrder: 3,
         lastEditedAt: now,
-        dataJson: JSON.stringify({
-          settlementMethod: settlementDetails.settlementMethod,
-          reconciliationEmail: settlementDetails.reconciliationEmail,
-          integrationNotes: settlementDetails.integrationNotes
-        })
+        dataJson: JSON.stringify(bankingDetails)
       },
       update: {
         status: "completed",
         lastEditedAt: now,
-        dataJson: JSON.stringify({
-          settlementMethod: settlementDetails.settlementMethod,
-          reconciliationEmail: settlementDetails.reconciliationEmail,
-          integrationNotes: settlementDetails.integrationNotes
-        })
+        dataJson: JSON.stringify(bankingDetails)
       }
     });
 
@@ -3006,12 +3238,13 @@ export const submitPayerApplication = async (
     const missingSections = [
       SECTION_KEYS.businessSnapshot,
       SECTION_KEYS.contactsTransactors,
-      SECTION_KEYS.bankingDetails
+      SECTION_KEYS.bankingDetails,
+      SECTION_KEYS.operations
     ].filter((sectionKey) => sectionStatusByKey.get(sectionKey) !== "completed");
 
     if (missingSections.length > 0) {
       throw new Error(
-        "Complete the business, billing contacts, and settlement sections before submitting."
+        "Complete the business, billing contacts, banking, and settlement sections before submitting."
       );
     }
 
@@ -3298,4 +3531,41 @@ export const replaceApplicationDocuments = async (
   }
 
   return detailedApplication;
+};
+
+export const getApplicationDocumentDownload = async (
+  documentId: string,
+  actor: ApplicationActor
+): Promise<{
+  absolutePath: string;
+  mimeType: string;
+  originalFileName: string;
+}> => {
+  const document = await prisma.document.findUnique({
+    where: {
+      id: documentId
+    },
+    include: {
+      application: {
+        include: {
+          organization: true
+        }
+      }
+    }
+  });
+
+  if (!document) {
+    throw new Error("Document not found.");
+  }
+
+  assertApplicantOwnsApplication(actor, document.application);
+
+  const absolutePath = resolveStoredFilePath(document.storagePath);
+  await ensureStoredFileExists(absolutePath);
+
+  return {
+    absolutePath,
+    mimeType: document.mimeType || "application/octet-stream",
+    originalFileName: document.originalFileName
+  };
 };

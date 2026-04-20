@@ -1,35 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PortalShell from "../components/PortalShell";
 import WizardLayout from "../components/WizardLayout";
 import { APPLICANT_NAV_GROUPS } from "../constants/navigation";
-import BusinessInfoStep, { BusinessInfoFormState } from "../components/steps/BusinessInfoStep";
+import BusinessInfoStep, {
+  BusinessInfoFormState
+} from "../components/steps/BusinessInfoStep";
 import PeopleContactsStep, {
   PeopleContactsFormState,
   ContactPerson,
   Transactor
 } from "../components/steps/PeopleContactsStep";
-import BankingDetailsStep, { BankingDetailsFormState } from "../components/steps/BankingDetailsStep";
-import OperationsStep, { OperationsFormState, Outlet } from "../components/steps/OperationsStep";
-import DocumentsStep, { DocumentRequirement } from "../components/steps/DocumentsStep";
-import ReviewSubmitStep, { DeclarationFormState } from "../components/steps/ReviewSubmitStep";
+import BankingDetailsStep, {
+  BankingDetailsFormState
+} from "../components/steps/BankingDetailsStep";
+import OperationsStep, {
+  OperationsFormState,
+  Outlet
+} from "../components/steps/OperationsStep";
+import DocumentsStep, {
+  DocumentRequirement
+} from "../components/steps/DocumentsStep";
+import ReviewSubmitStep, {
+  DeclarationFormState
+} from "../components/steps/ReviewSubmitStep";
 import {
-  getActiveApplication,
   ApplicationDetailResponse,
+  getActiveApplicationByType,
   getDocumentRequirements,
-  saveMerchantDraft,
-  saveMerchantContacts,
-  saveMerchantBanking,
-  saveAgentDraft,
+  saveAgentBanking,
   saveAgentContacts,
+  saveAgentDraft,
   saveAgentOperations,
-  savePayerDraft,
+  saveMerchantBanking,
+  saveMerchantContacts,
+  saveMerchantDraft,
+  savePayerBanking,
   savePayerContacts,
+  savePayerDraft,
   savePayerSettlement,
-  uploadApplicationDocuments,
-  submitMerchantApplication,
   submitAgentApplication,
-  submitPayerApplication
+  submitMerchantApplication,
+  submitPayerApplication,
+  uploadApplicationDocuments
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
@@ -54,11 +67,181 @@ interface StepError {
   fieldErrors?: FieldError[];
 }
 
+const EMPTY_PRIMARY_CONTACT: ContactPerson = {
+  fullName: "",
+  email: "",
+  phoneNumber: "",
+  designation: "",
+  residentialAddress: ""
+};
+
+const EMPTY_PERSON: Transactor = {
+  fullName: "",
+  email: "",
+  phoneNumber: "",
+  designation: "",
+  residentialAddress: "",
+  nationalIdNumber: ""
+};
+
+const EMPTY_SIGNATORY: Transactor = {
+  ...EMPTY_PERSON,
+  isPrimarySignatory: true
+};
+
+const EMPTY_OUTLET: Outlet = {
+  name: "",
+  location: "",
+  contactPerson: "",
+  phoneNumber: "",
+  email: ""
+};
+
+const createEmptyBusinessInfo = (): BusinessInfoFormState => ({
+  legalName: "",
+  tradingName: "",
+  contactPerson: "",
+  businessEmail: "",
+  businessPhone: "",
+  businessAddress: "",
+  projectedTransactions: "",
+  yearsInOperation: "",
+  productsDescription: "",
+  serviceCoverage: "",
+  registrationNumber: "",
+  taxNumber: ""
+});
+
+const createEmptyPeopleContacts = (): PeopleContactsFormState => ({
+  primaryContact: { ...EMPTY_PRIMARY_CONTACT },
+  authorizedTransactors: [{ ...EMPTY_PERSON }],
+  signatories: [{ ...EMPTY_SIGNATORY }],
+  directors: [{ ...EMPTY_PERSON }]
+});
+
+const createEmptyBankingDetails = (): BankingDetailsFormState => ({
+  accountName: "",
+  bankName: "",
+  branchName: "",
+  branchCode: "",
+  accountNumber: "",
+  accountType: "Current",
+  currency: "USD"
+});
+
+const createEmptyOperations = (): OperationsFormState => ({
+  outlets: [{ ...EMPTY_OUTLET }],
+  complianceContact: "",
+  operationalDetails: "",
+  settlementMethod: "",
+  reconciliationEmail: "",
+  integrationNotes: ""
+});
+
+const createEmptyDeclarations = (): DeclarationFormState => ({
+  signerName: "",
+  signerTitle: "",
+  acceptedTerms: false,
+  certifiedInformation: false,
+  authorizedToAct: false
+});
+
+const getStepOrder = (applicationType: ApplicationType): string[] =>
+  applicationType === "merchant"
+    ? [
+        "business-info",
+        "people-contacts",
+        "banking",
+        "documents",
+        "review-submit"
+      ]
+    : [
+        "business-info",
+        "people-contacts",
+        "banking",
+        "operations",
+        "documents",
+        "review-submit"
+      ];
+
+const getStepIdForSection = (
+  sectionKey: string | null,
+  applicationType: ApplicationType
+): string | null => {
+  switch (sectionKey) {
+    case "business_snapshot":
+      return "business-info";
+    case "contacts_transactors":
+      return "people-contacts";
+    case "banking_details":
+      return "banking";
+    case "operations_configuration":
+      return applicationType === "merchant" ? "documents" : "operations";
+    case "supporting_documents":
+      return "documents";
+    case "declarations_review":
+      return "review-submit";
+    default:
+      return null;
+  }
+};
+
+const getStepIndexFromApplication = (
+  response: ApplicationDetailResponse,
+  applicationType: ApplicationType
+): number => {
+  const stepOrder = getStepOrder(applicationType);
+  const currentStepId = getStepIdForSection(
+    response.currentStep,
+    applicationType
+  );
+
+  if (currentStepId) {
+    const currentIndex = stepOrder.indexOf(currentStepId);
+
+    if (currentIndex >= 0) {
+      return currentIndex;
+    }
+  }
+
+  const firstIncomplete = response.sections.find(
+    (section) => section.status !== "completed"
+  );
+  const fallbackStepId = getStepIdForSection(
+    firstIncomplete?.key || null,
+    applicationType
+  );
+
+  if (fallbackStepId) {
+    const fallbackIndex = stepOrder.indexOf(fallbackStepId);
+
+    if (fallbackIndex >= 0) {
+      return fallbackIndex;
+    }
+  }
+
+  return 0;
+};
+
+const mapDocumentRequirements = (
+  response: Awaited<ReturnType<typeof getDocumentRequirements>>
+): DocumentRequirement[] =>
+  response.requirements.map((requirement) => ({
+    id: requirement.code,
+    name: requirement.label,
+    description: requirement.description || "",
+    requirementCode: requirement.code,
+    isMandatory: requirement.isRequired,
+    acceptedFormats: requirement.allowedExtensions
+  }));
+
 function OnboardingWizardPage(): JSX.Element {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const [application, setApplication] = useState<ApplicationDetailResponse | null>(null);
+  const [application, setApplication] = useState<ApplicationDetailResponse | null>(
+    null
+  );
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -66,98 +249,32 @@ function OnboardingWizardPage(): JSX.Element {
   const [message, setMessage] = useState("");
   const [stepErrors, setStepErrors] = useState<Record<string, StepError>>({});
   const [selectedFiles, setSelectedFiles] = useState<Record<string, File[]>>({});
-
-  // Form state
-  const [businessInfo, setBusinessInfo] = useState<BusinessInfoFormState>({
-    legalName: "",
-    tradingName: "",
-    contactPerson: "",
-    businessEmail: "",
-    businessPhone: "",
-    businessAddress: ""
-  });
-
-  const [peopleContacts, setPeopleContacts] = useState<PeopleContactsFormState>({
-    primaryContact: {
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      designation: "",
-      residentialAddress: ""
-    },
-    authorizedTransactors: [
-      {
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        designation: "",
-        residentialAddress: "",
-        nationalIdNumber: ""
-      }
-    ],
-    signatories: [
-      {
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        designation: "",
-        residentialAddress: "",
-        nationalIdNumber: "",
-        isPrimarySignatory: true
-      }
-    ],
-    directors: [
-      {
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        designation: "",
-        residentialAddress: "",
-        nationalIdNumber: ""
-      }
-    ]
-  });
-
-  const [bankingDetails, setBankingDetails] = useState<BankingDetailsFormState>({
-    accountName: "",
-    bankName: "",
-    branchName: "",
-    branchCode: "",
-    accountNumber: "",
-    accountType: "Current",
-    currency: "USD"
-  });
-
-  const [operations, setOperations] = useState<OperationsFormState>({
-    outlets: [
-      {
-        name: "",
-        location: "",
-        contactPerson: "",
-        phoneNumber: "",
-        email: ""
-      }
-    ],
-    description: "",
-    complianceContact: "",
-    operationalDetails: ""
-  });
-
-  const [declarations, setDeclarations] = useState<DeclarationFormState>({
-    signerName: "",
-    signerTitle: "",
-    acceptedTerms: false,
-    certifiedInformation: false,
-    authorizedToAct: false
-  });
-
-  const [documentRequirements, setDocumentRequirements] = useState<DocumentRequirement[]>([]);
+  const [businessInfo, setBusinessInfo] = useState<BusinessInfoFormState>(
+    createEmptyBusinessInfo()
+  );
+  const [peopleContacts, setPeopleContacts] = useState<PeopleContactsFormState>(
+    createEmptyPeopleContacts()
+  );
+  const [bankingDetails, setBankingDetails] = useState<BankingDetailsFormState>(
+    createEmptyBankingDetails()
+  );
+  const [operations, setOperations] = useState<OperationsFormState>(
+    createEmptyOperations()
+  );
+  const [declarations, setDeclarations] = useState<DeclarationFormState>(
+    createEmptyDeclarations()
+  );
+  const [documentRequirements, setDocumentRequirements] = useState<
+    DocumentRequirement[]
+  >([]);
   const [entityTypes, setEntityTypes] = useState<string[]>([]);
   const [selectedEntityType, setSelectedEntityType] = useState("");
 
   const applicationType = (searchParams.get("type") || "merchant") as ApplicationType;
   const isAgent = applicationType === "agent";
   const isPayer = applicationType === "payer";
+  const hasOperationsStep = isAgent || isPayer;
+  const totalSections = hasOperationsStep ? 6 : 5;
 
   const applicationTypeLabel = {
     merchant: "Merchant Application",
@@ -165,53 +282,243 @@ function OnboardingWizardPage(): JSX.Element {
     payer: "Payer / Biller Application"
   }[applicationType];
 
-  // Load entity types and document requirements
+  const resetWizardState = (): void => {
+    setApplication(null);
+    setCurrentStepIndex(0);
+    setError("");
+    setMessage("");
+    setStepErrors({});
+    setSelectedFiles({});
+    setBusinessInfo(createEmptyBusinessInfo());
+    setPeopleContacts(createEmptyPeopleContacts());
+    setBankingDetails(createEmptyBankingDetails());
+    setOperations(createEmptyOperations());
+    setDeclarations(createEmptyDeclarations());
+    setDocumentRequirements([]);
+    setEntityTypes([]);
+    setSelectedEntityType("");
+  };
+
+  useEffect(() => {
+    resetWizardState();
+  }, [applicationType]);
+
   useEffect(() => {
     const loadRequirements = async (): Promise<void> => {
       try {
-        const response = await getDocumentRequirements(applicationType);
-        setEntityTypes(response.availableEntityTypes);
-        setSelectedEntityType(response.availableEntityTypes[0] || "");
-        setDocumentRequirements(
-          response.requirements.map((req) => ({
-            id: req.code,
-            name: req.label,
-            description: req.description || "",
-            requirementCode: req.code,
-            isMandatory: req.isRequired,
-            acceptedFormats: req.allowedExtensions
-          }))
+        const response = await getDocumentRequirements(
+          applicationType,
+          selectedEntityType || undefined
         );
-      } catch (err) {
-        console.error("Failed to load requirements", err);
+
+        setEntityTypes(response.availableEntityTypes);
+
+        if (!selectedEntityType && response.availableEntityTypes[0]) {
+          setSelectedEntityType(response.availableEntityTypes[0]);
+        }
+
+        setDocumentRequirements(mapDocumentRequirements(response));
+      } catch (loadError) {
+        console.error("Failed to load requirements", loadError);
       }
     };
 
     void loadRequirements();
-  }, [applicationType]);
+  }, [applicationType, selectedEntityType]);
 
-  // Load active application on mount
   useEffect(() => {
     const loadApplication = async (): Promise<void> => {
       setIsLoading(true);
+
       try {
-        const response = await getActiveApplication();
-        if (response && response.applicationType === applicationType) {
-          setApplication(response);
-          // Pre-populate form with existing data
-          if (response.businessSnapshot) {
-            setBusinessInfo({
-              legalName: response.businessSnapshot.legalName || "",
-              tradingName: response.businessSnapshot.tradingName || "",
-              contactPerson: response.businessSnapshot.contactPerson || "",
-              businessEmail: response.businessSnapshot.businessEmail || "",
-              businessPhone: response.businessSnapshot.businessPhone || "",
-              businessAddress: response.businessSnapshot.businessAddress || ""
+        const response = await getActiveApplicationByType(applicationType);
+
+        if (!response) {
+          return;
+        }
+
+        setApplication(response);
+
+        const entityType =
+          response.businessSnapshot?.entityType || response.organization.entityType || "";
+
+        if (entityType) {
+          setSelectedEntityType(entityType);
+        }
+
+        if (response.businessSnapshot) {
+          setBusinessInfo({
+            legalName: response.businessSnapshot.legalName || "",
+            tradingName: response.businessSnapshot.tradingName || "",
+            contactPerson: response.businessSnapshot.contactPerson || "",
+            businessEmail: response.businessSnapshot.businessEmail || "",
+            businessPhone: response.businessSnapshot.businessPhone || "",
+            businessAddress: response.businessSnapshot.businessAddress || "",
+            projectedTransactions:
+              response.businessSnapshot.projectedTransactions || "",
+            yearsInOperation: response.businessSnapshot.yearsInOperation || "",
+            productsDescription:
+              response.businessSnapshot.productsDescription || "",
+            serviceCoverage: response.businessSnapshot.serviceCoverage || "",
+            registrationNumber:
+              response.businessSnapshot.registrationNumber || "",
+            taxNumber: response.businessSnapshot.taxNumber || ""
+          });
+        }
+
+        if (applicationType === "merchant" && response.merchantContacts) {
+          setPeopleContacts({
+            primaryContact: {
+              ...EMPTY_PRIMARY_CONTACT,
+              ...response.merchantContacts.primaryContact
+            },
+            authorizedTransactors:
+              response.merchantContacts.authorizedTransactors.length > 0
+                ? response.merchantContacts.authorizedTransactors.map((person) => ({
+                    ...EMPTY_PERSON,
+                    ...person
+                  }))
+                : [{ ...EMPTY_PERSON }],
+            signatories:
+              response.merchantContacts.signatories.length > 0
+                ? response.merchantContacts.signatories.map((person) => ({
+                    ...EMPTY_SIGNATORY,
+                    ...person
+                  }))
+                : [{ ...EMPTY_SIGNATORY }],
+            directors: [{ ...EMPTY_PERSON }]
+          });
+        }
+
+        if (applicationType === "agent") {
+          if (response.agentContacts) {
+            setPeopleContacts({
+              primaryContact: {
+                ...EMPTY_PRIMARY_CONTACT,
+                ...response.agentContacts.primaryContact
+              },
+              authorizedTransactors:
+                response.agentContacts.authorizedTransactors.length > 0
+                  ? response.agentContacts.authorizedTransactors.map((person) => ({
+                      ...EMPTY_PERSON,
+                      ...person
+                    }))
+                  : [{ ...EMPTY_PERSON }],
+              signatories: [{ ...EMPTY_SIGNATORY }],
+              directors:
+                response.agentContacts.directors.length > 0
+                  ? response.agentContacts.directors.map((person) => ({
+                      ...EMPTY_PERSON,
+                      ...person
+                    }))
+                  : [{ ...EMPTY_PERSON }]
+            });
+          }
+
+          if (response.agentOperations) {
+            setBankingDetails({
+              accountName: response.agentOperations.accountName || "",
+              bankName: response.agentOperations.bankName || "",
+              branchName: response.agentOperations.branchName || "",
+              branchCode: response.agentOperations.branchCode || "",
+              accountNumber: response.agentOperations.accountNumber || "",
+              accountType: response.agentOperations.accountType || "Current",
+              currency: response.agentOperations.currency || "USD"
+            });
+
+            setOperations({
+              outlets:
+                response.agentOperations.outlets.length > 0
+                  ? response.agentOperations.outlets.map((outlet) => ({
+                      name: outlet.name || "",
+                      location:
+                        outlet.location || outlet.addressLine1 || "",
+                      contactPerson: outlet.contactPerson || "",
+                      phoneNumber: outlet.phoneNumber || "",
+                      email: outlet.email || ""
+                    }))
+                  : [{ ...EMPTY_OUTLET }],
+              complianceContact:
+                response.agentOperations.complianceContact || "",
+              operationalDetails:
+                response.agentOperations.operationalDetails || "",
+              settlementMethod: "",
+              reconciliationEmail: "",
+              integrationNotes: ""
             });
           }
         }
-      } catch (err) {
-        console.error("Failed to load application", err);
+
+        if (applicationType === "payer") {
+          if (response.payerContacts) {
+            setPeopleContacts({
+              primaryContact: {
+                ...EMPTY_PRIMARY_CONTACT,
+                ...response.payerContacts.primaryContact
+              },
+              authorizedTransactors:
+                response.payerContacts.operationsContacts.length > 0
+                  ? response.payerContacts.operationsContacts.map((person) => ({
+                      ...EMPTY_PERSON,
+                      ...person
+                    }))
+                  : [{ ...EMPTY_PERSON }],
+              signatories:
+                response.payerContacts.signatories.length > 0
+                  ? response.payerContacts.signatories.map((person) => ({
+                      ...EMPTY_SIGNATORY,
+                      ...person
+                    }))
+                  : [{ ...EMPTY_SIGNATORY }],
+              directors: [{ ...EMPTY_PERSON }]
+            });
+          }
+
+          if (response.payerSettlement) {
+            setBankingDetails({
+              accountName: response.payerSettlement.accountName || "",
+              bankName: response.payerSettlement.bankName || "",
+              branchName: response.payerSettlement.branchName || "",
+              branchCode: response.payerSettlement.branchCode || "",
+              accountNumber: response.payerSettlement.accountNumber || "",
+              accountType: response.payerSettlement.accountType || "Current",
+              currency: response.payerSettlement.currency || "USD"
+            });
+
+            setOperations({
+              outlets: [{ ...EMPTY_OUTLET }],
+              complianceContact: "",
+              operationalDetails: "",
+              settlementMethod:
+                response.payerSettlement.settlementMethod || "",
+              reconciliationEmail:
+                response.payerSettlement.reconciliationEmail || "",
+              integrationNotes:
+                response.payerSettlement.integrationNotes || ""
+            });
+          }
+        }
+
+        const declarationState =
+          (applicationType === "merchant"
+            ? response.merchantDeclaration
+            : applicationType === "agent"
+              ? response.agentDeclaration
+              : response.payerDeclaration) || null;
+
+        if (declarationState) {
+          setDeclarations({
+            signerName: declarationState.signerName || "",
+            signerTitle: declarationState.signerTitle || "",
+            acceptedTerms: Boolean(declarationState.acceptedTerms),
+            certifiedInformation: Boolean(declarationState.certifiedInformation),
+            authorizedToAct: Boolean(declarationState.authorizedToAct)
+          });
+        }
+
+        setCurrentStepIndex(getStepIndexFromApplication(response, applicationType));
+      } catch (loadError) {
+        console.error("Failed to load application", loadError);
       } finally {
         setIsLoading(false);
       }
@@ -219,76 +526,163 @@ function OnboardingWizardPage(): JSX.Element {
 
     if (user) {
       void loadApplication();
+    } else {
+      setIsLoading(false);
     }
-  }, [user, applicationType]);
+  }, [applicationType, user]);
 
-  // API Save Handlers
+  const uploadedDocumentsByRequirement = useMemo(() => {
+    if (!application) {
+      return {};
+    }
+
+    return application.uploadedDocuments.reduce<
+      Record<
+        string,
+        Array<{
+          id: string;
+          requirementCode: string;
+          fileName: string;
+          uploadedAt: string;
+          status: "pending" | "accepted" | "rejected";
+          reviewerComment?: string;
+        }>
+      >
+    >((accumulator, document) => {
+      if (!document.requirementCode) {
+        return accumulator;
+      }
+
+      const bucket = accumulator[document.requirementCode] || [];
+      bucket.push({
+        id: document.id,
+        requirementCode: document.requirementCode,
+        fileName: document.originalFileName,
+        uploadedAt: document.uploadedAt,
+        status:
+          document.status === "accepted" || document.status === "rejected"
+            ? document.status
+            : "pending",
+        reviewerComment: document.reviewNotes || undefined
+      });
+      accumulator[document.requirementCode] = bucket;
+      return accumulator;
+    }, {});
+  }, [application]);
+
   const saveBusinessInfoStep = async (): Promise<void> => {
     setError("");
-    setStepErrors((prev) => ({ ...prev, "business-info": { stepId: "business-info", message: "" } }));
+    setStepErrors((prev) => ({
+      ...prev,
+      "business-info": { stepId: "business-info", message: "" }
+    }));
 
-    // Validation
-    if (!businessInfo.legalName || !businessInfo.businessEmail || !businessInfo.businessPhone) {
-      const fieldErrs: FieldError[] = [];
-      if (!businessInfo.legalName) fieldErrs.push({ field: "legalName", message: "Legal name is required" });
-      if (!businessInfo.businessEmail) fieldErrs.push({ field: "businessEmail", message: "Email is required" });
-      if (!businessInfo.businessPhone) fieldErrs.push({ field: "businessPhone", message: "Phone is required" });
+    if (
+      !selectedEntityType ||
+      !businessInfo.legalName ||
+      !businessInfo.businessEmail ||
+      !businessInfo.businessPhone
+    ) {
+      const fieldErrors: FieldError[] = [];
+
+      if (!selectedEntityType) {
+        fieldErrors.push({
+          field: "entityType",
+          message: "Business category is required"
+        });
+      }
+      if (!businessInfo.legalName) {
+        fieldErrors.push({
+          field: "legalName",
+          message: "Legal name is required"
+        });
+      }
+      if (!businessInfo.businessEmail) {
+        fieldErrors.push({
+          field: "businessEmail",
+          message: "Email is required"
+        });
+      }
+      if (!businessInfo.businessPhone) {
+        fieldErrors.push({
+          field: "businessPhone",
+          message: "Phone is required"
+        });
+      }
 
       setStepErrors((prev) => ({
         ...prev,
-        "business-info": { stepId: "business-info", message: "Please fill all required fields", fieldErrors: fieldErrs }
+        "business-info": {
+          stepId: "business-info",
+          message: "Please complete the required business details.",
+          fieldErrors
+        }
       }));
       return;
     }
 
     setIsSaving(true);
+
     try {
-      const appId = application?.applicationId;
+      const applicationId = application?.applicationId;
       let response: ApplicationDetailResponse;
 
       if (applicationType === "merchant") {
         response = await saveMerchantDraft({
-          applicationId: appId,
-          entityType: selectedEntityType || "merchant",
+          applicationId,
+          entityType: selectedEntityType,
           legalName: businessInfo.legalName,
           tradingName: businessInfo.tradingName,
           contactPerson: businessInfo.contactPerson,
           businessEmail: businessInfo.businessEmail,
           businessPhone: businessInfo.businessPhone,
           businessAddress: businessInfo.businessAddress,
-          productsDescription: businessInfo.productsDescription || ""
+          projectedTransactions: businessInfo.projectedTransactions || "",
+          productsDescription: businessInfo.productsDescription || "",
+          registrationNumber: businessInfo.registrationNumber || "",
+          taxNumber: businessInfo.taxNumber || ""
         });
       } else if (applicationType === "agent") {
         response = await saveAgentDraft({
-          applicationId: appId,
-          entityType: selectedEntityType || "agent",
+          applicationId,
+          entityType: selectedEntityType,
           legalName: businessInfo.legalName,
           tradingName: businessInfo.tradingName,
           contactPerson: businessInfo.contactPerson,
           businessEmail: businessInfo.businessEmail,
           businessPhone: businessInfo.businessPhone,
           businessAddress: businessInfo.businessAddress,
-          yearsInOperation: businessInfo.yearsInOperation || ""
+          yearsInOperation: businessInfo.yearsInOperation || "",
+          serviceCoverage: businessInfo.serviceCoverage || "",
+          registrationNumber: businessInfo.registrationNumber || "",
+          taxNumber: businessInfo.taxNumber || "",
+          productsDescription: businessInfo.productsDescription || ""
         });
       } else {
         response = await savePayerDraft({
-          applicationId: appId,
-          entityType: selectedEntityType || "payer",
+          applicationId,
+          entityType: selectedEntityType,
           legalName: businessInfo.legalName,
           tradingName: businessInfo.tradingName,
           contactPerson: businessInfo.contactPerson,
           businessEmail: businessInfo.businessEmail,
           businessPhone: businessInfo.businessPhone,
-          businessAddress: businessInfo.businessAddress
+          businessAddress: businessInfo.businessAddress,
+          registrationNumber: businessInfo.registrationNumber || "",
+          taxNumber: businessInfo.taxNumber || "",
+          productsDescription: businessInfo.productsDescription || ""
         });
       }
 
       setApplication(response);
-      setMessage("Business information saved successfully");
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to save business information";
-      setError(errMsg);
-      throw new Error(errMsg);
+      setMessage("Business information saved successfully.");
+    } catch (saveError) {
+      const saveMessage =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to save business information.";
+      setError(saveMessage);
+      throw new Error(saveMessage);
     } finally {
       setIsSaving(false);
     }
@@ -296,32 +690,37 @@ function OnboardingWizardPage(): JSX.Element {
 
   const savePeopleContactsStep = async (): Promise<void> => {
     setError("");
-    setStepErrors((prev) => ({ ...prev, "people-contacts": { stepId: "people-contacts", message: "" } }));
+    setStepErrors((prev) => ({
+      ...prev,
+      "people-contacts": { stepId: "people-contacts", message: "" }
+    }));
 
-    const appId = application?.applicationId;
-    if (!appId) {
-      setError("Save business information first");
+    const applicationId = application?.applicationId;
+
+    if (!applicationId) {
+      setError("Save business information first.");
       return;
     }
 
     setIsSaving(true);
+
     try {
       let response: ApplicationDetailResponse;
 
       if (applicationType === "merchant") {
-        response = await saveMerchantContacts(appId, {
+        response = await saveMerchantContacts(applicationId, {
           primaryContact: peopleContacts.primaryContact,
           authorizedTransactors: peopleContacts.authorizedTransactors,
           signatories: peopleContacts.signatories || []
         });
       } else if (applicationType === "agent") {
-        response = await saveAgentContacts(appId, {
+        response = await saveAgentContacts(applicationId, {
           primaryContact: peopleContacts.primaryContact,
           authorizedTransactors: peopleContacts.authorizedTransactors,
           directors: peopleContacts.directors || []
         });
       } else {
-        response = await savePayerContacts(appId, {
+        response = await savePayerContacts(applicationId, {
           primaryContact: peopleContacts.primaryContact,
           operationsContacts: peopleContacts.authorizedTransactors,
           signatories: peopleContacts.signatories || []
@@ -329,11 +728,14 @@ function OnboardingWizardPage(): JSX.Element {
       }
 
       setApplication(response);
-      setMessage("People and contacts saved successfully");
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to save contacts";
-      setError(errMsg);
-      throw new Error(errMsg);
+      setMessage("People and contact details saved successfully.");
+    } catch (saveError) {
+      const saveMessage =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to save people and contact details.";
+      setError(saveMessage);
+      throw new Error(saveMessage);
     } finally {
       setIsSaving(false);
     }
@@ -341,46 +743,106 @@ function OnboardingWizardPage(): JSX.Element {
 
   const saveBankingStep = async (): Promise<void> => {
     setError("");
-    setStepErrors((prev) => ({ ...prev, "banking": { stepId: "banking", message: "" } }));
+    setStepErrors((prev) => ({
+      ...prev,
+      banking: { stepId: "banking", message: "" }
+    }));
 
     if (!bankingDetails.accountNumber || !bankingDetails.bankName) {
-      setError("Please fill all required banking fields");
+      setError("Please complete the required banking fields.");
       return;
     }
 
-    const appId = application?.applicationId;
-    if (!appId) {
-      setError("Save business information first");
+    const applicationId = application?.applicationId;
+
+    if (!applicationId) {
+      setError("Save business information first.");
       return;
     }
 
     setIsSaving(true);
+
     try {
       let response: ApplicationDetailResponse;
 
       if (applicationType === "merchant") {
-        response = await saveMerchantBanking(appId, bankingDetails);
+        response = await saveMerchantBanking(applicationId, bankingDetails);
       } else if (applicationType === "agent") {
-        response = await saveAgentOperations(appId, {
-          accountName: bankingDetails.accountName,
-          bankName: bankingDetails.bankName,
-          branchName: bankingDetails.branchName,
-          branchCode: bankingDetails.branchCode,
-          accountNumber: bankingDetails.accountNumber,
-          accountType: bankingDetails.accountType,
-          currency: bankingDetails.currency,
-          outlets: operations.outlets || []
-        });
+        response = await saveAgentBanking(applicationId, bankingDetails);
       } else {
-        response = await savePayerSettlement(appId, bankingDetails);
+        response = await savePayerBanking(applicationId, bankingDetails);
       }
 
       setApplication(response);
-      setMessage("Banking details saved successfully");
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to save banking details";
-      setError(errMsg);
-      throw new Error(errMsg);
+      setMessage("Banking details saved successfully.");
+    } catch (saveError) {
+      const saveMessage =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to save banking details.";
+      setError(saveMessage);
+      throw new Error(saveMessage);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const saveOperationsStep = async (): Promise<void> => {
+    if (!hasOperationsStep) {
+      return;
+    }
+
+    setError("");
+    setStepErrors((prev) => ({
+      ...prev,
+      operations: { stepId: "operations", message: "" }
+    }));
+
+    const applicationId = application?.applicationId;
+
+    if (!applicationId) {
+      setError("Save business information first.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      let response: ApplicationDetailResponse;
+
+      if (applicationType === "agent") {
+        response = await saveAgentOperations(applicationId, {
+          outlets: (operations.outlets || []).map((outlet) => ({
+            name: outlet.name,
+            location: outlet.location,
+            contactPerson: outlet.contactPerson,
+            phoneNumber: outlet.phoneNumber,
+            email: outlet.email
+          })),
+          complianceContact: operations.complianceContact || "",
+          operationalDetails: operations.operationalDetails || ""
+        });
+      } else {
+        response = await savePayerSettlement(applicationId, {
+          settlementMethod: operations.settlementMethod || "",
+          reconciliationEmail: operations.reconciliationEmail || "",
+          integrationNotes: operations.integrationNotes || ""
+        });
+      }
+
+      setApplication(response);
+      setMessage(
+        applicationType === "agent"
+          ? "Operations details saved successfully."
+          : "Settlement configuration saved successfully."
+      );
+    } catch (saveError) {
+      const saveMessage =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to save operations details.";
+      setError(saveMessage);
+      throw new Error(saveMessage);
     } finally {
       setIsSaving(false);
     }
@@ -388,37 +850,52 @@ function OnboardingWizardPage(): JSX.Element {
 
   const saveDocumentsStep = async (): Promise<void> => {
     setError("");
-    setStepErrors((prev) => ({ ...prev, "documents": { stepId: "documents", message: "" } }));
+    setStepErrors((prev) => ({
+      ...prev,
+      documents: { stepId: "documents", message: "" }
+    }));
 
-    const appId = application?.applicationId;
-    if (!appId) {
-      setError("Save all previous steps first");
+    const applicationId = application?.applicationId;
+
+    if (!applicationId) {
+      setError("Save the earlier steps first.");
       return;
     }
 
-    const filesToUpload = Object.entries(selectedFiles).filter(([, files]) => files.length > 0);
+    const filesToUpload = Object.entries(selectedFiles).filter(
+      ([, files]) => files.length > 0
+    );
+
     if (filesToUpload.length === 0) {
-      setMessage("No new documents to upload");
+      setMessage("No new documents selected for upload.");
       return;
     }
 
     setIsSaving(true);
+
     try {
-      let latestApp: ApplicationDetailResponse | null = null;
+      let latestApplication: ApplicationDetailResponse | null = null;
 
       for (const [requirementCode, files] of filesToUpload) {
-        latestApp = await uploadApplicationDocuments(appId, requirementCode, files);
+        latestApplication = await uploadApplicationDocuments(
+          applicationId,
+          requirementCode,
+          files
+        );
       }
 
-      if (latestApp) {
-        setApplication(latestApp);
+      if (latestApplication) {
+        setApplication(latestApplication);
         setSelectedFiles({});
-        setMessage(`${filesToUpload.length} document group(s) uploaded successfully`);
+        setMessage(`${filesToUpload.length} document group(s) uploaded successfully.`);
       }
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to upload documents";
-      setError(errMsg);
-      throw new Error(errMsg);
+    } catch (saveError) {
+      const saveMessage =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to upload supporting documents.";
+      setError(saveMessage);
+      throw new Error(saveMessage);
     } finally {
       setIsSaving(false);
     }
@@ -427,33 +904,195 @@ function OnboardingWizardPage(): JSX.Element {
   const submitApplication = async (): Promise<void> => {
     setError("");
 
-    const appId = application?.applicationId;
-    if (!appId) {
-      setError("Application not found");
+    const applicationId = application?.applicationId;
+
+    if (!applicationId) {
+      setError("Application not found.");
       return;
     }
 
     setIsSaving(true);
+
     try {
       let response: ApplicationDetailResponse;
 
       if (applicationType === "merchant") {
-        response = await submitMerchantApplication(appId, declarations);
+        response = await submitMerchantApplication(applicationId, declarations);
       } else if (applicationType === "agent") {
-        response = await submitAgentApplication(appId, declarations);
+        response = await submitAgentApplication(applicationId, declarations);
       } else {
-        response = await submitPayerApplication(appId, declarations);
+        response = await submitPayerApplication(applicationId, declarations);
       }
 
       setApplication(response);
-      setMessage("Application submitted successfully");
-      setTimeout(() => navigate("/applications/status"), 2000);
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to submit application";
-      setError(errMsg);
+      setMessage("Application submitted successfully.");
+      setTimeout(() => navigate("/applications/status"), 1200);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Failed to submit application."
+      );
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleBusinessInfoChange = (
+    field: keyof BusinessInfoFormState,
+    value: string
+  ): void => {
+    setBusinessInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePrimaryContactChange = (
+    field: keyof ContactPerson,
+    value: string
+  ): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      primaryContact: { ...prev.primaryContact, [field]: value }
+    }));
+  };
+
+  const handleTransactorChange = (
+    index: number,
+    field: keyof Transactor,
+    value: string
+  ): void => {
+    setPeopleContacts((prev) => {
+      const authorizedTransactors = [...prev.authorizedTransactors];
+      authorizedTransactors[index] = {
+        ...authorizedTransactors[index],
+        [field]: value
+      };
+      return { ...prev, authorizedTransactors };
+    });
+  };
+
+  const handleSignatoryChange = (
+    index: number,
+    field: keyof Transactor,
+    value: string | boolean
+  ): void => {
+    setPeopleContacts((prev) => {
+      const signatories = [...(prev.signatories || [{ ...EMPTY_SIGNATORY }])];
+      signatories[index] = { ...signatories[index], [field]: value };
+      return { ...prev, signatories };
+    });
+  };
+
+  const handleDirectorChange = (
+    index: number,
+    field: keyof Transactor,
+    value: string | boolean
+  ): void => {
+    setPeopleContacts((prev) => {
+      const directors = [...(prev.directors || [{ ...EMPTY_PERSON }])];
+      directors[index] = { ...directors[index], [field]: value };
+      return { ...prev, directors };
+    });
+  };
+
+  const handleAddTransactor = (): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      authorizedTransactors: [...prev.authorizedTransactors, { ...EMPTY_PERSON }]
+    }));
+  };
+
+  const handleAddSignatory = (): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      signatories: [...(prev.signatories || []), { ...EMPTY_SIGNATORY, isPrimarySignatory: false }]
+    }));
+  };
+
+  const handleAddDirector = (): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      directors: [...(prev.directors || []), { ...EMPTY_PERSON }]
+    }));
+  };
+
+  const handleRemoveTransactor = (index: number): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      authorizedTransactors:
+        prev.authorizedTransactors.length > 1
+          ? prev.authorizedTransactors.filter((_, itemIndex) => itemIndex !== index)
+          : [{ ...EMPTY_PERSON }]
+    }));
+  };
+
+  const handleRemoveSignatory = (index: number): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      signatories:
+        (prev.signatories || []).length > 1
+          ? (prev.signatories || []).filter((_, itemIndex) => itemIndex !== index)
+          : [{ ...EMPTY_SIGNATORY }]
+    }));
+  };
+
+  const handleRemoveDirector = (index: number): void => {
+    setPeopleContacts((prev) => ({
+      ...prev,
+      directors:
+        (prev.directors || []).length > 1
+          ? (prev.directors || []).filter((_, itemIndex) => itemIndex !== index)
+          : [{ ...EMPTY_PERSON }]
+    }));
+  };
+
+  const handleBankingDetailsChange = (
+    field: keyof BankingDetailsFormState,
+    value: string
+  ): void => {
+    setBankingDetails((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleOperationsChange = (
+    field: keyof OperationsFormState,
+    value: string
+  ): void => {
+    setOperations((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleOutletChange = (
+    index: number,
+    field: keyof Outlet,
+    value: string
+  ): void => {
+    setOperations((prev) => {
+      const outlets = [...(prev.outlets || [])];
+      outlets[index] = { ...outlets[index], [field]: value };
+      return { ...prev, outlets };
+    });
+  };
+
+  const handleAddOutlet = (): void => {
+    setOperations((prev) => ({
+      ...prev,
+      outlets: [...(prev.outlets || []), { ...EMPTY_OUTLET }]
+    }));
+  };
+
+  const handleRemoveOutlet = (index: number): void => {
+    setOperations((prev) => ({
+      ...prev,
+      outlets:
+        (prev.outlets || []).length > 1
+          ? (prev.outlets || []).filter((_, itemIndex) => itemIndex !== index)
+          : [{ ...EMPTY_OUTLET }]
+    }));
+  };
+
+  const handleDeclarationChange = (
+    field: keyof DeclarationFormState,
+    value: string | boolean
+  ): void => {
+    setDeclarations((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFileSelect = (requirementCode: string, files: FileList): void => {
@@ -466,95 +1105,10 @@ function OnboardingWizardPage(): JSX.Element {
   const handleFileRemove = (requirementCode: string, fileName: string): void => {
     setSelectedFiles((prev) => ({
       ...prev,
-      [requirementCode]: (prev[requirementCode] || []).filter((f) => f.name !== fileName)
+      [requirementCode]: (prev[requirementCode] || []).filter(
+        (file) => file.name !== fileName
+      )
     }));
-  };
-
-  // Field change handlers
-  const handleBusinessInfoChange = (field: keyof BusinessInfoFormState, value: string): void => {
-    setBusinessInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handlePrimaryContactChange = (field: keyof ContactPerson, value: string): void => {
-    setPeopleContacts((prev) => ({
-      ...prev,
-      primaryContact: { ...prev.primaryContact, [field]: value }
-    }));
-  };
-
-  const handleTransactorChange = (index: number, field: keyof Transactor, value: string): void => {
-    setPeopleContacts((prev) => {
-      const newTransactors = [...prev.authorizedTransactors];
-      newTransactors[index] = { ...newTransactors[index], [field]: value };
-      return { ...prev, authorizedTransactors: newTransactors };
-    });
-  };
-
-  const handleAddTransactor = (): void => {
-    setPeopleContacts((prev) => ({
-      ...prev,
-      authorizedTransactors: [
-        ...prev.authorizedTransactors,
-        {
-          fullName: "",
-          email: "",
-          phoneNumber: "",
-          designation: "",
-          residentialAddress: "",
-          nationalIdNumber: ""
-        }
-      ]
-    }));
-  };
-
-  const handleRemoveTransactor = (index: number): void => {
-    setPeopleContacts((prev) => ({
-      ...prev,
-      authorizedTransactors: prev.authorizedTransactors.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleBankingDetailsChange = (field: keyof BankingDetailsFormState, value: string): void => {
-    setBankingDetails((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleOperationsChange = (field: keyof OperationsFormState, value: string): void => {
-    setOperations((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleOutletChange = (index: number, field: keyof Outlet, value: string): void => {
-    setOperations((prev) => {
-      const newOutlets = [...(prev.outlets || [])];
-      newOutlets[index] = { ...newOutlets[index], [field]: value };
-      return { ...prev, outlets: newOutlets };
-    });
-  };
-
-  const handleAddOutlet = (): void => {
-    setOperations((prev) => ({
-      ...prev,
-      outlets: [
-        ...(prev.outlets || []),
-        {
-          name: "",
-          location: "",
-          contactPerson: "",
-          phoneNumber: "",
-          email: ""
-        }
-      ]
-    }));
-  };
-
-  const handleRemoveOutlet = (index: number): void => {
-    setOperations((prev) => ({
-      ...prev,
-      outlets: (prev.outlets || []).filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleDeclarationChange = (field: keyof DeclarationFormState, value: string | boolean): void => {
-    setDeclarations((prev) => ({ ...prev, [field]: value }));
   };
 
   const wizardSteps: WizardStep[] = [
@@ -580,11 +1134,12 @@ function OnboardingWizardPage(): JSX.Element {
         </div>
       ),
       isValid: Boolean(
-        businessInfo.legalName &&
-        businessInfo.tradingName &&
-        businessInfo.businessEmail &&
-        businessInfo.businessPhone &&
-        businessInfo.businessAddress
+        selectedEntityType &&
+          businessInfo.legalName &&
+          businessInfo.tradingName &&
+          businessInfo.businessEmail &&
+          businessInfo.businessPhone &&
+          businessInfo.businessAddress
       ),
       onSave: saveBusinessInfoStep
     },
@@ -604,6 +1159,12 @@ function OnboardingWizardPage(): JSX.Element {
             onTransactorChange={handleTransactorChange}
             onAddTransactor={handleAddTransactor}
             onRemoveTransactor={handleRemoveTransactor}
+            onSignatoryChange={handleSignatoryChange}
+            onAddSignatory={handleAddSignatory}
+            onRemoveSignatory={handleRemoveSignatory}
+            onDirectorChange={handleDirectorChange}
+            onAddDirector={handleAddDirector}
+            onRemoveDirector={handleRemoveDirector}
             isAgent={isAgent}
             isPayer={isPayer}
           />
@@ -611,8 +1172,13 @@ function OnboardingWizardPage(): JSX.Element {
       ),
       isValid: Boolean(
         peopleContacts.primaryContact.fullName &&
-        peopleContacts.primaryContact.email &&
-        peopleContacts.authorizedTransactors[0]?.fullName
+          peopleContacts.primaryContact.email &&
+          peopleContacts.authorizedTransactors.some(
+            (person) => Boolean(person.fullName)
+          ) &&
+          (isAgent
+            ? peopleContacts.directors?.some((person) => Boolean(person.fullName))
+            : peopleContacts.signatories?.some((person) => Boolean(person.fullName)))
       ),
       onSave: savePeopleContactsStep
     },
@@ -621,9 +1187,9 @@ function OnboardingWizardPage(): JSX.Element {
       label: "Banking Details",
       content: (
         <div>
-          {stepErrors["banking"]?.message && (
+          {stepErrors.banking?.message && (
             <div className="alert alert--error" style={{ marginBottom: "var(--space-4)" }}>
-              <div className="alert-title">{stepErrors["banking"].message}</div>
+              <div className="alert-title">{stepErrors.banking.message}</div>
             </div>
           )}
           <BankingDetailsStep
@@ -636,42 +1202,56 @@ function OnboardingWizardPage(): JSX.Element {
       ),
       isValid: Boolean(
         bankingDetails.accountName &&
-        bankingDetails.bankName &&
-        bankingDetails.accountNumber &&
-        bankingDetails.accountType &&
-        bankingDetails.currency
+          bankingDetails.bankName &&
+          bankingDetails.accountNumber &&
+          bankingDetails.accountType &&
+          bankingDetails.currency
       ),
       onSave: saveBankingStep
     },
-    {
-      id: "operations",
-      label: isAgent ? "Outlets & Operations" : "Operations",
-      content: (
-        <OperationsStep
-          formData={operations}
-          onOutletChange={handleOutletChange}
-          onAddOutlet={handleAddOutlet}
-          onRemoveOutlet={handleRemoveOutlet}
-          onChange={handleOperationsChange}
-          isAgent={isAgent}
-          isPayer={isPayer}
-        />
-      ),
-      isValid: true
-    },
+    ...(hasOperationsStep
+      ? [
+          {
+            id: "operations",
+            label: isAgent ? "Outlets & Operations" : "Settlement Configuration",
+            content: (
+              <div>
+                {stepErrors.operations?.message && (
+                  <div className="alert alert--error" style={{ marginBottom: "var(--space-4)" }}>
+                    <div className="alert-title">{stepErrors.operations.message}</div>
+                  </div>
+                )}
+                <OperationsStep
+                  formData={operations}
+                  onOutletChange={handleOutletChange}
+                  onAddOutlet={handleAddOutlet}
+                  onRemoveOutlet={handleRemoveOutlet}
+                  onChange={handleOperationsChange}
+                  isAgent={isAgent}
+                  isPayer={isPayer}
+                />
+              </div>
+            ),
+            isValid: isAgent
+              ? operations.outlets.some((outlet) => Boolean(outlet.name))
+              : Boolean(operations.settlementMethod),
+            onSave: saveOperationsStep
+          }
+        ]
+      : []),
     {
       id: "documents",
       label: "Supporting Documents",
       content: (
         <div>
-          {stepErrors["documents"]?.message && (
+          {stepErrors.documents?.message && (
             <div className="alert alert--error" style={{ marginBottom: "var(--space-4)" }}>
-              <div className="alert-title">{stepErrors["documents"].message}</div>
+              <div className="alert-title">{stepErrors.documents.message}</div>
             </div>
           )}
           <DocumentsStep
             requirements={documentRequirements}
-            uploadedDocuments={{}}
+            uploadedDocuments={uploadedDocumentsByRequirement}
             selectedFiles={selectedFiles}
             onFileSelect={handleFileSelect}
             onFileRemove={handleFileRemove}
@@ -691,11 +1271,11 @@ function OnboardingWizardPage(): JSX.Element {
           applicationSummary={{
             applicationType: applicationTypeLabel,
             organizationName: user?.organization?.legalName || "Your Organization",
-            sectionsCompleted: currentStepIndex + 1,
-            totalSections: 6,
-            status: "draft"
+            sectionsCompleted: Math.min(currentStepIndex + 1, totalSections),
+            totalSections,
+            status: application?.status || "draft"
           }}
-          documentsCount={documentRequirements.length}
+          documentsCount={application?.uploadedDocuments.length || 0}
           isAgent={isAgent}
           isPayer={isPayer}
           onSubmit={submitApplication}
@@ -704,34 +1284,39 @@ function OnboardingWizardPage(): JSX.Element {
       ),
       isValid: Boolean(
         declarations.signerName &&
-        declarations.signerTitle &&
-        declarations.acceptedTerms &&
-        declarations.certifiedInformation &&
-        declarations.authorizedToAct
+          declarations.signerTitle &&
+          declarations.acceptedTerms &&
+          declarations.certifiedInformation &&
+          declarations.authorizedToAct
       )
     }
   ];
 
   const handleNextStep = async (): Promise<void> => {
     const currentStep = wizardSteps[currentStepIndex];
+
     if (currentStep.onSave && !isSaving) {
       try {
         await currentStep.onSave();
+
         if (currentStepIndex < wizardSteps.length - 1) {
-          setCurrentStepIndex(currentStepIndex + 1);
+          setCurrentStepIndex((prev) => prev + 1);
           setMessage("");
         }
-      } catch (err) {
-        // Error already set by save handler
+      } catch {
+        // Step save handlers already set the relevant UI feedback.
       }
-    } else if (currentStepIndex < wizardSteps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
+      return;
+    }
+
+    if (currentStepIndex < wizardSteps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
     }
   };
 
   const handlePreviousStep = (): void => {
     if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1);
+      setCurrentStepIndex((prev) => prev - 1);
       setError("");
       setMessage("");
     }
@@ -747,7 +1332,7 @@ function OnboardingWizardPage(): JSX.Element {
     try {
       await currentStep.onSave();
     } catch {
-      // The step save handler already sets the relevant UI feedback.
+      // Step save handlers already manage the feedback state.
     }
   };
 
@@ -761,7 +1346,7 @@ function OnboardingWizardPage(): JSX.Element {
     >
       {isLoading ? (
         <div className="empty-state">
-          <div className="empty-state-icon">⏳</div>
+          <div className="empty-state-icon">...</div>
           <h3>Loading your application...</h3>
         </div>
       ) : (
@@ -772,12 +1357,14 @@ function OnboardingWizardPage(): JSX.Element {
               <div className="alert-description">{error}</div>
             </div>
           )}
+
           {message && (
             <div className="alert alert--success" style={{ marginBottom: "var(--space-4)" }}>
               <div className="alert-title">Success</div>
               <div className="alert-description">{message}</div>
             </div>
           )}
+
           <WizardLayout
             steps={wizardSteps}
             currentStepIndex={currentStepIndex}
@@ -786,7 +1373,11 @@ function OnboardingWizardPage(): JSX.Element {
             onSaveDraft={handleSaveDraft}
             onSubmit={submitApplication}
             isLoading={isSaving}
-            canSubmit={declarations.acceptedTerms && declarations.certifiedInformation && declarations.authorizedToAct}
+            canSubmit={
+              declarations.acceptedTerms &&
+              declarations.certifiedInformation &&
+              declarations.authorizedToAct
+            }
             showSubmitButton={currentStepIndex === wizardSteps.length - 1}
           />
         </div>

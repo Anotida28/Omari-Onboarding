@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import ReviewSplitPane from "./ReviewSplitPane";
 import {
-  API_BASE_URL,
   ApplicationDetailResponse,
   ReviewQueueItem,
   approveReviewApplication,
+  buildApiUrl,
   createApplicationComment,
   getApplication,
   getReviewQueue,
@@ -23,8 +23,6 @@ const REVIEW_SCOPE_OPTIONS: Array<{ value: ReviewScope; label: string }> = [
   { value: "all", label: "All Applications" },
   { value: "closed", label: "Completed Decisions" }
 ];
-
-const ASSET_BASE_URL = API_BASE_URL.replace(/\/api$/, "");
 
 const humanize = (value: string): string =>
   value
@@ -1559,7 +1557,7 @@ function InternalReviewWorkspace(): JSX.Element {
                         <div className="form-actions form-actions--split">
                           <a
                             className="button button--ghost button-link"
-                            href={`${ASSET_BASE_URL}${document.downloadUrl}`}
+                            href={buildApiUrl(document.downloadUrl)}
                             target="_blank"
                             rel="noreferrer"
                           >

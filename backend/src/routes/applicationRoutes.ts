@@ -3,15 +3,18 @@ import multer from "multer";
 import { requireApplicant, requireAuth } from "../middleware/auth";
 import {
   createComment,
+  downloadApplicationDocument,
   getActiveApplication,
   getApplication,
   submitAgent,
   submitPayer,
   submitMerchant,
   updateCommentResolution,
+  upsertAgentBanking,
   upsertAgentContacts,
   upsertAgentDraft,
   upsertAgentOperations,
+  upsertPayerBanking,
   upsertPayerContacts,
   upsertPayerDraft,
   upsertPayerSettlement,
@@ -48,15 +51,18 @@ const router = Router();
 
 router.use(requireAuth);
 router.get("/active", requireApplicant, getActiveApplication);
+router.get("/documents/:documentId/download", downloadApplicationDocument);
 router.post("/agent-draft", requireApplicant, upsertAgentDraft);
 router.post("/payer-draft", requireApplicant, upsertPayerDraft);
 router.post("/merchant-draft", requireApplicant, upsertMerchantDraft);
 router.post("/:applicationId/comments", createComment);
 router.patch("/comments/:commentId", updateCommentResolution);
 router.post("/:applicationId/agent-contacts", requireApplicant, upsertAgentContacts);
+router.post("/:applicationId/agent-banking", requireApplicant, upsertAgentBanking);
 router.post("/:applicationId/agent-operations", requireApplicant, upsertAgentOperations);
 router.post("/:applicationId/agent-submit", requireApplicant, submitAgent);
 router.post("/:applicationId/payer-contacts", requireApplicant, upsertPayerContacts);
+router.post("/:applicationId/payer-banking", requireApplicant, upsertPayerBanking);
 router.post("/:applicationId/payer-settlement", requireApplicant, upsertPayerSettlement);
 router.post("/:applicationId/payer-submit", requireApplicant, submitPayer);
 router.post("/:applicationId/merchant-contacts", requireApplicant, upsertMerchantContacts);

@@ -2,7 +2,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import multer from "multer";
-import path from "path";
 import { attachCurrentUser } from "./middleware/auth";
 import applicationRoutes from "./routes/applicationRoutes";
 import authRoutes from "./routes/authRoutes";
@@ -23,7 +22,6 @@ app.use(
 );
 app.use(express.json());
 app.use(attachCurrentUser);
-app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
@@ -43,7 +41,7 @@ app.use(
     error: unknown,
     _req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    _next: express.NextFunction
   ) => {
     if (error instanceof multer.MulterError) {
       res.status(400).json({
@@ -52,14 +50,60 @@ app.use(
       return;
     }
 
-    if (error instanceof Error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "type" in error &&
+      (error as { type?: string }).type === "entity.parse.failed"
+    ) {
       res.status(400).json({
-        message: error.message
+        message: "Invalid JSON payload."
       });
       return;
     }
 
-    next(error);
+    if (
+      error &&
+      typeof error === "object" &&
+      "status" in error &&
+      typeof (error as { status?: number }).status === "number"
+    ) {
+      const statusCode = (error as { status: number }).status;
+
+      if (statusCode >= 400 && statusCode < 500) {
+        res.status(statusCode).json({
+          message:
+            error instanceof Error && error.message
+              ? error.message
+              : "Request could not be completed."
+        });
+        return;
+      }
+    }
+
+    if (
+      error &&
+      typeof error === "object" &&
+      "statusCode" in error &&
+      typeof (error as { statusCode?: number }).statusCode === "number"
+    ) {
+      const statusCode = (error as { statusCode: number }).statusCode;
+
+      if (statusCode >= 400 && statusCode < 500) {
+        res.status(statusCode).json({
+          message:
+            error instanceof Error && error.message
+              ? error.message
+              : "Request could not be completed."
+        });
+        return;
+      }
+    }
+
+    console.error("Unhandled application error.", error);
+    res.status(500).json({
+      message: "Internal server error."
+    });
   }
 );
 

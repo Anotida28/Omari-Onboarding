@@ -200,6 +200,8 @@ export interface MerchantBankingPayload {
 
 export interface AgentOutletPayload {
   name: string;
+  location?: string;
+  contactPerson?: string;
   code?: string;
   phoneNumber?: string;
   email?: string;
@@ -210,15 +212,28 @@ export interface AgentOutletPayload {
   country?: string;
 }
 
-export interface AgentOperationsPayload extends MerchantBankingPayload {
+export interface AgentBankingPayload extends MerchantBankingPayload {}
+
+export interface AgentOperationsStepPayload {
   outlets: AgentOutletPayload[];
+  complianceContact?: string;
+  operationalDetails?: string;
 }
 
-export interface PayerSettlementPayload extends MerchantBankingPayload {
+export interface AgentOperationsPayload extends MerchantBankingPayload, AgentOperationsStepPayload {
+}
+
+export interface PayerBankingPayload extends MerchantBankingPayload {}
+
+export interface PayerSettlementStepPayload {
   settlementMethod?: string;
   reconciliationEmail?: string;
   integrationNotes?: string;
 }
+
+export interface PayerSettlementPayload
+  extends MerchantBankingPayload,
+    PayerSettlementStepPayload {}
 
 export interface MerchantDeclarationPayload {
   signerName: string;
@@ -672,9 +687,24 @@ export const saveAgentContacts = async (
     }
   );
 
+export const saveAgentBanking = async (
+  applicationId: string,
+  payload: AgentBankingPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/agent-banking`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
 export const saveAgentOperations = async (
   applicationId: string,
-  payload: AgentOperationsPayload
+  payload: AgentOperationsStepPayload
 ): Promise<ApplicationDetailResponse> =>
   apiFetch<ApplicationDetailResponse>(
     `/applications/${applicationId}/agent-operations`,
@@ -702,9 +732,24 @@ export const savePayerContacts = async (
     }
   );
 
+export const savePayerBanking = async (
+  applicationId: string,
+  payload: PayerBankingPayload
+): Promise<ApplicationDetailResponse> =>
+  apiFetch<ApplicationDetailResponse>(
+    `/applications/${applicationId}/payer-banking`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
 export const savePayerSettlement = async (
   applicationId: string,
-  payload: PayerSettlementPayload
+  payload: PayerSettlementStepPayload
 ): Promise<ApplicationDetailResponse> =>
   apiFetch<ApplicationDetailResponse>(
     `/applications/${applicationId}/payer-settlement`,

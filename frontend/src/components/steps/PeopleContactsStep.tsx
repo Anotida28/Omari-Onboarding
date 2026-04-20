@@ -26,10 +26,18 @@ interface PeopleContactsStepProps {
   onTransactorChange: (index: number, field: keyof Transactor, value: string) => void;
   onAddTransactor: () => void;
   onRemoveTransactor: (index: number) => void;
-  onSignatoryChange?: (index: number, field: keyof Transactor, value: string) => void;
+  onSignatoryChange?: (
+    index: number,
+    field: keyof Transactor,
+    value: string | boolean
+  ) => void;
   onAddSignatory?: () => void;
   onRemoveSignatory?: (index: number) => void;
-  onDirectorChange?: (index: number, field: keyof Transactor, value: string) => void;
+  onDirectorChange?: (
+    index: number,
+    field: keyof Transactor,
+    value: string | boolean
+  ) => void;
   onAddDirector?: () => void;
   onRemoveDirector?: (index: number) => void;
   isAgent?: boolean;
@@ -239,8 +247,8 @@ export const PeopleContactsStep: React.FC<PeopleContactsStepProps> = ({
         ))}
       </div>
 
-      {/* Signatories (for Merchant) */}
-      {!isAgent && !isPayer && formData.signatories && (
+      {/* Signatories (for Merchant and Payer) */}
+      {!isAgent && formData.signatories && (
         <div>
           <div
             style={{
@@ -278,7 +286,7 @@ export const PeopleContactsStep: React.FC<PeopleContactsStepProps> = ({
                       type="checkbox"
                       checked={signatory.isPrimarySignatory || false}
                       onChange={(e) =>
-                        onSignatoryChange?.(index, "isPrimarySignatory" as any, e.target.checked ? "true" : "false")
+                        onSignatoryChange?.(index, "isPrimarySignatory", e.target.checked)
                       }
                     />
                     <span style={{ fontSize: "0.875rem" }}>Primary Signatory</span>

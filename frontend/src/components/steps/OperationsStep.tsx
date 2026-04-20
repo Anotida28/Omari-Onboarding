@@ -10,9 +10,11 @@ export interface Outlet {
 
 export interface OperationsFormState {
   outlets: Outlet[];
-  description?: string;
   complianceContact?: string;
   operationalDetails?: string;
+  settlementMethod?: string;
+  reconciliationEmail?: string;
+  integrationNotes?: string;
 }
 
 interface OperationsStepProps {
@@ -212,22 +214,62 @@ export const OperationsStep: React.FC<OperationsStepProps> = ({
           </div>
         )}
 
-        <div className="form-field">
-          <label>
-            {isPayer ? "Settlement Preferences" : "Operational Details"}
-          </label>
-          <textarea
-            name={isPayer ? "description" : "operationalDetails"}
-            value={isPayer ? (formData.description || "") : (formData.operationalDetails || "")}
-            onChange={handleFieldChange}
-            placeholder={
-              isPayer
-                ? "Describe your settlement preferences and payout schedule requirements"
-                : "Describe your operational model, transaction patterns, and customer base"
-            }
-            style={{ minHeight: "120px" }}
-          />
-        </div>
+        {isPayer ? (
+          <>
+            <div className="form-field-group--inline">
+              <div className="form-field">
+                <label className="required">Settlement Method</label>
+                <select
+                  name="settlementMethod"
+                  value={formData.settlementMethod || ""}
+                  onChange={(e) =>
+                    onChange?.(
+                      "settlementMethod",
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">Select settlement method</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="wallet_credit">Wallet Credit</option>
+                  <option value="mixed">Mixed Settlement</option>
+                </select>
+              </div>
+              <div className="form-field">
+                <label>Reconciliation Email</label>
+                <input
+                  type="email"
+                  name="reconciliationEmail"
+                  value={formData.reconciliationEmail || ""}
+                  onChange={handleFieldChange}
+                  placeholder="finance@example.com"
+                />
+              </div>
+            </div>
+
+            <div className="form-field">
+              <label>Integration Notes</label>
+              <textarea
+                name="integrationNotes"
+                value={formData.integrationNotes || ""}
+                onChange={handleFieldChange}
+                placeholder="Describe your payout schedule, settlement timing, file exchange, or reconciliation requirements."
+                style={{ minHeight: "120px" }}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="form-field">
+            <label>Operational Details</label>
+            <textarea
+              name="operationalDetails"
+              value={formData.operationalDetails || ""}
+              onChange={handleFieldChange}
+              placeholder="Describe your operational model, transaction patterns, and customer base"
+              style={{ minHeight: "120px" }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

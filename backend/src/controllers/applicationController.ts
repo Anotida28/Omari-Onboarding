@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import {
   createApplicationComment,
   getActiveApplicationDetailForUser,
+  getApplicationDocumentDownload,
   getApplicationDetailForUser,
   replaceApplicationDocuments,
+  saveAgentBanking,
   saveAgentContacts,
   saveAgentDraft,
   saveAgentOperations,
   savePayerContacts,
+  savePayerBanking,
   savePayerDraft,
   savePayerSettlement,
   saveMerchantBanking,
@@ -38,6 +41,7 @@ const getApplicationErrorStatusCode = (error: unknown): number => {
   if (
     error.message === "Application not found." ||
     error.message === "Document requirement not found for this application." ||
+    error.message === "Document not found." ||
     error.message === "Comment not found."
   ) {
     return 404;
@@ -52,6 +56,7 @@ const getApplicationErrorStatusCode = (error: unknown): number => {
     error.message.includes("Comment visibility") ||
     error.message.includes("Comment section") ||
     error.message.includes("can only be added") ||
+    error.message.includes("Save banking details before") ||
     error.message.includes("not an agent application") ||
     error.message.includes("not a merchant application") ||
     error.message.includes("not a payer application") ||
@@ -148,6 +153,50 @@ export const upsertMerchantDraft = async (
   } catch (error) {
     console.error("Failed to save merchant draft.", error);
     sendApplicationError(res, error, "Failed to save merchant draft.");
+  }
+};
+
+export const downloadApplicationDocument = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const documentId = req.params.documentId;
+
+  if (!isNonEmptyString(documentId)) {
+    res.status(400).json({
+      message: "documentId is required."
+    });
+    return;
+  }
+
+  try {
+    const { absolutePath, mimeType, originalFileName } =
+      await getApplicationDocumentDownload(
+        documentId,
+        getAuthenticatedActor(req)
+      );
+    const safeFileName = originalFileName.replace(/["\\]/g, "_");
+
+    res.setHeader("Content-Type", mimeType);
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${safeFileName}"; filename*=UTF-8''${encodeURIComponent(originalFileName)}`
+    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    res.sendFile(absolutePath, (sendError) => {
+      if (!sendError || res.headersSent) {
+        return;
+      }
+
+      console.error("Failed to stream application document.", sendError);
+      res.status(500).json({
+        message: "Failed to stream application document."
+      });
+    });
+  } catch (error) {
+    console.error("Failed to download application document.", error);
+    sendApplicationError(res, error, "Failed to download application document.");
   }
 };
 
@@ -819,7 +868,7 @@ export const upsertMerchantBanking = async (
   }
 };
 
-export const upsertAgentOperations = async (
+export const upsertAgentBanking = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -831,8 +880,7 @@ export const upsertAgentOperations = async (
     branchCode,
     accountNumber,
     accountType,
-    currency,
-    outlets
+    currency
   } = req.body as Record<string, unknown>;
 
   if (!isNonEmptyString(applicationId)) {
@@ -854,7 +902,7 @@ export const upsertAgentOperations = async (
   }
 
   try {
-    const response = await saveAgentOperations(
+    const response = await saveAgentBanking(
       applicationId,
       {
         accountName,
@@ -863,10 +911,49 @@ export const upsertAgentOperations = async (
         branchCode: isNonEmptyString(branchCode) ? branchCode : undefined,
         accountNumber,
         accountType: isNonEmptyString(accountType) ? accountType : undefined,
-        currency: isNonEmptyString(currency) ? currency : undefined,
+        currency: isNonEmptyString(currency) ? currency : undefined
+      },
+      getAuthenticatedActor(req)
+    );
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Failed to save agent banking details.", error);
+    sendApplicationError(res, error, "Failed to save agent banking details.");
+  }
+};
+
+export const upsertAgentOperations = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const applicationId = req.params.applicationId;
+  const {
+    outlets,
+    complianceContact,
+    operationalDetails
+  } = req.body as Record<string, unknown>;
+
+  if (!isNonEmptyString(applicationId)) {
+    res.status(400).json({
+      message: "applicationId is required."
+    });
+    return;
+  }
+
+  try {
+    const response = await saveAgentOperations(
+      applicationId,
+      {
         outlets: Array.isArray(outlets)
           ? (outlets as Array<Record<string, unknown>>).map((outlet) => ({
               name: isNonEmptyString(outlet.name) ? outlet.name : "",
+              location: isNonEmptyString(outlet.location)
+                ? outlet.location
+                : undefined,
+              contactPerson: isNonEmptyString(outlet.contactPerson)
+                ? outlet.contactPerson
+                : undefined,
               code: isNonEmptyString(outlet.code) ? outlet.code : undefined,
               phoneNumber: isNonEmptyString(outlet.phoneNumber)
                 ? outlet.phoneNumber
@@ -884,7 +971,13 @@ export const upsertAgentOperations = async (
                 : undefined,
               country: isNonEmptyString(outlet.country) ? outlet.country : undefined
             }))
-          : []
+          : [],
+        complianceContact: isNonEmptyString(complianceContact)
+          ? complianceContact
+          : undefined,
+        operationalDetails: isNonEmptyString(operationalDetails)
+          ? operationalDetails
+          : undefined
       },
       getAuthenticatedActor(req)
     );
@@ -896,7 +989,7 @@ export const upsertAgentOperations = async (
   }
 };
 
-export const upsertPayerSettlement = async (
+export const upsertPayerBanking = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -908,10 +1001,7 @@ export const upsertPayerSettlement = async (
     branchCode,
     accountNumber,
     accountType,
-    currency,
-    settlementMethod,
-    reconciliationEmail,
-    integrationNotes
+    currency
   } = req.body as Record<string, unknown>;
 
   if (!isNonEmptyString(applicationId)) {
@@ -933,7 +1023,7 @@ export const upsertPayerSettlement = async (
   }
 
   try {
-    const response = await savePayerSettlement(
+    const response = await savePayerBanking(
       applicationId,
       {
         accountName,
@@ -942,7 +1032,40 @@ export const upsertPayerSettlement = async (
         branchCode: isNonEmptyString(branchCode) ? branchCode : undefined,
         accountNumber,
         accountType: isNonEmptyString(accountType) ? accountType : undefined,
-        currency: isNonEmptyString(currency) ? currency : undefined,
+        currency: isNonEmptyString(currency) ? currency : undefined
+      },
+      getAuthenticatedActor(req)
+    );
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Failed to save payer banking details.", error);
+    sendApplicationError(res, error, "Failed to save payer banking details.");
+  }
+};
+
+export const upsertPayerSettlement = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const applicationId = req.params.applicationId;
+  const {
+    settlementMethod,
+    reconciliationEmail,
+    integrationNotes
+  } = req.body as Record<string, unknown>;
+
+  if (!isNonEmptyString(applicationId)) {
+    res.status(400).json({
+      message: "applicationId is required."
+    });
+    return;
+  }
+
+  try {
+    const response = await savePayerSettlement(
+      applicationId,
+      {
         settlementMethod: isNonEmptyString(settlementMethod)
           ? settlementMethod
           : undefined,

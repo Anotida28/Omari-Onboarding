@@ -14,7 +14,7 @@ export interface UploadedDocument {
   requirementCode: string;
   fileName: string;
   uploadedAt: string;
-  status: "pending" | "verified" | "rejected";
+  status: "pending" | "accepted" | "rejected";
   reviewerComment?: string;
 }
 
@@ -46,13 +46,22 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
 
   const getDocumentStatus = (requirementCode: string) => {
     const docs = uploadedDocuments[requirementCode] || [];
-    if (docs.length === 0) return null;
+
+    if (docs.length === 0) {
+      return null;
+    }
 
     const hasRejected = docs.some((d) => d.status === "rejected");
-    const hasVerified = docs.some((d) => d.status === "verified");
+    const hasAccepted = docs.some((d) => d.status === "accepted");
 
-    if (hasRejected) return "rejected";
-    if (hasVerified) return "verified";
+    if (hasRejected) {
+      return "rejected";
+    }
+
+    if (hasAccepted) {
+      return "accepted";
+    }
+
     return "pending";
   };
 
@@ -62,7 +71,8 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
         <div className="form-section-card__header">
           <div className="form-section-card__title">Supporting Documents</div>
           <div className="form-section-card__description">
-            Upload all required documents to support your application. Ensure files are clear, legible, and in acceptable formats.
+            Upload all required documents to support your application. Ensure files are clear,
+            legible, and in acceptable formats.
           </div>
         </div>
 
@@ -76,7 +86,7 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
               <div
                 key={requirement.id}
                 className={`document-tile ${
-                  status === "verified"
+                  status === "accepted"
                     ? "document-tile--accepted"
                     : status === "rejected"
                       ? "document-tile--rejected"
@@ -121,23 +131,22 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                   {status && (
                     <span
                       className={`document-status document-status--${
-                        status === "verified"
+                        status === "accepted"
                           ? "accepted"
                           : status === "rejected"
                             ? "rejected"
                             : "pending"
                       }`}
                     >
-                      {status === "verified"
-                        ? "✓ Verified"
+                      {status === "accepted"
+                        ? "Accepted"
                         : status === "rejected"
-                          ? "✗ Rejected"
-                          : "⏳ Pending"}
+                          ? "Rejected"
+                          : "Pending"}
                     </span>
                   )}
                 </div>
 
-                {/* Uploaded Documents */}
                 {docs.length > 0 && (
                   <div
                     style={{
@@ -147,7 +156,13 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                       marginBottom: "var(--space-3)"
                     }}
                   >
-                    <div style={{ fontSize: "0.875rem", fontWeight: 600, marginBottom: "var(--space-2)" }}>
+                    <div
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        marginBottom: "var(--space-2)"
+                      }}
+                    >
                       Uploaded Files ({docs.length})
                     </div>
                     <div style={{ display: "grid", gap: "var(--space-2)" }}>
@@ -165,26 +180,21 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                           }}
                         >
                           <div>
-                            <div style={{ fontWeight: 500 }}>📄 {doc.fileName}</div>
+                            <div style={{ fontWeight: 500 }}>{doc.fileName}</div>
                             <div style={{ fontSize: "0.75rem", color: "var(--text-500)" }}>
                               {new Date(doc.uploadedAt).toLocaleDateString()}
-                              {doc.reviewerComment && ` • ${doc.reviewerComment}`}
+                              {doc.reviewerComment ? ` • ${doc.reviewerComment}` : ""}
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            className="btn btn--ghost btn--sm"
-                            onClick={() => onFileRemove?.(requirement.requirementCode, doc.fileName)}
-                          >
-                            ✕
-                          </button>
+                          <span className="document-status document-status--pending">
+                            Stored
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* New Files Preview */}
                 {newFiles.length > 0 && (
                   <div
                     style={{
@@ -195,7 +205,14 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                       marginBottom: "var(--space-3)"
                     }}
                   >
-                    <div style={{ fontSize: "0.875rem", fontWeight: 600, marginBottom: "var(--space-2)", color: "var(--success-600)" }}>
+                    <div
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        marginBottom: "var(--space-2)",
+                        color: "var(--success-600)"
+                      }}
+                    >
                       Ready to Upload ({newFiles.length})
                     </div>
                     <div style={{ display: "grid", gap: "var(--space-2)" }}>
@@ -213,18 +230,26 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                           }}
                         >
                           <div>
-                            <div style={{ fontWeight: 500 }}>📎 {file.name}</div>
+                            <div style={{ fontWeight: 500 }}>{file.name}</div>
                             <div style={{ fontSize: "0.75rem", color: "var(--text-500)" }}>
                               {(file.size / 1024).toFixed(2)} KB
                             </div>
                           </div>
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            onClick={() =>
+                              onFileRemove?.(requirement.requirementCode, file.name)
+                            }
+                          >
+                            Remove
+                          </button>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* File Upload Input */}
                 <label
                   style={{
                     display: "flex",
@@ -255,7 +280,6 @@ export const DocumentsStep: React.FC<DocumentsStepProps> = ({
                     accept={requirement.acceptedFormats.map((fmt) => `.${fmt}`).join(",")}
                   />
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "2rem", marginBottom: "var(--space-2)" }}>📁</div>
                     <div style={{ fontWeight: 600, color: "var(--text-900)" }}>
                       Click to upload or drag and drop
                     </div>

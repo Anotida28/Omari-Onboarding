@@ -87,6 +87,18 @@
     #edf2f1;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
 .workspace-content > * {
   animation: section-rise 0.44s ease both;
 }
@@ -4301,8 +4313,9 @@ body {
   margin: -28px -32px 0 -32px;
   padding: 0 28px;
   border-bottom: 1px solid var(--line);
-  background: rgba(249, 252, 250, 0.96);
+  background: #f9fcfa;
   box-shadow: 0 1px 0 rgba(23, 29, 36, 0.04);
+  isolation: isolate;
 }
 
 .topbar__title {
@@ -4325,6 +4338,7 @@ body {
 
 .workspace-content {
   width: min(1320px, 100%);
+  margin: 18px auto 0;
   gap: 18px;
 }
 
