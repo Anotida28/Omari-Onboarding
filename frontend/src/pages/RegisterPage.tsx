@@ -1,17 +1,18 @@
 import { FormEvent, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import AuthShell from "../components/AuthShell";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
 
 function RegisterPage(): JSX.Element {
   const { isAuthenticated, isLoading, register, user } = useAuth();
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -23,6 +24,14 @@ function RegisterPage(): JSX.Element {
     event.preventDefault();
     setSubmitting(true);
     setError("");
+
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      setSubmitting(false);
+      return;
+    }
 
     try {
       const authenticatedUser = await register({
@@ -48,85 +57,117 @@ function RegisterPage(): JSX.Element {
   };
 
   return (
-    <AuthShell
-      eyebrow="Create account"
-      title="Create Your Omari Applicant Account"
-      description="Set up your account in a minute, then continue directly into onboarding. Mobile number is required and email is optional."
-      variant="register"
-    >
-      <div className="auth-card__header">
-        <p className="panel-header__eyebrow">New applicant</p>
-        <h2>Create your account</h2>
-        <p className="auth-card__copy">
-          Once this is complete, you will be taken straight to your applicant
-          dashboard so you can start or resume an application.
+    <div className="auth-page auth-page--minimal">
+      <img
+        className="auth-page__bg-art"
+        src="/omari-auth-hero.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <div className="auth-page__veil" aria-hidden="true" />
+
+      <section className="auth-minimal-card auth-minimal-card--signup" aria-label="Create account">
+        <div className="auth-minimal-card__brand">
+          <img src="/omari-logo.png" alt="Omari logo" />
+        </div>
+
+        {error ? <p className="feedback feedback--error">{error}</p> : null}
+
+        <form className="auth-form auth-form--minimal auth-form--signup" onSubmit={handleSubmit}>
+          <label className="field">
+            <span>Name*</span>
+            <input
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+              placeholder="Enter first name"
+              autoComplete="given-name"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Last Name*</span>
+            <input
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+              placeholder="Enter last name"
+              autoComplete="family-name"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Email*</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Enter your email"
+              autoComplete="email"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Phone*</span>
+            <input
+              value={mobileNumber}
+              onChange={(event) => setMobileNumber(event.target.value)}
+              placeholder="Enter phone number"
+              autoComplete="tel"
+              required
+            />
+          </label>
+
+          <label className="field auth-field--full">
+            <span>Organization*</span>
+            <input
+              value={organizationName}
+              onChange={(event) => setOrganizationName(event.target.value)}
+              placeholder="Enter organization name"
+              autoComplete="organization"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Password*</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Create a password"
+              autoComplete="new-password"
+              required
+            />
+          </label>
+
+          <label className="field">
+            <span>Repeat Password*</span>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              placeholder="Repeat your password"
+              autoComplete="new-password"
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="button button--primary auth-form__submit"
+            disabled={submitting}
+          >
+            {submitting ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
+
+        <p className="auth-card__footer auth-card__footer--minimal">
+          Already have an account? <Link to="/auth/login">Sign in</Link>
         </p>
-      </div>
-
-      {error ? <p className="feedback feedback--error">{error}</p> : null}
-
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <label className="field">
-          <span>Full Name</span>
-          <input
-            value={fullName}
-            onChange={(event) => setFullName(event.target.value)}
-            placeholder="Enter your full name"
-            autoComplete="name"
-          />
-        </label>
-
-        <label className="field">
-          <span>Organization Name</span>
-          <input
-            value={organizationName}
-            onChange={(event) => setOrganizationName(event.target.value)}
-            placeholder="Enter business or organization name"
-            autoComplete="organization"
-          />
-        </label>
-
-        <label className="field">
-          <span>Mobile Number</span>
-          <input
-            value={mobileNumber}
-            onChange={(event) => setMobileNumber(event.target.value)}
-            placeholder="Enter mobile number"
-            autoComplete="tel"
-          />
-        </label>
-
-        <label className="field">
-          <span>Email Address (Optional)</span>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="Enter email if you want email updates later"
-            autoComplete="email"
-          />
-        </label>
-
-        <label className="field field--wide">
-          <span>Password</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Create a password"
-            autoComplete="new-password"
-          />
-        </label>
-
-        <button type="submit" className="button button--primary auth-form__submit" disabled={submitting}>
-          {submitting ? "Creating Your Account..." : "Create Account And Continue"}
-        </button>
-      </form>
-
-      <p className="auth-card__footer">
-        Already have an account? <Link to="/auth/login">Sign in</Link>
-      </p>
-    </AuthShell>
+      </section>
+    </div>
   );
 }
 

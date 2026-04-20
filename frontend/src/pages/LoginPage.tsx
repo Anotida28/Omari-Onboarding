@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
 
@@ -87,6 +87,10 @@ function LoginPage(): JSX.Element {
             {submitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
+
+        <p className="auth-card__footer auth-card__footer--minimal">
+          New here? <Link to="/auth/register">Create an account</Link>
+        </p>
       </section>
     </div>
   );

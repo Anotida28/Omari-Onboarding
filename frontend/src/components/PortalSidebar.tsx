@@ -32,11 +32,6 @@ function PortalSidebar({
         <div className="sidebar__brand-mark">
           <img src="/omari-logo.png" alt="Omari logo" />
         </div>
-
-        <div>
-          <p className="sidebar__eyebrow">Omari</p>
-          <h1>Onboarding</h1>
-        </div>
       </div>
 
       <nav className="sidebar__nav" aria-label="Primary">
