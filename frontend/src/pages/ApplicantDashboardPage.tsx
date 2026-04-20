@@ -1,214 +1,241 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PortalShell from "../components/PortalShell";
 import { APPLICANT_NAV_GROUPS } from "../constants/navigation";
 import { useAuth } from "../context/AuthContext";
 import { ApplicationDetailResponse, getActiveApplication } from "../services/api";
 
-const humanize = (value: string): string =>
-  value
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-
-const getApplicationLabel = (applicationType: string): string => {
-  if (applicationType === "agent") {
-    return "Agent Application";
-  }
-
-  if (applicationType === "payer") {
-    return "Payer / Biller Application";
-  }
-
-  return "Merchant Application";
+const getStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    draft: "In Progress",
+    submitted: "Under Review",
+    initial_review: "Under Review",
+    document_check: "Under Review",
+    compliance_review: "Under Review",
+    needs_more_information: "Action Required",
+    approved: "Approved",
+    rejected: "Rejected",
+    activated: "Activated",
+    archived: "Archived"
+  };
+  return labels[status] || status;
 };
 
-const getApplicationRoute = (applicationType: string): string => {
-  if (applicationType === "agent") {
-    return "/applications/agent";
-  }
-
-  if (applicationType === "payer") {
-    return "/applications/payer";
-  }
-
-  return "/applications/merchant";
+const getApplicationTypeLabel = (type: string): string => {
+  const labels: Record<string, string> = {
+    merchant: "Merchant Application",
+    agent: "Agent Application",
+    payer: "Payer / Biller Application"
+  };
+  return labels[type] || type;
 };
 
 function ApplicantDashboardPage(): JSX.Element {
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const [application, setApplication] = useState<ApplicationDetailResponse | null>(
-    null
-  );
-  const [loadingApplication, setLoadingApplication] = useState(true);
-  const [applicationError, setApplicationError] = useState("");
+  const [application, setApplication] = useState<ApplicationDetailResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadDraft = async (): Promise<void> => {
+    const loadApplication = async (): Promise<void> => {
+      setIsLoading(true);
       try {
         const response = await getActiveApplication();
         setApplication(response);
-        setApplicationError("");
-      } catch (caughtError) {
+      } catch {
         setApplication(null);
-        setApplicationError(
-          caughtError instanceof Error
-            ? caughtError.message
-            : "Unable to load your saved application."
-        );
       } finally {
-        setLoadingApplication(false);
+        setIsLoading(false);
       }
     };
 
-    void loadDraft();
+    void loadApplication();
   }, []);
-
-  const completedSections = useMemo(
-    () =>
-      application?.sections.filter((section) => section.status === "completed")
-        .length || 0,
-    [application]
-  );
 
   return (
     <PortalShell
       title="Omari - Onboarding System"
       eyebrow="Applicant workspace"
-      heading="Your Onboarding Dashboard"
-      description="Resume where you left off, see what still needs attention, and move to the right form with clear next actions."
+      heading="Dashboard"
+      description="Manage your applications and track their progress through our review process."
       navGroups={APPLICANT_NAV_GROUPS}
     >
-      {applicationError ? (
-        <p className="feedback feedback--error">{applicationError}</p>
-      ) : null}
-
-      <div className="dashboard-grid">
-        <article className="dashboard-card dashboard-card--hero">
-          <span className="dashboard-card__eyebrow">Organization</span>
-          <h2>{user?.organization?.legalName || "Your organization"}</h2>
-          <p>
-            {user?.organization?.entityType
-              ? humanize(user.organization.entityType)
-              : "Onboarding applicant"}
-          </p>
-
-          <div className="dashboard-actions">
-            {application ? (
-              <Link
-                to={getApplicationRoute(application.applicationType)}
-                className="button button--primary button-link"
+      {isLoading ? (
+        <div className="empty-state">
+          <div className="empty-state-icon">⏳</div>
+          <h3>Loading your dashboard...</h3>
+        </div>
+      ) : application ? (
+        <div style={{ display: "grid", gap: "var(--space-6)" }}>
+          {/* Current Application Status */}
+          <div className="status-hero">
+            <div style={{ display: "grid", gap: "var(--space-2)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "var(--space-3)"
+                }}
               >
-                Resume {getApplicationLabel(application.applicationType)}
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/applications/merchant"
-                  className="button button--primary button-link"
+                <div>
+                  <h2 style={{ margin: "0 0 var(--space-2) 0" }}>
+                    {getApplicationTypeLabel(application.applicationType)}
+                  </h2>
+                  <p style={{ margin: 0, color: "var(--text-700)" }}>
+                    {user?.organization?.legalName}
+                  </p>
+                </div>
+                <span
+                  className={`status-badge status-badge--${
+                    application.status === "draft"
+                      ? "draft"
+                      : application.status === "needs_more_information"
+                        ? "action-required"
+                        : ["submitted", "initial_review", "document_check", "compliance_review"].includes(
+                            application.status
+                          )
+                          ? "in-progress"
+                          : application.status === "approved"
+                            ? "approved"
+                            : "rejected"
+                  }`}
                 >
-                  Start New Merchant Application
-                </Link>
-                <Link
-                  to="/applications/agent"
-                  className="button button--ghost button-link"
-                >
-                  Start New Agent Application
-                </Link>
-                <Link
-                  to="/applications/payer"
-                  className="button button--ghost button-link"
-                >
-                  Start New Payer / Biller Application
-                </Link>
-              </>
-            )}
-            {application ? (
-              <Link
-                to={`/applications/${application.applicationId}/status`}
-                className="button button--ghost button-link"
-              >
-                Track Application Status
-              </Link>
-            ) : null}
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <span className="dashboard-card__eyebrow">Account Contact</span>
-          <strong>{user?.mobileNumber || "-"}</strong>
-          <p>{user?.email || "No email added yet"}</p>
-          <div className="dashboard-badges">
-            <span className="status-chip status-chip--soft">
-              Mobile {user?.mobileVerified ? "Verified" : "Pending"}
-            </span>
-            <span className="status-chip">
-              Email {user?.emailVerified ? "Verified" : "Pending"}
-            </span>
-          </div>
-        </article>
-
-        <article className="dashboard-card">
-          <span className="dashboard-card__eyebrow">Saved Application</span>
-          {loadingApplication ? (
-            <>
-              <strong>Checking draft...</strong>
-              <p>We are checking if you already have an active onboarding application.</p>
-            </>
-          ) : application ? (
-            <>
-              <strong>{humanize(application.status)}</strong>
-              <p>
-                {completedSections}/{application.sections.length} sections completed.
-              </p>
-              <span className="dashboard-card__meta">
-                Current step: {humanize(application.currentStep || "business_snapshot")}
-              </span>
-            </>
-          ) : (
-            <>
-              <strong>No saved draft yet</strong>
-              <p>
-                Start a merchant, agent, or payer / biller application to begin
-                and we will save progress section by section.
-              </p>
-            </>
-          )}
-        </article>
-
-        <article className="dashboard-card">
-          <span className="dashboard-card__eyebrow">Recommended Next Step</span>
-          <strong>
-            {application
-              ? application.status === "needs_more_information"
-                ? "Update requested sections"
-                : "Continue your draft"
-              : "Begin onboarding"}
-          </strong>
-          <p>
-            {application
-              ? `Open the ${getApplicationLabel(application.applicationType).toLowerCase()} form to continue editing, upload missing files, or resubmit after review feedback.`
-              : "We'll save your progress section by section once you begin any onboarding flow."}
-          </p>
-          {application ? (
-            <div className="dashboard-actions">
-              <Link
-                to={
-                  application.status === "needs_more_information"
-                    ? `/applications/${application.applicationId}/status`
-                    : getApplicationRoute(application.applicationType)
-                }
-                className="button button--ghost button-link"
-              >
-                {application.status === "needs_more_information"
-                  ? "Review Requested Changes"
-                  : "Open Application Form"}
-              </Link>
+                  {getStatusLabel(application.status)}
+                </span>
+              </div>
             </div>
-          ) : null}
-        </article>
-      </div>
+
+            <div className="status-hero-meta">
+              <div className="status-meta-item">
+                <div className="status-meta-label">Last Updated</div>
+                <div className="status-meta-value">
+                  {application.submittedAt
+                    ? new Date(application.submittedAt).toLocaleDateString()
+                    : "Draft"}
+                </div>
+              </div>
+              <div className="status-meta-item">
+                <div className="status-meta-label">Progress</div>
+                <div className="status-meta-value">
+                  {application.sections.filter((s) => s.status === "completed").length} of{" "}
+                  {application.sections.length} sections
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Continue Application CTA */}
+          {application.status === "draft" && (
+            <div
+              style={{
+                padding: "var(--space-5)",
+                background: "rgba(36, 191, 117, 0.08)",
+                border: "1px solid rgba(36, 191, 117, 0.3)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "var(--space-4)"
+              }}
+            >
+              <div>
+                <h3 style={{ margin: "0 0 var(--space-1) 0", color: "var(--text-900)" }}>
+                  Continue your application
+                </h3>
+                <p style={{ margin: 0, color: "var(--text-700)" }}>
+                  You're on step{" "}
+                  {
+                    application.sections.find((s) => s.status !== "completed")
+                      ?.sortOrder
+                  }{" "}
+                  of {application.sections.length}. Pick up where you left off.
+                </p>
+              </div>
+              <button
+                className="btn btn--primary"
+                onClick={() =>
+                  navigate(
+                    `/applications/wizard?type=${application.applicationType}`
+                  )
+                }
+              >
+                Continue →
+              </button>
+            </div>
+          )}
+
+          {/* Quick Actions */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "var(--space-4)"
+            }}
+          >
+            <div
+              className="form-section-card"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                navigate(`/applications/wizard?type=${application.applicationType}`)
+              }
+            >
+              <div className="form-section-card__title">Edit Application</div>
+              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
+                Update your application details and progress through remaining sections.
+              </p>
+            </div>
+
+            <div
+              className="form-section-card"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/applications/${application.applicationId}/status`)}
+            >
+              <div className="form-section-card__title">View Status</div>
+              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
+                Track your application progress and reviewer feedback.
+              </p>
+            </div>
+
+            <div
+              className="form-section-card"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/profile")}
+            >
+              <div className="form-section-card__title">Account Settings</div>
+              <p style={{ margin: "var(--space-2) 0 0 0", color: "var(--text-700)" }}>
+                Update your personal information and preferences.
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="empty-state">
+          <div className="empty-state-icon">📋</div>
+          <h3>No active application</h3>
+          <p>Start a new merchant, agent, or payer / biller application to get started.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "var(--space-3)", maxWidth: "500px" }}>
+            <button
+              className="btn btn--primary"
+              onClick={() => navigate("/applications/wizard?type=merchant")}
+            >
+              Merchant
+            </button>
+            <button
+              className="btn btn--primary"
+              onClick={() => navigate("/applications/wizard?type=agent")}
+            >
+              Agent
+            </button>
+            <button
+              className="btn btn--primary"
+              onClick={() => navigate("/applications/wizard?type=payer")}
+            >
+              Payer
+            </button>
+          </div>
+        </div>
+      )}
     </PortalShell>
   );
 }

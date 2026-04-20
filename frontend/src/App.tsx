@@ -8,6 +8,7 @@ import ApplicationStatusPage from "./pages/ApplicationStatusPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import MerchantOnboardingPage from "./pages/MerchantOnboardingPage";
+import OnboardingWizardPage from "./pages/OnboardingWizardPage";
 import PayerOnboardingPage from "./pages/PayerOnboardingPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
@@ -30,6 +31,9 @@ function App(): JSX.Element {
 
             <Route element={<RoleRoute allowedRole="applicant" />}>
               <Route path="/dashboard" element={<ApplicantDashboardPage />} />
+              {/* New unified wizard-based onboarding */}
+              <Route path="/applications/wizard" element={<OnboardingWizardPage />} />
+              {/* Legacy routes - preserved for backward compatibility */}
               <Route path="/applications/agent" element={<AgentOnboardingPage />} />
               <Route path="/applications/merchant" element={<MerchantOnboardingPage />} />
               <Route path="/applications/payer" element={<PayerOnboardingPage />} />
@@ -40,15 +44,16 @@ function App(): JSX.Element {
               />
               <Route
                 path="/applications/new/merchant"
-                element={<Navigate to="/applications/merchant" replace />}
+                element={<Navigate to="/applications/wizard?type=merchant" replace />}
               />
               <Route
                 path="/applications/new/payer"
-                element={<Navigate to="/applications/payer" replace />}
+                element={<Navigate to="/applications/wizard?type=payer" replace />}
               />
             </Route>
 
             <Route element={<RoleRoute allowedRole="admin" />}>
+              <Route path="/dashboard" element={<ApplicantDashboardPage />} />
               <Route path="/review" element={<ReviewPage />} />
             </Route>
           </Route>

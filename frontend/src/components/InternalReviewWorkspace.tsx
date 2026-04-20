@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import ReviewSplitPane from "./ReviewSplitPane";
 import {
   API_BASE_URL,
   ApplicationDetailResponse,

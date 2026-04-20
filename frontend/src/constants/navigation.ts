@@ -10,16 +10,8 @@ export const APPLICANT_NAV_GROUPS: PortalNavGroup[] = [
         end: true
       },
       {
-        label: "Merchant Application",
-        to: "/applications/merchant"
-      },
-      {
-        label: "Agent Application",
-        to: "/applications/agent"
-      },
-      {
-        label: "Payer / Biller Application",
-        to: "/applications/payer"
+        label: "Continue Application",
+        to: "/applications/wizard"
       },
       {
         label: "Application Status",
@@ -38,7 +30,7 @@ export const ADMIN_NAV_GROUPS: PortalNavGroup[] = [
     title: "Workspace",
     items: [
       {
-        label: "Application Queue",
+        label: "Review Queue",
         to: "/review",
         end: true
       },

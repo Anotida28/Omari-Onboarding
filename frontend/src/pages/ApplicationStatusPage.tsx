@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import PortalShell from "../components/PortalShell";
+import Timeline, { TimelineEvent } from "../components/Timeline";
 import { APPLICANT_NAV_GROUPS } from "../constants/navigation";
 import {
   ApplicationDetailResponse,
@@ -459,21 +460,16 @@ function ApplicationStatusPage(): JSX.Element {
                 </div>
               </div>
 
-              <div className="timeline-list">
-                {application.statusHistory.map((item) => (
-                  <article className="timeline-item" key={item.id}>
-                    <div className="timeline-item__dot" />
-                    <div>
-                      <strong>
-                        {humanize(item.fromStatus || "new")} to{" "}
-                        {humanize(item.toStatus)}
-                      </strong>
-                      <p>{item.reason || "No reason recorded."}</p>
-                      <span>{formatDate(item.createdAt)}</span>
-                    </div>
-                  </article>
-                ))}
-              </div>
+              <Timeline
+                events={application.statusHistory.map((item): TimelineEvent => ({
+                  id: item.id,
+                  title: `${humanize(item.fromStatus || "new")} to ${humanize(item.toStatus)}`,
+                  description: item.reason || "No reason recorded.",
+                  timestamp: formatDate(item.createdAt),
+                  isCompleted: true,
+                  isActive: false
+                }))}
+              />
             </section>
 
             <section className="form-section">

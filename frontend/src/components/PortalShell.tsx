@@ -1,7 +1,6 @@
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getInitials } from "../utils/auth";
 import PortalSidebar, { PortalNavGroup } from "./PortalSidebar";
 
 interface PortalShellProps {
@@ -63,19 +62,7 @@ function PortalShell({
             <strong className="topbar__title">{title}</strong>
 
             <div className="topbar__meta">
-              <div className="profile-card">
-                <div className="profile-card__avatar">
-                  {getInitials(user.fullName)}
-                </div>
-                <div>
-                  <strong>{user.fullName}</strong>
-                  <span>
-                    {user.role === "admin"
-                      ? "Internal review workspace"
-                      : user.organization?.legalName || "Applicant workspace"}
-                  </span>
-                </div>
-              </div>
+              <strong className="topbar__user-name">{user.fullName}</strong>
             </div>
           </header>
 
