@@ -2,10 +2,12 @@ import { ReactNode, createContext, useContext, useEffect, useState } from "react
 import {
   AuthenticatedUser,
   ChangePasswordPayload,
+  InternalLoginPayload,
   LoginPayload,
   RegisterPayload,
   getCurrentUser,
   changeCurrentPassword,
+  loginInternalUser,
   loginUser,
   logoutUser,
   registerUser,
@@ -18,6 +20,7 @@ interface AuthContextValue {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (payload: LoginPayload) => Promise<AuthenticatedUser>;
+  loginInternal: (payload: InternalLoginPayload) => Promise<AuthenticatedUser>;
   register: (payload: RegisterPayload) => Promise<AuthenticatedUser>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<AuthenticatedUser | null>;
@@ -82,6 +85,19 @@ export const AuthProvider = ({
     return response.user;
   };
 
+  const loginInternal = async (
+    payload: InternalLoginPayload
+  ): Promise<AuthenticatedUser> => {
+    const response = await loginInternalUser(payload);
+
+    if (!response.user) {
+      throw new Error("Internal login did not return a valid user session.");
+    }
+
+    setUser(response.user);
+    return response.user;
+  };
+
   const register = async (
     payload: RegisterPayload
   ): Promise<AuthenticatedUser> => {
@@ -129,6 +145,7 @@ export const AuthProvider = ({
         isLoading,
         isAuthenticated: Boolean(user),
         login,
+        loginInternal,
         register,
         logout,
         refreshUser,

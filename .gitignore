@@ -5,6 +5,7 @@ frontend/node_modules/
 backend/dist/
 backend/uploads/
 frontend/build/
+backend/*.log
 
 backend/.env
 frontend/.env

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { prisma } from "../lib/prisma";
-import { createAdminUser } from "../services/authService";
+import { prepareInternalAdminUser } from "../services/authService";
 
 dotenv.config();
 
@@ -19,42 +19,39 @@ const parseArguments = (): Record<string, string> =>
 
 const args = parseArguments();
 
-const fullName = args.name || process.env.ADMIN_FULL_NAME;
 const email = args.email || process.env.ADMIN_EMAIL;
-const mobileNumber = args.mobile || process.env.ADMIN_MOBILE_NUMBER;
-const password = args.password || process.env.ADMIN_PASSWORD;
+const userId = args["user-id"];
 const username = args.username || process.env.ADMIN_USERNAME;
 const authSource = args["auth-source"] || process.env.ADMIN_AUTH_SOURCE;
 
 const printUsage = (): void => {
   console.log(
-    "Usage: npm run admin:create -- --name=\"Admin Name\" --email=\"admin@example.com\" --mobile=\"+263771234567\" --password=\"StrongPassword123\" [--username=\"internal.user\"] [--auth-source=\"break_glass\"]"
+    "Usage: npm run internal-user:prepare -- --email=\"admin@example.com\" --username=\"internal.user\" [--auth-source=\"break_glass\"]"
   );
 };
 
 const main = async (): Promise<void> => {
-  if (!fullName || !email || !mobileNumber || !password) {
+  if ((!email && !userId) || !username) {
     printUsage();
     process.exitCode = 1;
     return;
   }
 
-  const user = await createAdminUser({
-    fullName,
+  const user = await prepareInternalAdminUser({
     email,
-    mobileNumber,
-    password,
+    userId,
     username,
     authSource
   });
 
-  const usernameLabel = user.username ? ` username=${user.username}` : "";
-  console.log(`Admin user created: ${user.fullName} <${user.email}>${usernameLabel}`);
+  console.log(
+    `Internal auth prepared for ${user.fullName} with username=${user.username}`
+  );
 };
 
 void main()
   .catch((error) => {
-    console.error("Failed to create admin user.", error);
+    console.error("Failed to prepare internal user.", error);
     process.exitCode = 1;
   })
   .finally(async () => {

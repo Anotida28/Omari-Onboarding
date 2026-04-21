@@ -4,3 +4,533 @@
 
 [INFO] 14:20:00 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
 Backend server running on http://localhost:5000
+[INFO] 17:22:28 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts has been modified
+Backend server running on http://localhost:5000
+[INFO] 17:22:43 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\controllers\authController.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:114:20)
+[ERROR] 17:22:43 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:22:50 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\routes\authRoutes.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:114:20)
+[ERROR] 17:22:51 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:23:04 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\userService.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:114:20)
+[ERROR] 17:23:05 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:23:12 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\controllers\userController.ts has been modified
+Backend server running on http://localhost:5000
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.395Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.395Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.395Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.395Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.391Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.391Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.573Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.573Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.574Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:23:56.574Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+prisma:error 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:24:08.373Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+Unhandled application error. PrismaClientValidationError: 
+Invalid `prisma.authSession.findFirst()` invocation in
+C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:44
+
+  827 export const getCurrentUserFromSessionToken = async (
+  828   sessionToken: string
+  829 ): Promise<AuthenticatedUser | null> => {
+→ 830   const session = await prisma.authSession.findFirst({
+          where: {
+            tokenHash: "f5c0c8e45d3d1526db64d7256f5283331867147c636f194f5d244f331486af8b",
+            revokedAt: null,
+            expiresAt: {
+              gt: new Date("2026-04-21T15:24:08.373Z")
+            }
+          },
+          include: {
+            user: {
+              include: {
+                organizationOwner: true,
+                internalIdentity: true,
+                ~~~~~~~~~~~~~~~~
+        ?       createdApplications?: true,
+        ?       uploadedDocuments?: true,
+        ?       reviewedDocuments?: true,
+        ?       authoredComments?: true,
+        ?       statusChanges?: true,
+        ?       assignedReviewTasks?: true,
+        ?       authSessions?: true,
+        ?       otpChallenges?: true
+              }
+            }
+          }
+        })
+
+Unknown field `internalIdentity` for include statement on model `User`. Available options are marked with ?.
+    at throwValidationException (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\core\errorRendering\throwValidationException.ts:45:9)
+    at ei.handleRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:202:7)
+    at ei.handleAndLogRequestError (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+    at getCurrentUserFromSessionToken (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts:830:19)
+    at attachCurrentUser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\middleware\auth.ts:30:23) {
+  clientVersion: '6.19.3'
+}
+[INFO] 17:34:30 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-39705746539417053.js:114:20)
+[ERROR] 17:34:30 Error: listen EADDRINUSE: address already in use :::5000

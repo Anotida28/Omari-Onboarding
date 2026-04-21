@@ -30,8 +30,8 @@ function PortalShell({
 
   const profileMeta =
     user.role === "admin"
-      ? user.email || "Internal reviewer"
-      : user.organization?.legalName || user.mobileNumber;
+      ? user.username || user.email || "Internal reviewer"
+      : user.organization?.legalName || user.mobileNumber || "Applicant workspace";
 
   const handleLogout = async (): Promise<void> => {
     setIsLoggingOut(true);

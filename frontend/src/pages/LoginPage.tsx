@@ -14,10 +14,11 @@ interface LoginPageProps {
 }
 
 function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
-  const { isAuthenticated, isLoading, login, user } = useAuth();
+  const { isAuthenticated, isLoading, login, loginInternal, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [identifier, setIdentifier] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -41,10 +42,15 @@ function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
     setError("");
 
     try {
-      const authenticatedUser = await login({
-        identifier,
-        password
-      });
+      const authenticatedUser = isInternalMode
+        ? await loginInternal({
+            username,
+            password
+          })
+        : await login({
+            identifier,
+            password
+          });
 
       const fallbackPath = getDefaultPathForUser(authenticatedUser);
       const nextPath =
@@ -97,15 +103,27 @@ function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 
         <form className="auth-form auth-form--minimal" onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Mobile number or email</span>
-            <input
-              value={identifier}
-              onChange={(event) => setIdentifier(event.target.value)}
-              placeholder="Enter your mobile number or email"
-              autoComplete="username"
-            />
-          </label>
+          {isInternalMode ? (
+            <label className="field">
+              <span>Username</span>
+              <input
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="Enter your internal username"
+                autoComplete="username"
+              />
+            </label>
+          ) : (
+            <label className="field">
+              <span>Mobile number or email</span>
+              <input
+                value={identifier}
+                onChange={(event) => setIdentifier(event.target.value)}
+                placeholder="Enter your mobile number or email"
+                autoComplete="username"
+              />
+            </label>
+          )}
 
           <label className="field">
             <span>Password</span>

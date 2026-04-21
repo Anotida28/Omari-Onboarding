@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { getSessionCookieName, getSessionCookieOptions } from "../lib/auth";
 import {
   changePassword,
+  loginInternalUser,
   loginUser,
   logoutSession,
   registerApplicant,
@@ -34,10 +35,26 @@ const getAuthErrorStatusCode = (error: unknown): number => {
   }
 
   if (
+    error.message.includes("Use the internal sign in page") ||
+    error.message.includes("managed through the enterprise directory") ||
+    error.message.includes("do not have access")
+  ) {
+    return 403;
+  }
+
+  if (
     error.message.includes("Invalid login credentials") ||
+    error.message.includes("Invalid internal login credentials") ||
     error.message.includes("not active")
   ) {
     return 401;
+  }
+
+  if (
+    error.message.includes("gateway is currently unavailable") ||
+    error.message.includes("gateway is not configured")
+  ) {
+    return 503;
   }
 
   return 500;
@@ -145,6 +162,41 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error("Failed to log in.", error);
     sendAuthError(res, error, "Failed to log in.");
+  }
+};
+
+export const loginInternal = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { username, password } = req.body as Record<string, unknown>;
+
+  if (!isNonEmptyString(username) || !isNonEmptyString(password)) {
+    res.status(400).json({
+      message: "username and password are required."
+    });
+    return;
+  }
+
+  try {
+    const response = await loginInternalUser(
+      {
+        username,
+        password
+      },
+      {
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent") || undefined
+      }
+    );
+
+    setSessionCookie(res, response.sessionToken);
+    res.status(200).json({
+      user: response.user
+    });
+  } catch (error) {
+    console.error("Failed to log in to the internal portal.", error);
+    sendAuthError(res, error, "Failed to log in to the internal portal.");
   }
 };
 

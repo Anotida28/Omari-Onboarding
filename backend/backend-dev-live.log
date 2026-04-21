@@ -37,3 +37,59 @@ Unhandled application error. Error: Origin not allowed by CORS.
     at router.process_params (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\router\index.js:346:12)
     at next (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\router\index.js:280:10)
     at expressInit (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\middleware\init.js:40:5)
+[INFO] 17:22:28 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:114:20)
+[ERROR] 17:22:29 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:22:43 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\controllers\authController.ts has been modified
+Backend server running on http://localhost:5000
+[INFO] 17:22:50 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\routes\authRoutes.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:114:20)
+[ERROR] 17:22:51 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:23:04 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\userService.ts has been modified
+Backend server running on http://localhost:5000
+[INFO] 17:23:12 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\controllers\userController.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:114:20)
+[ERROR] 17:23:12 Error: listen EADDRINUSE: address already in use :::5000
+[INFO] 17:34:30 Restarting: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\services\authService.ts has been modified
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at app.listen (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\src\server.ts:5:5)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1829:14)
+    at Module._compile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\backend\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:69:33)
+    at node:internal/modules/cjs/loader:1969:10
+    at require.extensions..jsx.require.extensions..js (C:\Users\om526127\AppData\Local\Temp\ts-node-dev-hook-9727829968756483.js:114:20)
+[ERROR] 17:34:30 Error: listen EADDRINUSE: address already in use :::5000

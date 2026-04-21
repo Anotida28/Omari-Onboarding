@@ -4,10 +4,15 @@ export interface HealthResponse {
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
+  fullName?: string;
   role: string;
-  email: string;
+  email: string | null;
+  username?: string | null;
+  status?: string;
+  authSource?: string;
+  lastLoginAt?: string | null;
 }
 
 export interface AuthenticatedOrganization {
@@ -21,11 +26,16 @@ export interface AuthenticatedUser {
   id: string;
   fullName: string;
   email: string | null;
-  mobileNumber: string;
+  mobileNumber: string | null;
+  username: string | null;
   role: string;
   status: string;
   mobileVerified: boolean;
   emailVerified: boolean;
+  isInternalUser: boolean;
+  authSource: string;
+  canChangePassword: boolean;
+  canEditProfile: boolean;
   organization: AuthenticatedOrganization | null;
 }
 
@@ -43,6 +53,11 @@ export interface RegisterPayload {
 
 export interface LoginPayload {
   identifier: string;
+  password: string;
+}
+
+export interface InternalLoginPayload {
+  username: string;
   password: string;
 }
 
@@ -501,6 +516,17 @@ export const loginUser = async (
   payload: LoginPayload
 ): Promise<AuthResponse> =>
   apiFetch<AuthResponse>("/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+export const loginInternalUser = async (
+  payload: InternalLoginPayload
+): Promise<AuthResponse> =>
+  apiFetch<AuthResponse>("/auth/internal/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

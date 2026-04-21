@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   login,
+  loginInternal,
   logout,
   me,
   register,
@@ -13,6 +14,7 @@ const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/internal/login", loginInternal);
 router.post("/logout", logout);
 router.get("/me", me);
 router.get("/session", requireAuth, me);

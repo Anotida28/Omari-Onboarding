@@ -340,3 +340,76 @@ Compiling...
 Compiled successfully!
 webpack compiled [1m[32msuccessfully[39m[22m
 No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+ERROR in src/components/PortalShell.tsx:54:11
+TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+  [0m [90m 52 |[39m           groups[33m=[39m{navGroups}
+   [90m 53 |[39m           currentUserName[33m=[39m{user[33m.[39mfullName}
+  [31m[1m>[22m[39m[90m 54 |[39m           currentUserMeta[33m=[39m{profileMeta}
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 55 |[39m           onLogout[33m=[39m{() [33m=>[39m [36mvoid[39m handleLogout()}
+   [90m 56 |[39m           isLoggingOut[33m=[39m{isLoggingOut}
+   [90m 57 |[39m         [33m/[39m[33m>[39m[0m
+
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+ERROR in src/components/PortalShell.tsx:54:11
+TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+  [0m [90m 52 |[39m           groups[33m=[39m{navGroups}
+   [90m 53 |[39m           currentUserName[33m=[39m{user[33m.[39mfullName}
+  [31m[1m>[22m[39m[90m 54 |[39m           currentUserMeta[33m=[39m{profileMeta}
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 55 |[39m           onLogout[33m=[39m{() [33m=>[39m [36mvoid[39m handleLogout()}
+   [90m 56 |[39m           isLoggingOut[33m=[39m{isLoggingOut}
+   [90m 57 |[39m         [33m/[39m[33m>[39m[0m
+
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+ERROR in src/components/PortalShell.tsx:54:11
+TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+  [0m [90m 52 |[39m           groups[33m=[39m{navGroups}
+   [90m 53 |[39m           currentUserName[33m=[39m{user[33m.[39mfullName}
+  [31m[1m>[22m[39m[90m 54 |[39m           currentUserMeta[33m=[39m{profileMeta}
+   [90m    |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 55 |[39m           onLogout[33m=[39m{() [33m=>[39m [36mvoid[39m handleLogout()}
+   [90m 56 |[39m           isLoggingOut[33m=[39m{isLoggingOut}
+   [90m 57 |[39m         [33m/[39m[33m>[39m[0m
+
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.

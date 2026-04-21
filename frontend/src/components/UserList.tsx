@@ -31,9 +31,7 @@ function UserList(): JSX.Element {
         {users.map((user) => (
           <li key={user.id}>
             <strong>{user.name}</strong>
-            <span>
-              {user.role} · {user.email}
-            </span>
+            <span>{user.role} | {user.email || user.username || "No email"}</span>
           </li>
         ))}
       </ul>

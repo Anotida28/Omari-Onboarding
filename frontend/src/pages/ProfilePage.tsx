@@ -109,6 +109,10 @@ function ProfilePage(): JSX.Element {
   }, [user]);
 
   const navGroups = user?.role === "admin" ? ADMIN_NAV_GROUPS : APPLICANT_NAV_GROUPS;
+  const isDirectoryManagedInternal = Boolean(
+    user && user.role === "admin" && !user.canEditProfile
+  );
+  const canManagePasswordLocally = Boolean(user?.canChangePassword);
 
   const applicationSummary = useMemo(() => {
     if (!application) {
@@ -131,6 +135,15 @@ function ProfilePage(): JSX.Element {
 
   const handleProfileSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
+
+    if (!user.canEditProfile) {
+      setProfileError(
+        "This internal identity is managed through the Omari access gateways and cannot be edited here."
+      );
+      setProfileSuccess("");
+      return;
+    }
+
     setSavingProfile(true);
     setProfileError("");
     setProfileSuccess("");
@@ -160,6 +173,13 @@ function ProfilePage(): JSX.Element {
     event.preventDefault();
     setPasswordError("");
     setPasswordSuccess("");
+
+    if (!user.canChangePassword) {
+      setPasswordError(
+        "Password changes for this internal account are handled by the enterprise directory."
+      );
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       setPasswordError("New password and confirmation do not match.");
@@ -207,7 +227,7 @@ function ProfilePage(): JSX.Element {
               <h2 className="page-section__title">{user.fullName}</h2>
               <p className="page-section__description">
                 {user.role === "admin"
-                  ? "Internal reviewer account"
+                  ? user.username || user.email || "Internal reviewer account"
                   : user.organization?.legalName || "Applicant workspace"}
               </p>
             </div>
@@ -229,8 +249,9 @@ function ProfilePage(): JSX.Element {
                   <p className="page-section__eyebrow">Section 1</p>
                   <h3 className="page-section__title">Identity</h3>
                   <p className="page-section__description">
-                    Keep the account name, mobile number, and email aligned with the person
-                    responsible for this onboarding workspace.
+                    {isDirectoryManagedInternal
+                      ? "This internal identity is synced from the enterprise access gateways. Review the details here, but update them in the source directory."
+                      : "Keep the account name, mobile number, and email aligned with the person responsible for this onboarding workspace."}
                   </p>
                 </div>
               </div>
@@ -247,16 +268,22 @@ function ProfilePage(): JSX.Element {
                       onChange={(event) => setFullName(event.target.value)}
                       placeholder="Enter your full name"
                       autoComplete="name"
+                      disabled={isDirectoryManagedInternal}
                     />
                   </label>
 
                   <label className="field">
-                    <span>Mobile number</span>
+                    <span>{user.role === "admin" ? "Work mobile" : "Mobile number"}</span>
                     <input
                       value={mobileNumber}
                       onChange={(event) => setMobileNumber(event.target.value)}
-                      placeholder="Enter your mobile number"
+                      placeholder={
+                        user.role === "admin"
+                          ? "Enter your work mobile number"
+                          : "Enter your mobile number"
+                      }
                       autoComplete="tel"
+                      disabled={isDirectoryManagedInternal}
                     />
                   </label>
 
@@ -268,19 +295,22 @@ function ProfilePage(): JSX.Element {
                       onChange={(event) => setEmail(event.target.value)}
                       placeholder="Enter your email address"
                       autoComplete="email"
+                      disabled={isDirectoryManagedInternal}
                     />
                   </label>
                 </div>
 
-                <div className="page-actions">
-                  <button
-                    type="submit"
-                    className="btn btn--primary"
-                    disabled={savingProfile}
-                  >
-                    {savingProfile ? "Saving..." : "Save identity changes"}
-                  </button>
-                </div>
+                {user.canEditProfile ? (
+                  <div className="page-actions">
+                    <button
+                      type="submit"
+                      className="btn btn--primary"
+                      disabled={savingProfile}
+                    >
+                      {savingProfile ? "Saving..." : "Save identity changes"}
+                    </button>
+                  </div>
+                ) : null}
               </form>
             </section>
 
@@ -338,7 +368,9 @@ function ProfilePage(): JSX.Element {
                   <p className="page-section__eyebrow">Section 3</p>
                   <h3 className="page-section__title">Security</h3>
                   <p className="page-section__description">
-                    Update your password and review verification readiness for this account.
+                    {canManagePasswordLocally
+                      ? "Update your password and review verification readiness for this account."
+                      : "This internal account signs in through enterprise gateways, so password and credential lifecycle are handled outside this workspace."}
                   </p>
                 </div>
               </div>
@@ -346,52 +378,62 @@ function ProfilePage(): JSX.Element {
               {passwordError ? <p className="feedback feedback--error">{passwordError}</p> : null}
               {passwordSuccess ? <p className="feedback feedback--success">{passwordSuccess}</p> : null}
 
-              <form className="profile-form" onSubmit={handlePasswordSubmit}>
-                <div className="form-grid">
-                  <label className="field field--wide">
-                    <span>Current password</span>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(event) => setCurrentPassword(event.target.value)}
-                      placeholder="Enter your current password"
-                      autoComplete="current-password"
-                    />
-                  </label>
+              {canManagePasswordLocally ? (
+                <form className="profile-form" onSubmit={handlePasswordSubmit}>
+                  <div className="form-grid">
+                    <label className="field field--wide">
+                      <span>Current password</span>
+                      <input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(event) => setCurrentPassword(event.target.value)}
+                        placeholder="Enter your current password"
+                        autoComplete="current-password"
+                      />
+                    </label>
 
-                  <label className="field">
-                    <span>New password</span>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(event) => setNewPassword(event.target.value)}
-                      placeholder="Enter a new password"
-                      autoComplete="new-password"
-                    />
-                  </label>
+                    <label className="field">
+                      <span>New password</span>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(event) => setNewPassword(event.target.value)}
+                        placeholder="Enter a new password"
+                        autoComplete="new-password"
+                      />
+                    </label>
 
-                  <label className="field">
-                    <span>Confirm new password</span>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(event) => setConfirmPassword(event.target.value)}
-                      placeholder="Confirm your new password"
-                      autoComplete="new-password"
-                    />
-                  </label>
+                    <label className="field">
+                      <span>Confirm new password</span>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        placeholder="Confirm your new password"
+                        autoComplete="new-password"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="page-actions">
+                    <button
+                      type="submit"
+                      className="btn btn--primary"
+                      disabled={changingPassword}
+                    >
+                      {changingPassword ? "Updating..." : "Change password"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="empty-state empty-state--compact">
+                  <strong>Directory-managed sign in</strong>
+                  <span>
+                    Your username, password, and internal access approval are controlled by the
+                    upstream Omari gateways.
+                  </span>
                 </div>
-
-                <div className="page-actions">
-                  <button
-                    type="submit"
-                    className="btn btn--primary"
-                    disabled={changingPassword}
-                  >
-                    {changingPassword ? "Updating..." : "Change password"}
-                  </button>
-                </div>
-              </form>
+              )}
             </section>
           </div>
 
@@ -399,20 +441,47 @@ function ProfilePage(): JSX.Element {
             <section className="page-section page-section--dense">
               <div className="page-section__header">
                 <div>
-                  <p className="page-section__eyebrow">Verification</p>
-                  <h3 className="page-section__title">Contact readiness</h3>
+                  <p className="page-section__eyebrow">
+                    {user.role === "admin" ? "Access" : "Verification"}
+                  </p>
+                  <h3 className="page-section__title">
+                    {user.role === "admin" ? "Identity source" : "Contact readiness"}
+                  </h3>
                 </div>
               </div>
 
               <dl className="stacked-meta stacked-meta--compact">
-                <div>
-                  <dt>Mobile</dt>
-                  <dd>{user.mobileVerified ? "Verified" : "Pending verification"}</dd>
-                </div>
-                <div>
-                  <dt>Email</dt>
-                  <dd>{user.emailVerified ? "Verified" : "Pending verification"}</dd>
-                </div>
+                {user.role === "admin" ? (
+                  <>
+                    <div>
+                      <dt>Username</dt>
+                      <dd>{user.username || "-"}</dd>
+                    </div>
+                    <div>
+                      <dt>Auth source</dt>
+                      <dd>{humanize(user.authSource)}</dd>
+                    </div>
+                    <div>
+                      <dt>Password control</dt>
+                      <dd>
+                        {canManagePasswordLocally
+                          ? "Managed in Omari"
+                          : "Managed by enterprise directory"}
+                      </dd>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <dt>Mobile</dt>
+                      <dd>{user.mobileVerified ? "Verified" : "Pending verification"}</dd>
+                    </div>
+                    <div>
+                      <dt>Email</dt>
+                      <dd>{user.emailVerified ? "Verified" : "Pending verification"}</dd>
+                    </div>
+                  </>
+                )}
               </dl>
             </section>
 
