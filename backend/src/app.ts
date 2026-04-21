@@ -12,11 +12,21 @@ import userRoutes from "./routes/userRoutes";
 dotenv.config();
 
 const app = express();
-const frontendOrigin = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+const frontendOrigins = (process.env.FRONTEND_ORIGIN || "http://localhost:3001")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: frontendOrigin,
+    origin: (origin, callback) => {
+      if (!origin || frontendOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origin not allowed by CORS."));
+    },
     credentials: true
   })
 );

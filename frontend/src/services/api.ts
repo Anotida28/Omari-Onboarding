@@ -281,8 +281,15 @@ export interface ReviewQueueItem {
   applicationType: string;
   status: string;
   currentStep: string | null;
+  createdAt: string;
   submittedAt: string | null;
   updatedAt: string;
+  startedBy: {
+    id: string;
+    fullName: string;
+    mobileNumber: string;
+    email: string | null;
+  };
   organization: {
     legalName: string;
     tradingName: string | null;
@@ -308,7 +315,15 @@ export interface ApplicationDetailResponse {
   applicationType: string;
   status: string;
   currentStep: string | null;
+  createdAt: string;
   submittedAt: string | null;
+  updatedAt: string;
+  startedBy: {
+    id: string;
+    fullName: string;
+    mobileNumber: string;
+    email: string | null;
+  };
   organization: {
     id: string;
     legalName: string;

@@ -1,7 +1,9 @@
 import { FormEvent, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import RouteRedirect from "../components/RouteRedirect";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
+import { getCurrentPortal, redirectWithNavigate } from "../utils/portal";
 
 function RegisterPage(): JSX.Element {
   const { isAuthenticated, isLoading, register, user } = useAuth();
@@ -14,9 +16,11 @@ function RegisterPage(): JSX.Element {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const currentPortal = getCurrentPortal();
+  const roleMatchesPortal = user && user.role === "applicant";
 
-  if (!isLoading && isAuthenticated) {
-    return <Navigate to={getDefaultPathForUser(user)} replace />;
+  if (!isLoading && isAuthenticated && roleMatchesPortal) {
+    return <RouteRedirect to={getDefaultPathForUser(user)} replace />;
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -39,9 +43,11 @@ function RegisterPage(): JSX.Element {
         password
       });
 
-      navigate(getDefaultPathForUser(authenticatedUser), {
-        replace: true
-      });
+      redirectWithNavigate(
+        navigate,
+        getDefaultPathForUser(authenticatedUser),
+        true
+      );
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -71,6 +77,14 @@ function RegisterPage(): JSX.Element {
         <div className="auth-minimal-card__header">
           <h1>Create your account</h1>
         </div>
+
+        {!isLoading && isAuthenticated && user && !roleMatchesPortal ? (
+          <p className="feedback feedback--warning">
+            {currentPortal === "applicant"
+              ? "An internal staff session is already active in this browser. Creating an applicant account here will switch this browser into the applicant portal."
+              : "An internal portal session is active in this browser."}
+          </p>
+        ) : null}
 
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 

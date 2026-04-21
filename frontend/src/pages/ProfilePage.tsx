@@ -480,12 +480,15 @@ function ProfilePage(): JSX.Element {
                 <div className="page-section__header">
                   <div>
                     <p className="page-section__eyebrow">Workspace</p>
-                    <h3 className="page-section__title">Review operations</h3>
+                    <h3 className="page-section__title">Internal operations</h3>
                   </div>
                 </div>
 
                 <div className="page-actions page-actions--stacked">
-                  <Link to="/review" className="btn btn--primary">
+                  <Link to="/internal/intake" className="btn btn--primary">
+                    Open intake monitor
+                  </Link>
+                  <Link to="/internal/review" className="btn btn--secondary">
                     Open review queue
                   </Link>
                 </div>

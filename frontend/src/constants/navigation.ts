@@ -41,11 +41,22 @@ export const APPLICANT_NAV_GROUPS: PortalNavGroup[] = [
 
 export const ADMIN_NAV_GROUPS: PortalNavGroup[] = [
   {
+    title: "Workspace",
+    items: [
+      {
+        label: "Intake Monitor",
+        to: "/internal/intake",
+        end: true,
+        icon: "dashboard"
+      }
+    ]
+  },
+  {
     title: "Applications",
     items: [
       {
         label: "Review Queue",
-        to: "/review",
+        to: "/internal/review",
         end: true,
         icon: "review"
       }
@@ -56,7 +67,7 @@ export const ADMIN_NAV_GROUPS: PortalNavGroup[] = [
     items: [
       {
         label: "Profile",
-        to: "/profile",
+        to: "/internal/profile",
         icon: "profile"
       }
     ]

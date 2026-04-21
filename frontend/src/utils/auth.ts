@@ -1,13 +1,16 @@
 import { AuthenticatedUser } from "../services/api";
+import { buildPortalUrl, getCurrentPortal, getPortalLoginPath } from "./portal";
 
 export const getDefaultPathForUser = (
   user: AuthenticatedUser | null
 ): string => {
   if (!user) {
-    return "/auth/login";
+    return getPortalLoginPath(getCurrentPortal());
   }
 
-  return user.role === "admin" ? "/review" : "/dashboard";
+  return user.role === "admin"
+    ? buildPortalUrl("internal", "/internal")
+    : buildPortalUrl("applicant", "/dashboard");
 };
 
 export const getInitials = (value: string): string =>

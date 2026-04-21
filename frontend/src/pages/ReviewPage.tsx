@@ -6,9 +6,9 @@ function ReviewPage(): JSX.Element {
   return (
     <PortalShell
       title="Omari - Review System"
-      eyebrow="Internal review workspace"
-      heading="Application Review Operations"
-      description="Review submissions end-to-end, assess document readiness, and complete approval decisions with clear audit context."
+      eyebrow="Internal review"
+      heading="Review Queue"
+      description="Assess submitted applications, clear document checks, and record approval decisions with full audit context."
       navGroups={ADMIN_NAV_GROUPS}
     >
       <InternalReviewWorkspace />

@@ -1,6 +1,8 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import RouteRedirect from "./RouteRedirect";
 import { getDefaultPathForUser } from "../utils/auth";
+import { getCurrentPortal, getCurrentPortalLoginPath } from "../utils/portal";
 
 const RouteLoader = (): JSX.Element => (
   <div className="route-loader">
@@ -22,11 +24,14 @@ export function ProtectedRoute(): JSX.Element {
 
   if (!user) {
     const from = `${location.pathname}${location.search}${location.hash}`;
+    const loginPath = location.pathname.startsWith("/internal")
+      ? "/internal/login"
+      : "/auth/login";
 
     return (
-      <Navigate
-        to="/auth/login"
-        replace
+      <RouteRedirect
+        to={loginPath}
+        replace={true}
         state={{
           from
         }}
@@ -39,13 +44,22 @@ export function ProtectedRoute(): JSX.Element {
 
 export function PublicOnlyRoute(): JSX.Element {
   const { isLoading, user } = useAuth();
+  const portal = getCurrentPortal();
 
   if (isLoading) {
     return <RouteLoader />;
   }
 
   if (user) {
-    return <Navigate to={getDefaultPathForUser(user)} replace />;
+    const roleMatchesPortal =
+      (portal === "internal" && user.role === "admin") ||
+      (portal === "applicant" && user.role === "applicant");
+
+    if (!roleMatchesPortal) {
+      return <Outlet />;
+    }
+
+    return <RouteRedirect to={getDefaultPathForUser(user)} replace />;
   }
 
   return <Outlet />;
@@ -57,17 +71,23 @@ export function RoleRoute({
   allowedRole: "applicant" | "admin";
 }): JSX.Element {
   const { isLoading, user } = useAuth();
+  const portal = getCurrentPortal();
 
   if (isLoading) {
     return <RouteLoader />;
   }
 
   if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    return <RouteRedirect to={getCurrentPortalLoginPath()} replace />;
   }
 
   if (user.role !== allowedRole) {
-    return <Navigate to={getDefaultPathForUser(user)} replace />;
+    return (
+      <RouteRedirect
+        to={portal === "internal" ? "/internal/login" : "/auth/login"}
+        replace
+      />
+    );
   }
 
   return <Outlet />;

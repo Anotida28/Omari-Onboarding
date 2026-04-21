@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import RouteRedirect from "../components/RouteRedirect";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
 
@@ -17,7 +17,7 @@ function HomePage(): JSX.Element {
     );
   }
 
-  return <Navigate to={getDefaultPathForUser(user)} replace />;
+  return <RouteRedirect to={getDefaultPathForUser(user)} replace />;
 }
 
 export default HomePage;

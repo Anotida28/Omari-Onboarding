@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getCurrentPortalLoginPath, redirectWithNavigate } from "../utils/portal";
 import PortalSidebar, { PortalNavGroup } from "./PortalSidebar";
 
 interface PortalShellProps {
@@ -34,12 +35,11 @@ function PortalShell({
 
   const handleLogout = async (): Promise<void> => {
     setIsLoggingOut(true);
+    const nextPath = getCurrentPortalLoginPath();
 
     try {
       await logout();
-      navigate("/auth/login", {
-        replace: true
-      });
+      redirectWithNavigate(navigate, nextPath, true);
     } finally {
       setIsLoggingOut(false);
     }

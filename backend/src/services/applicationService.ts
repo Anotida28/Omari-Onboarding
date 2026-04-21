@@ -362,7 +362,15 @@ export interface ApplicationDetailResponse {
   applicationType: string;
   status: string;
   currentStep: string | null;
+  createdAt: string;
   submittedAt: string | null;
+  updatedAt: string;
+  startedBy: {
+    id: string;
+    fullName: string;
+    mobileNumber: string;
+    email: string | null;
+  };
   organization: {
     id: string;
     legalName: string;
@@ -609,6 +617,14 @@ const getSectionBlueprints = (applicationType: string) =>
 
 const applicationDetailInclude = Prisma.validator<Prisma.ApplicationInclude>()({
   organization: true,
+  createdByUser: {
+    select: {
+      id: true,
+      fullName: true,
+      mobileNumber: true,
+      email: true
+    }
+  },
   sections: true,
   comments: {
     orderBy: {
@@ -887,9 +903,17 @@ const mapApplicationDetail = async (
     applicationType: application.applicationType,
     status: application.status,
     currentStep: application.currentStep,
+    createdAt: application.createdAt.toISOString(),
     submittedAt: application.submittedAt
       ? application.submittedAt.toISOString()
       : null,
+    updatedAt: application.updatedAt.toISOString(),
+    startedBy: {
+      id: application.createdByUser.id,
+      fullName: application.createdByUser.fullName,
+      mobileNumber: application.createdByUser.mobileNumber,
+      email: application.createdByUser.email
+    },
     organization: {
       id: application.organization.id,
       legalName: application.organization.legalName,

@@ -14,8 +14,15 @@ export interface ReviewQueueItem {
   applicationType: string;
   status: string;
   currentStep: string | null;
+  createdAt: string;
   submittedAt: string | null;
   updatedAt: string;
+  startedBy: {
+    id: string;
+    fullName: string;
+    mobileNumber: string;
+    email: string | null;
+  };
   organization: {
     legalName: string;
     tradingName: string | null;
@@ -113,6 +120,10 @@ const VALID_DOCUMENT_REVIEW_STATUSES = new Set<string>([
 ]);
 
 const resolveScopeStatuses = (scope: string): string[] | undefined => {
+  if (scope === "intake") {
+    return Array.from(ACTIVE_APPLICATION_STATUSES);
+  }
+
   if (scope === "pending") {
     return PENDING_REVIEW_STATUSES;
   }
@@ -260,6 +271,24 @@ export const listReviewApplications = async (
 ): Promise<ReviewQueueResponse> => {
   const normalizedScope = scope.trim().toLowerCase() || "pending";
   const statuses = resolveScopeStatuses(normalizedScope);
+  const orderBy =
+    normalizedScope === "intake"
+      ? [
+          {
+            updatedAt: "desc" as const
+          },
+          {
+            createdAt: "desc" as const
+          }
+        ]
+      : [
+          {
+            submittedAt: "desc" as const
+          },
+          {
+            updatedAt: "desc" as const
+          }
+        ];
 
   const applications = await prisma.application.findMany({
     where:
@@ -276,6 +305,14 @@ export const listReviewApplications = async (
           },
     include: {
       organization: true,
+      createdByUser: {
+        select: {
+          id: true,
+          fullName: true,
+          mobileNumber: true,
+          email: true
+        }
+      },
       sections: true,
       reviewTasks: {
         orderBy: {
@@ -283,14 +320,7 @@ export const listReviewApplications = async (
         }
       }
     },
-    orderBy: [
-      {
-        submittedAt: "desc"
-      },
-      {
-        updatedAt: "desc"
-      }
-    ]
+    orderBy
   });
 
   return {
@@ -306,10 +336,17 @@ export const listReviewApplications = async (
         applicationType: application.applicationType,
         status: application.status,
         currentStep: application.currentStep,
+        createdAt: application.createdAt.toISOString(),
         submittedAt: application.submittedAt
           ? application.submittedAt.toISOString()
           : null,
         updatedAt: application.updatedAt.toISOString(),
+        startedBy: {
+          id: application.createdByUser.id,
+          fullName: application.createdByUser.fullName,
+          mobileNumber: application.createdByUser.mobileNumber,
+          email: application.createdByUser.email
+        },
         organization: {
           legalName: application.organization.legalName,
           tradingName: application.organization.tradingName,

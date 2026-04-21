@@ -1,0 +1,334 @@
+
+> omari-onboarding-frontend@0.1.0 start
+> react-scripts start
+
+(node:30772) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:30772) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled successfully!
+
+You can now view omari-onboarding-frontend in the browser.
+
+  Local:            http://localhost:3001
+  On Your Network:  http://10.0.16.220:3001
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalReviewWorkspace.tsx
+Syntax error: Expected corresponding JSX closing tag for <div>. (2109:12) (2109:12)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalReviewWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalReviewWorkspace.tsx: Expected corresponding JSX closing tag for <div>. (2109:12)
+
+[0m [90m 2107 |[39m                 [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 2108 |[39m               [33m<[39m[33m/[39m[33msection[39m[33m>[39m
+[31m[1m>[22m[39m[90m 2109 |[39m             [33m<[39m[33m/[39m[33m>[39m
+ [90m      |[39m             [31m[1m^[22m[39m
+ [90m 2110 |[39m           ) [33m:[39m [36mnull[39m}
+ [90m 2111 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 2112 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptParserMixin.jsxParseElementAt (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4722:14)
+    at TypeScriptParserMixin.jsxParseElementAt (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4698:32)
+    at TypeScriptParserMixin.jsxParseElementAt (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4698:32)
+    at TypeScriptParserMixin.jsxParseElement (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+    at TypeScriptParserMixin.parseExprAtom (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+    at TypeScriptParserMixin.parseExprSubscripts (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9775:39
+    at TypeScriptParserMixin.tryParse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6907:20)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9775:18)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10800:39
+    at TypeScriptParserMixin.allowInAnd (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+    at TypeScriptParserMixin.parseExprAtom (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+    at TypeScriptParserMixin.parseExprSubscripts (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10800:39
+    at TypeScriptParserMixin.allowInAnd (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10891:30)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9603:18)
+    at TypeScriptParserMixin.parseMaybeConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10885:17)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10893:29)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9603:18)
+    at TypeScriptParserMixin.parseMaybeConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10885:17)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10893:29)
+    at TypeScriptParserMixin.parseConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9603:18)
+    at TypeScriptParserMixin.parseMaybeConditional (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10885:17)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalReviewWorkspace.tsx
+  Line 2109:12:  Parsing [1m[31merror[39m[22m[1m: Expected corresponding JSX closing tag for <div>. (2109:12)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+ERROR in src/components/InternalReviewWorkspace.tsx
+TS1005: '</' expected.
+
+ERROR in src/components/InternalReviewWorkspace.tsx:800:6
+TS17008: JSX element 'section' has no corresponding closing tag.
+  [0m [90m 798 |[39m
+   [90m 799 |[39m   [36mreturn[39m (
+  [31m[1m>[22m[39m[90m 800 |[39m     [33m<[39m[33msection[39m className[33m=[39m[32m"review-workspace"[39m[33m>[39m
+   [90m     |[39m      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 801 |[39m       {error [33m?[39m [33m<[39m[33mp[39m className[33m=[39m[32m"feedback feedback--error"[39m[33m>[39m{error}[33m<[39m[33m/[39m[33mp[39m[33m>[39m [33m:[39m [36mnull[39m}
+   [90m 802 |[39m       {message [33m?[39m [33m<[39m[33mp[39m className[33m=[39m[32m"feedback feedback--success"[39m[33m>[39m{message}[33m<[39m[33m/[39m[33mp[39m[33m>[39m [33m:[39m [36mnull[39m}
+   [90m 803 |[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:823:8
+TS17008: JSX element 'div' has no corresponding closing tag.
+  [0m [90m 821 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 822 |[39m
+  [31m[1m>[22m[39m[90m 823 |[39m       [33m<[39m[33mdiv[39m className[33m=[39m[32m"review-layout"[39m[33m>[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 824 |[39m         [33m<[39m[33maside[39m className[33m=[39m[32m"review-queue"[39m[33m>[39m
+   [90m 825 |[39m           [33m<[39m[33mdiv[39m className[33m=[39m[32m"review-queue__header"[39m[33m>[39m
+   [90m 826 |[39m             [33m<[39m[33mdiv[39m[33m>[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2109:15
+TS1003: Identifier expected.
+  [0m [90m 2107 |[39m                 [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2108 |[39m               [33m<[39m[33m/[39m[33msection[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 2109 |[39m             [33m<[39m[33m/[39m[33m>[39m
+   [90m      |[39m               [31m[1m^[22m[39m
+   [90m 2110 |[39m           ) [33m:[39m [36mnull[39m}
+   [90m 2111 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2112 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2110:19
+TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [0m [90m 2108 |[39m               [33m<[39m[33m/[39m[33msection[39m[33m>[39m
+   [90m 2109 |[39m             [33m<[39m[33m/[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 2110 |[39m           ) [33m:[39m [36mnull[39m}
+   [90m      |[39m                   [31m[1m^[22m[39m
+   [90m 2111 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2112 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2113 |[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2112:9
+TS17015: Expected corresponding closing tag for JSX fragment.
+  [0m [90m 2110 |[39m           ) [33m:[39m [36mnull[39m}
+   [90m 2111 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 2112 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m      |[39m         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 2113 |[39m
+   [90m 2114 |[39m       {pendingDecision [33m?[39m (
+   [90m 2115 |[39m         [33m<[39m[33mdiv[39m className[33m=[39m[32m"decision-modal__backdrop"[39m role[33m=[39m[32m"presentation"[39m onClick[33m=[39m{closeDecisionModal}[33m>[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2114:7
+TS1005: ')' expected.
+  [0m [90m 2112 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2113 |[39m
+  [31m[1m>[22m[39m[90m 2114 |[39m       {pendingDecision [33m?[39m (
+   [90m      |[39m       [31m[1m^[22m[39m
+   [90m 2115 |[39m         [33m<[39m[33mdiv[39m className[33m=[39m[32m"decision-modal__backdrop"[39m role[33m=[39m[32m"presentation"[39m onClick[33m=[39m{closeDecisionModal}[33m>[39m
+   [90m 2116 |[39m           [33m<[39m[33mdiv[39m
+   [90m 2117 |[39m             className[33m=[39m[32m"decision-modal"[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2180:7
+TS17002: Expected corresponding JSX closing tag for 'div'.
+  [0m [90m 2178 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+   [90m 2179 |[39m       ) [33m:[39m [36mnull[39m}
+  [31m[1m>[22m[39m[90m 2180 |[39m     [33m<[39m[33m/[39m[33msection[39m[33m>[39m
+   [90m      |[39m       [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 2181 |[39m   )[33m;[39m
+   [90m 2182 |[39m }
+   [90m 2183 |[39m[0m
+
+ERROR in src/components/InternalReviewWorkspace.tsx:2182:1
+TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  [0m [90m 2180 |[39m     [33m<[39m[33m/[39m[33msection[39m[33m>[39m
+   [90m 2181 |[39m   )[33m;[39m
+  [31m[1m>[22m[39m[90m 2182 |[39m }
+   [90m      |[39m [31m[1m^[22m[39m
+   [90m 2183 |[39m
+   [90m 2184 |[39m [36mexport[39m [36mdefault[39m [33mInternalReviewWorkspace[39m[33m;[39m
+   [90m 2185 |[39m[0m
+
+ERROR in src/pages/ReviewPage.tsx:1:8
+TS1192: Module '"C:/Users/om526127/Documents/GitHub/Projects/Omari-Onboarding/frontend/src/components/InternalReviewWorkspace"' has no default export.
+  [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mInternalReviewWorkspace[39m [36mfrom[39m [32m"../components/InternalReviewWorkspace"[39m[33m;[39m
+   [90m   |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 2 |[39m [36mimport[39m [33mPortalShell[39m [36mfrom[39m [32m"../components/PortalShell"[39m[33m;[39m
+   [90m 3 |[39m [36mimport[39m { [33mADMIN_NAV_GROUPS[39m } [36mfrom[39m [32m"../constants/navigation"[39m[33m;[39m
+   [90m 4 |[39m[0m
+
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.

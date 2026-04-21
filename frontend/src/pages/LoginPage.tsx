@@ -1,18 +1,38 @@
 import { FormEvent, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import RouteRedirect from "../components/RouteRedirect";
 import { useAuth } from "../context/AuthContext";
 import { getDefaultPathForUser } from "../utils/auth";
+import {
+  buildPortalUrl,
+  getCurrentPortal,
+  redirectWithNavigate
+} from "../utils/portal";
 
-function LoginPage(): JSX.Element {
+interface LoginPageProps {
+  mode?: "applicant" | "internal";
+}
+
+function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
   const { isAuthenticated, isLoading, login, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const locationState = location.state as { from?: unknown } | null;
+  const requestedPath =
+    typeof locationState?.from === "string" ? locationState.from : null;
+  const isInternalMode = mode === "internal";
+  const currentPortal = getCurrentPortal();
+  const roleMatchesMode =
+    user &&
+    ((isInternalMode && user.role === "admin") ||
+      (!isInternalMode && user.role === "applicant"));
 
-  if (!isLoading && isAuthenticated) {
-    return <Navigate to={getDefaultPathForUser(user)} replace />;
+  if (!isLoading && isAuthenticated && roleMatchesMode) {
+    return <RouteRedirect to={getDefaultPathForUser(user)} replace />;
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -26,9 +46,16 @@ function LoginPage(): JSX.Element {
         password
       });
 
-      navigate(getDefaultPathForUser(authenticatedUser), {
-        replace: true
-      });
+      const fallbackPath = getDefaultPathForUser(authenticatedUser);
+      const nextPath =
+        requestedPath &&
+        (isInternalMode
+          ? requestedPath.startsWith("/internal")
+          : !requestedPath.startsWith("/internal"))
+          ? requestedPath
+          : fallbackPath;
+
+      redirectWithNavigate(navigate, nextPath, true);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -56,8 +83,16 @@ function LoginPage(): JSX.Element {
         </div>
 
         <div className="auth-minimal-card__header">
-          <h1>Welcome back</h1>
+          <h1>{isInternalMode ? "Internal access" : "Welcome back"}</h1>
         </div>
+
+        {!isLoading && isAuthenticated && user && !roleMatchesMode ? (
+          <p className="feedback feedback--warning">
+            {currentPortal === "internal"
+              ? "An applicant session is already active in this browser. Sign in here with an internal Omari account to switch into the internal portal."
+              : "An internal staff session is already active in this browser. Sign in here with an applicant account to continue in the applicant portal."}
+          </p>
+        ) : null}
 
         {error ? <p className="feedback feedback--error">{error}</p> : null}
 
@@ -92,9 +127,18 @@ function LoginPage(): JSX.Element {
           </button>
         </form>
 
-        <p className="auth-card__footer auth-card__footer--minimal">
-          New here? <Link to="/auth/register">Create an account</Link>
-        </p>
+        {isInternalMode ? (
+          <p className="auth-card__footer auth-card__footer--minimal">
+            Applicant account?{" "}
+            <a href={buildPortalUrl("applicant", "/auth/login")}>
+              Use applicant sign in
+            </a>
+          </p>
+        ) : (
+          <p className="auth-card__footer auth-card__footer--minimal">
+            New here? <Link to="/auth/register">Create an account</Link>
+          </p>
+        )}
       </section>
     </div>
   );
