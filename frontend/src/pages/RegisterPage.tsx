@@ -70,10 +70,6 @@ function RegisterPage(): JSX.Element {
 
         <div className="auth-minimal-card__header">
           <h1>Create your account</h1>
-          <p>
-            Keep registration light with just the essentials. Mobile is required and email can be
-            added now or later.
-          </p>
         </div>
 
         {error ? <p className="feedback feedback--error">{error}</p> : null}

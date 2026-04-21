@@ -13,7 +13,6 @@ interface PortalShellProps {
 }
 
 function PortalShell({
-  title,
   eyebrow,
   heading,
   description,
@@ -58,23 +57,6 @@ function PortalShell({
         />
 
         <main className="workspace-main">
-          <header className="topbar">
-            <div className="topbar__copy">
-              <p className="topbar__eyebrow">{eyebrow}</p>
-              <strong className="topbar__title">{title}</strong>
-            </div>
-
-            <div className="topbar__meta">
-              <div className="topbar__profile">
-                <span className="topbar__profile-label">
-                  {user.role === "admin" ? "Internal reviewer" : "Applicant account"}
-                </span>
-                <strong className="topbar__user-name">{user.fullName}</strong>
-                <span className="topbar__user-meta">{profileMeta}</span>
-              </div>
-            </div>
-          </header>
-
           <div className="workspace-content">
             <section className="workspace-intro">
               <p className="workspace-intro__eyebrow">{eyebrow}</p>

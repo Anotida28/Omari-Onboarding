@@ -57,7 +57,6 @@ function LoginPage(): JSX.Element {
 
         <div className="auth-minimal-card__header">
           <h1>Welcome back</h1>
-          <p>Sign in with your mobile number or email to continue your Omari onboarding.</p>
         </div>
 
         {error ? <p className="feedback feedback--error">{error}</p> : null}
