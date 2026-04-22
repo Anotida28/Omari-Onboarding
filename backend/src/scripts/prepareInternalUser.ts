@@ -26,7 +26,7 @@ const authSource = args["auth-source"] || process.env.ADMIN_AUTH_SOURCE;
 
 const printUsage = (): void => {
   console.log(
-    "Usage: npm run internal-user:prepare -- --email=\"admin@example.com\" --username=\"internal.user\" [--auth-source=\"break_glass\"]"
+    "Usage: npm run internal-user:prepare -- --email=\"admin@example.com\" --username=\"internal.user\" [--auth-source=\"gateway\"]"
   );
 };
 

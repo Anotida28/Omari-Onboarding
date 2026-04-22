@@ -2,10 +2,12 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import multer from "multer";
+import { shouldEnableInternalGatewayMock } from "./lib/internalGateway";
 import { attachCurrentUser } from "./middleware/auth";
 import applicationRoutes from "./routes/applicationRoutes";
 import authRoutes from "./routes/authRoutes";
 import documentRequirementRoutes from "./routes/documentRequirementRoutes";
+import internalGatewayMockRoutes from "./routes/internalGatewayMockRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import userRoutes from "./routes/userRoutes";
 
@@ -39,6 +41,10 @@ app.get("/api/health", (_req, res) => {
     message: "Backend is running"
   });
 });
+
+if (shouldEnableInternalGatewayMock()) {
+  app.use("/api/dev/internal-gateway", internalGatewayMockRoutes);
+}
 
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationRoutes);

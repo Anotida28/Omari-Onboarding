@@ -28,7 +28,7 @@ const authSource = args["auth-source"] || process.env.ADMIN_AUTH_SOURCE;
 
 const printUsage = (): void => {
   console.log(
-    "Usage: npm run admin:create -- --name=\"Admin Name\" --email=\"admin@example.com\" --mobile=\"+263771234567\" --password=\"StrongPassword123\" [--username=\"internal.user\"] [--auth-source=\"break_glass\"]"
+    "Usage: npm run admin:create -- --name=\"Admin Name\" --email=\"admin@example.com\" --mobile=\"+263771234567\" --password=\"StrongPassword123\" [--username=\"internal.user\"] [--auth-source=\"gateway\"]"
   );
 };
 

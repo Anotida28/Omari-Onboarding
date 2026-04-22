@@ -9,6 +9,10 @@ import {
   normalizeMobileNumber,
   verifyPassword
 } from "../lib/auth";
+import {
+  resolveInternalAccessGatewayBaseUrl,
+  resolveInternalAuthGatewayUrl
+} from "../lib/internalGateway";
 import { prisma } from "../lib/prisma";
 import type { AuthenticatedUser } from "../types/auth";
 
@@ -143,6 +147,17 @@ const normalizeOptionalEmail = (value?: string | null): string | null => {
   return normalized ? normalizeEmailAddress(normalized) : null;
 };
 
+const normalizeOptionalGatewayMobile = (value?: string | null): string | null => {
+  const normalized = normalizeOptionalString(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const digitCount = normalized.replace(/\D/g, "").length;
+  return digitCount > 0 ? normalized : null;
+};
+
 const normalizeRequiredMobile = (value: string): string => {
   const normalized = normalizeMobileNumber(value);
 
@@ -180,9 +195,7 @@ const mapAuthenticatedUser = (user: MappedUserShape): AuthenticatedUser => {
     : isSyntheticInternalMobileNumber(user.mobileNumber)
       ? null
       : user.mobileNumber;
-  const canUseLocalProfileControls =
-    !user.internalIdentity ||
-    user.internalIdentity.authSource === INTERNAL_AUTH_SOURCE_BREAK_GLASS;
+  const canUseLocalProfileControls = user.role === USER_ROLES.applicant;
 
   return {
     id: user.id,
@@ -460,7 +473,17 @@ const payloadIncludesUsername = (value: unknown, username: string, depth = 0): b
 
   return Object.entries(value).some(([key, entryValue]) => {
     if (
-      ["username", "userName", "login", "samAccountName", "email"].includes(key) &&
+      [
+        "username",
+        "userName",
+        "login",
+        "samAccountName",
+        "email",
+        "stuff_id",
+        "staff_id",
+        "employeeId",
+        "employeeID"
+      ].includes(key) &&
       typeof entryValue === "string"
     ) {
       return entryValue.trim().toLowerCase() === username;
@@ -516,6 +539,7 @@ const extractInternalGatewayProfile = (
       fullName ||
       getNonEmptyRecordString(record, [
         "fullName",
+        "fullname",
         "displayName",
         "name",
         "userFullName"
@@ -527,7 +551,7 @@ const extractInternalGatewayProfile = (
       );
     mobileNumber =
       mobileNumber ||
-      normalizeOptionalString(
+      normalizeOptionalGatewayMobile(
         getNonEmptyRecordString(record, [
           "mobileNumber",
           "mobile",
@@ -550,6 +574,9 @@ const extractInternalGatewayProfile = (
         "externalReference",
         "employeeNumber",
         "employeeId",
+        "employeeID",
+        "stuff_id",
+        "staff_id",
         "userId"
       ]);
   }
@@ -585,10 +612,12 @@ const authenticateAgainstInternalGateway = async (
   payload: unknown;
   profile: Omit<InternalGatewayProfile, "authPayload" | "accessPayload">;
 }> => {
-  const authUrl = normalizeOptionalString(process.env.INTERNAL_AUTH_API_URL);
+  const authUrl = resolveInternalAuthGatewayUrl();
 
   if (!authUrl) {
-    throw new Error("Internal authentication gateway is not configured.");
+    throw new Error(
+      "Internal authentication gateway is not configured. Set INTERNAL_AUTH_API_URL."
+    );
   }
 
   let gatewayResponse: GatewayHttpResponse;
@@ -638,12 +667,12 @@ const validateInternalPortalAccess = async (
   payload: unknown;
   profile: Omit<InternalGatewayProfile, "authPayload" | "accessPayload">;
 }> => {
-  const accessBaseUrl = normalizeOptionalString(
-    process.env.INTERNAL_ACCESS_API_BASE_URL
-  );
+  const accessBaseUrl = resolveInternalAccessGatewayBaseUrl();
 
   if (!accessBaseUrl) {
-    throw new Error("Internal access gateway is not configured.");
+    throw new Error(
+      "Internal access gateway is not configured. Set INTERNAL_ACCESS_API_BASE_URL."
+    );
   }
 
   const normalizedBaseUrl = accessBaseUrl.replace(/\/+$/, "");
@@ -1024,96 +1053,6 @@ export const loginInternalUser = async (
 ): Promise<AuthResponse> => {
   const username = normalizeRequiredUsername(payload.username);
   const password = normalizeRequiredString(payload.password, "Password");
-  const breakGlassUser = await prisma.user.findFirst({
-    where: {
-      role: USER_ROLES.admin,
-      status: "active",
-      internalIdentity: {
-        is: {
-          username,
-          authSource: INTERNAL_AUTH_SOURCE_BREAK_GLASS
-        }
-      }
-    },
-    include: getUserInclude()
-  });
-
-  if (breakGlassUser) {
-    const passwordValid = await verifyPassword(password, breakGlassUser.passwordHash);
-
-    if (!passwordValid) {
-      await writeAuthAuditLog(prisma, {
-        actorUserId: breakGlassUser.id,
-        entityId: username,
-        action: "internal_login_failed",
-        summary: "Break-glass internal login failed.",
-        details: {
-          username,
-          stage: "break_glass",
-          ipAddress: context.ipAddress || null
-        }
-      });
-      throw new Error("Invalid internal login credentials.");
-    }
-
-    return prisma.$transaction(async (transaction) => {
-      const now = new Date();
-
-      await transaction.user.update({
-        where: {
-          id: breakGlassUser.id
-        },
-        data: {
-          lastLoginAt: now
-        }
-      });
-
-      if (breakGlassUser.internalIdentity) {
-        await transaction.internalUserIdentity.update({
-          where: {
-            id: breakGlassUser.internalIdentity.id
-          },
-          data: {
-            lastAuthenticatedAt: now,
-            lastAccessCheckedAt: now
-          }
-        });
-      }
-
-      const sessionToken = await createSessionForUser(
-        transaction,
-        breakGlassUser.id,
-        context
-      );
-
-      await writeAuthAuditLog(transaction, {
-        actorUserId: breakGlassUser.id,
-        entityId: breakGlassUser.id,
-        action: "internal_login_success",
-        summary: "Break-glass internal login successful.",
-        details: {
-          username,
-          stage: "break_glass",
-          ipAddress: context.ipAddress || null
-        }
-      });
-
-      const refreshedUser = await getUserWithOrganization(
-        transaction,
-        breakGlassUser.id
-      );
-
-      if (!refreshedUser) {
-        throw new Error("User account not found.");
-      }
-
-      return {
-        user: mapAuthenticatedUser(refreshedUser),
-        sessionToken
-      };
-    });
-  }
-
   let authGatewayResponse: {
     payload: unknown;
     profile: Omit<InternalGatewayProfile, "authPayload" | "accessPayload">;
@@ -1232,11 +1171,10 @@ export const updateProfile = async (
     }
 
     if (
-      existingUser.internalIdentity &&
-      existingUser.internalIdentity.authSource !== INTERNAL_AUTH_SOURCE_BREAK_GLASS
+      existingUser.role === USER_ROLES.admin
     ) {
       throw new Error(
-        "Internal identity details are managed through the enterprise directory."
+        "Internal identity details are managed through Active Directory (AD)."
       );
     }
 
@@ -1346,11 +1284,10 @@ export const changePassword = async (
   }
 
   if (
-    existingUser.internalIdentity &&
-    existingUser.internalIdentity.authSource !== INTERNAL_AUTH_SOURCE_BREAK_GLASS
+    existingUser.role === USER_ROLES.admin
   ) {
     throw new Error(
-      "Password changes for this internal account are managed through the enterprise directory."
+      "Password changes for this internal account are managed through Active Directory (AD)."
     );
   }
 
@@ -1411,7 +1348,11 @@ export const createAdminUser = async (
     : null;
   const authSource = payload.authSource
     ? normalizeRequiredString(payload.authSource, "Auth source").toLowerCase()
-    : INTERNAL_AUTH_SOURCE_BREAK_GLASS;
+    : INTERNAL_AUTH_SOURCE_GATEWAY;
+
+  if (authSource !== INTERNAL_AUTH_SOURCE_GATEWAY) {
+    throw new Error("Internal users must use gateway authentication.");
+  }
 
   if (!password) {
     throw new Error("Password is required.");
@@ -1458,7 +1399,7 @@ export const createAdminUser = async (
           displayName: fullName,
           workEmail: email,
           workMobileNumber: mobileNumber,
-          lastAuthenticatedAt: authSource === INTERNAL_AUTH_SOURCE_BREAK_GLASS ? null : new Date(),
+          lastAuthenticatedAt: new Date(),
           lastAccessCheckedAt: null
         }
       });
@@ -1480,9 +1421,13 @@ export const prepareInternalAdminUser = async (
   const username = normalizeRequiredUsername(payload.username);
   const authSource = payload.authSource
     ? normalizeRequiredString(payload.authSource, "Auth source").toLowerCase()
-    : INTERNAL_AUTH_SOURCE_BREAK_GLASS;
+    : INTERNAL_AUTH_SOURCE_GATEWAY;
   const email = payload.email ? normalizeEmailAddress(payload.email) : null;
   const userId = normalizeOptionalString(payload.userId);
+
+  if (authSource !== INTERNAL_AUTH_SOURCE_GATEWAY) {
+    throw new Error("Internal users must use gateway authentication.");
+  }
 
   if (!email && !userId) {
     throw new Error("Either email or userId is required.");

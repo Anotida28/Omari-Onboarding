@@ -138,7 +138,7 @@ function ProfilePage(): JSX.Element {
 
     if (!user.canEditProfile) {
       setProfileError(
-        "This internal identity is managed through the Omari access gateways and cannot be edited here."
+        "This internal identity is managed through Active Directory (AD) and cannot be edited here."
       );
       setProfileSuccess("");
       return;
@@ -176,7 +176,7 @@ function ProfilePage(): JSX.Element {
 
     if (!user.canChangePassword) {
       setPasswordError(
-        "Password changes for this internal account are handled by the enterprise directory."
+        "Password changes for this internal account are handled in Active Directory (AD)."
       );
       return;
     }
@@ -250,7 +250,7 @@ function ProfilePage(): JSX.Element {
                   <h3 className="page-section__title">Identity</h3>
                   <p className="page-section__description">
                     {isDirectoryManagedInternal
-                      ? "This internal identity is synced from the enterprise access gateways. Review the details here, but update them in the source directory."
+                      ? "This internal identity is synced from Active Directory (AD). Review the details here, but update the account in AD."
                       : "Keep the account name, mobile number, and email aligned with the person responsible for this onboarding workspace."}
                   </p>
                 </div>
@@ -370,7 +370,7 @@ function ProfilePage(): JSX.Element {
                   <p className="page-section__description">
                     {canManagePasswordLocally
                       ? "Update your password and review verification readiness for this account."
-                      : "This internal account signs in through enterprise gateways, so password and credential lifecycle are handled outside this workspace."}
+                      : "This internal account signs in with an Active Directory username and password, so password management stays in AD."}
                   </p>
                 </div>
               </div>
@@ -427,10 +427,10 @@ function ProfilePage(): JSX.Element {
                 </form>
               ) : (
                 <div className="empty-state empty-state--compact">
-                  <strong>Directory-managed sign in</strong>
+                  <strong>Active Directory sign in</strong>
                   <span>
-                    Your username, password, and internal access approval are controlled by the
-                    upstream Omari gateways.
+                    Use your AD username and password to access this portal. Password changes are
+                    handled in Active Directory, not in Omari.
                   </span>
                 </div>
               )}
@@ -466,7 +466,7 @@ function ProfilePage(): JSX.Element {
                       <dd>
                         {canManagePasswordLocally
                           ? "Managed in Omari"
-                          : "Managed by enterprise directory"}
+                          : "Managed in Active Directory"}
                       </dd>
                     </div>
                   </>

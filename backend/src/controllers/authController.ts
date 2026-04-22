@@ -36,7 +36,7 @@ const getAuthErrorStatusCode = (error: unknown): number => {
 
   if (
     error.message.includes("Use the internal sign in page") ||
-    error.message.includes("managed through the enterprise directory") ||
+    error.message.includes("managed through Active Directory") ||
     error.message.includes("do not have access")
   ) {
     return 403;

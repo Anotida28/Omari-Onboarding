@@ -13,7 +13,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.js",
     "admin:create": "npm run build && node dist/scripts/createAdmin.js",
-    "internal-admin:create": "npm run build && node dist/scripts/createAdmin.js --auth-source=break_glass",
+    "internal-admin:create": "npm run build && node dist/scripts/createAdmin.js --auth-source=gateway",
     "internal-user:prepare": "npm run build && node dist/scripts/prepareInternalUser.js"
   },
   "dependencies": {

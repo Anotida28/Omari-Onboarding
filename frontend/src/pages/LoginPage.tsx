@@ -89,7 +89,13 @@ function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
         </div>
 
         <div className="auth-minimal-card__header">
-          <h1>{isInternalMode ? "Internal access" : "Welcome back"}</h1>
+          <h1>{isInternalMode ? "Internal sign in" : "Welcome back"}</h1>
+          {isInternalMode ? (
+            <p>
+              Sign in with your Active Directory username and password. Password
+              changes stay on the Active Directory side.
+            </p>
+          ) : null}
         </div>
 
         {!isLoading && isAuthenticated && user && !roleMatchesMode ? (
@@ -105,11 +111,11 @@ function LoginPage({ mode = "applicant" }: LoginPageProps): JSX.Element {
         <form className="auth-form auth-form--minimal" onSubmit={handleSubmit}>
           {isInternalMode ? (
             <label className="field">
-              <span>Username</span>
+              <span>AD username</span>
               <input
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                placeholder="Enter your internal username"
+                placeholder="Enter your AD username"
                 autoComplete="username"
               />
             </label>
