@@ -1,3 +1,883 @@
 (node:35692) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 (node:35692) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+ERROR in src/components/InternalIntakeWorkspace.tsx:2:13
+TS2300: Duplicate identifier 'IntakeFilter'.
+  [0m [90m 1 |[39m [90m// types/intake.types.ts[39m
+  [31m[1m>[22m[39m[90m 2 |[39m [36mexport[39m type [33mIntakeFilter[39m [33m=[39m
+   [90m   |[39m             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 3 |[39m   [33m|[39m [32m"all"[39m
+   [90m 4 |[39m   [33m|[39m [32m"draft"[39m
+   [90m 5 |[39m   [33m|[39m [32m"submitted"[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:9:13
+TS2300: Duplicate identifier 'SortOrder'.
+  [0m [90m  7 |[39m   [33m|[39m [32m"action-required"[39m[33m;[39m
+   [90m  8 |[39m
+  [31m[1m>[22m[39m[90m  9 |[39m [36mexport[39m type [33mSortOrder[39m [33m=[39m [32m"newest"[39m [33m|[39m [32m"oldest"[39m[33m;[39m
+   [90m    |[39m             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 10 |[39m
+   [90m 11 |[39m [36mexport[39m [36minterface[39m [33mIntakeFilterOption[39m {
+   [90m 12 |[39m   value[33m:[39m [33mIntakeFilter[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:16:18
+TS2300: Duplicate identifier 'QueueSummary'.
+  [0m [90m 14 |[39m }
+   [90m 15 |[39m
+  [31m[1m>[22m[39m[90m 16 |[39m [36mexport[39m [36minterface[39m [33mQueueSummary[39m {
+   [90m    |[39m                  [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 17 |[39m   startedToday[33m:[39m number[33m;[39m
+   [90m 18 |[39m   drafts[33m:[39m number[33m;[39m
+   [90m 19 |[39m   submitted[33m:[39m number[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:24:18
+TS2300: Duplicate identifier 'ApplicationSummary'.
+  [0m [90m 22 |[39m }
+   [90m 23 |[39m
+  [31m[1m>[22m[39m[90m 24 |[39m [36mexport[39m [36minterface[39m [33mApplicationSummary[39m {
+   [90m    |[39m                  [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 25 |[39m   completedSections[33m:[39m number[33m;[39m
+   [90m 26 |[39m   openComments[33m:[39m number[33m;[39m
+   [90m 27 |[39m   applicantVisibleComments[33m:[39m number[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:29:15
+TS2304: Cannot find name 'ReviewTask'.
+  [0m [90m 27 |[39m   applicantVisibleComments[33m:[39m number[33m;[39m
+   [90m 28 |[39m   progressPercent[33m:[39m number[33m;[39m
+  [31m[1m>[22m[39m[90m 29 |[39m   latestTask[33m:[39m [33mReviewTask[39m [33m|[39m [36mnull[39m[33m;[39m
+   [90m    |[39m               [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 30 |[39m }
+   [90m 31 |[39m
+   [90m 32 |[39m [90m// constants/intake.constants.ts[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:33:36
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 31 |[39m
+   [90m 32 |[39m [90m// constants/intake.constants.ts[39m
+  [31m[1m>[22m[39m[90m 33 |[39m [36mimport[39m { [33mIntakeFilterOption[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m    |[39m                                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 34 |[39m
+   [90m 35 |[39m [36mexport[39m [36mconst[39m [33mINTAKE_FILTERS[39m[33m:[39m readonly [33mIntakeFilterOption[39m[] [33m=[39m [
+   [90m 36 |[39m   { value[33m:[39m [32m"all"[39m[33m,[39m label[33m:[39m [32m"All Active"[39m }[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:112:9
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 110 |[39m
+   [90m 111 |[39m [36mexport[39m [36mconst[39m matchesFilter [33m=[39m (
+  [31m[1m>[22m[39m[90m 112 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m,[39m
+   [90m     |[39m         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 113 |[39m   filter[33m:[39m [33mIntakeFilter[39m[33m,[39m
+   [90m 114 |[39m )[33m:[39m boolean [33m=>[39m {
+   [90m 115 |[39m   [36mconst[39m filterMap[33m:[39m [33mRecord[39m[33m<[39m[33mIntakeFilter[39m[33m,[39m (item[33m:[39m [33mReviewQueueItem[39m) [33m=>[39m boolean[33m>[39m [33m=[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:115:48
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 113 |[39m   filter[33m:[39m [33mIntakeFilter[39m[33m,[39m
+   [90m 114 |[39m )[33m:[39m boolean [33m=>[39m {
+  [31m[1m>[22m[39m[90m 115 |[39m   [36mconst[39m filterMap[33m:[39m [33mRecord[39m[33m<[39m[33mIntakeFilter[39m[33m,[39m (item[33m:[39m [33mReviewQueueItem[39m) [33m=>[39m boolean[33m>[39m [33m=[39m {
+   [90m     |[39m                                                [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 116 |[39m     all[33m:[39m () [33m=>[39m [36mtrue[39m[33m,[39m
+   [90m 117 |[39m     draft[33m:[39m (item) [33m=>[39m item[33m.[39mstatus [33m===[39m [32m"draft"[39m[33m,[39m
+   [90m 118 |[39m     submitted[33m:[39m (item) [33m=>[39m item[33m.[39mstatus [33m===[39m [32m"submitted"[39m[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:135:10
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 133 |[39m
+   [90m 134 |[39m [36mexport[39m [36mconst[39m resolveSelectedApplicationId [33m=[39m (
+  [31m[1m>[22m[39m[90m 135 |[39m   items[33m:[39m [33mReviewQueueItem[39m[][33m,[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 136 |[39m   currentSelected[33m:[39m string[33m,[39m
+   [90m 137 |[39m   preferredApplicationId[33m?[39m[33m:[39m string[33m,[39m
+   [90m 138 |[39m )[33m:[39m string [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:157:10
+TS2300: Duplicate identifier 'useState'.
+  [0m [90m 155 |[39m
+   [90m 156 |[39m [90m// hooks/useIntakeQueue.ts[39m
+  [31m[1m>[22m[39m[90m 157 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 158 |[39m [36mimport[39m { getReviewQueue } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 159 |[39m
+   [90m 160 |[39m [36mexport[39m [36mconst[39m useIntakeQueue [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:157:20
+TS2300: Duplicate identifier 'useCallback'.
+  [0m [90m 155 |[39m
+   [90m 156 |[39m [90m// hooks/useIntakeQueue.ts[39m
+  [31m[1m>[22m[39m[90m 157 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 158 |[39m [36mimport[39m { getReviewQueue } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 159 |[39m
+   [90m 160 |[39m [36mexport[39m [36mconst[39m useIntakeQueue [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:157:33
+TS2300: Duplicate identifier 'useRef'.
+  [0m [90m 155 |[39m
+   [90m 156 |[39m [90m// hooks/useIntakeQueue.ts[39m
+  [31m[1m>[22m[39m[90m 157 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m                                 [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 158 |[39m [36mimport[39m { getReviewQueue } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 159 |[39m
+   [90m 160 |[39m [36mexport[39m [36mconst[39m useIntakeQueue [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:160:14
+TS2395: Individual declarations in merged declaration 'useIntakeQueue' must be all exported or all local.
+  [0m [90m 158 |[39m [36mimport[39m { getReviewQueue } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 159 |[39m
+  [31m[1m>[22m[39m[90m 160 |[39m [36mexport[39m [36mconst[39m useIntakeQueue [33m=[39m () [33m=>[39m {
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 161 |[39m   [36mconst[39m [queue[33m,[39m setQueue] [33m=[39m useState[33m<[39m[33mReviewQueueItem[39m[][33m>[39m([])[33m;[39m
+   [90m 162 |[39m   [36mconst[39m [loading[33m,[39m setLoading] [33m=[39m useState([36mtrue[39m)[33m;[39m
+   [90m 163 |[39m   [36mconst[39m [error[33m,[39m setError] [33m=[39m useState[33m<[39m[33mstring[39m[33m>[39m([32m""[39m)[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:161:38
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 159 |[39m
+   [90m 160 |[39m [36mexport[39m [36mconst[39m useIntakeQueue [33m=[39m () [33m=>[39m {
+  [31m[1m>[22m[39m[90m 161 |[39m   [36mconst[39m [queue[33m,[39m setQueue] [33m=[39m useState[33m<[39m[33mReviewQueueItem[39m[][33m>[39m([])[33m;[39m
+   [90m     |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 162 |[39m   [36mconst[39m [loading[33m,[39m setLoading] [33m=[39m useState([36mtrue[39m)[33m;[39m
+   [90m 163 |[39m   [36mconst[39m [error[33m,[39m setError] [33m=[39m useState[33m<[39m[33mstring[39m[33m>[39m([32m""[39m)[33m;[39m
+   [90m 164 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:203:10
+TS2300: Duplicate identifier 'useState'.
+  [0m [90m 201 |[39m
+   [90m 202 |[39m [90m// hooks/useApplicationDetail.ts[39m
+  [31m[1m>[22m[39m[90m 203 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 204 |[39m [36mimport[39m { getApplication[33m,[39m [33mApplicationDetailResponse[39m } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 205 |[39m
+   [90m 206 |[39m [36mexport[39m [36mconst[39m useApplicationDetail [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:203:20
+TS2300: Duplicate identifier 'useCallback'.
+  [0m [90m 201 |[39m
+   [90m 202 |[39m [90m// hooks/useApplicationDetail.ts[39m
+  [31m[1m>[22m[39m[90m 203 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 204 |[39m [36mimport[39m { getApplication[33m,[39m [33mApplicationDetailResponse[39m } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 205 |[39m
+   [90m 206 |[39m [36mexport[39m [36mconst[39m useApplicationDetail [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:203:33
+TS2300: Duplicate identifier 'useRef'.
+  [0m [90m 201 |[39m
+   [90m 202 |[39m [90m// hooks/useApplicationDetail.ts[39m
+  [31m[1m>[22m[39m[90m 203 |[39m [36mimport[39m { useState[33m,[39m useCallback[33m,[39m useRef } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m                                 [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 204 |[39m [36mimport[39m { getApplication[33m,[39m [33mApplicationDetailResponse[39m } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 205 |[39m
+   [90m 206 |[39m [36mexport[39m [36mconst[39m useApplicationDetail [33m=[39m () [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:206:14
+TS2395: Individual declarations in merged declaration 'useApplicationDetail' must be all exported or all local.
+  [0m [90m 204 |[39m [36mimport[39m { getApplication[33m,[39m [33mApplicationDetailResponse[39m } [36mfrom[39m [32m"../services/api"[39m[33m;[39m
+   [90m 205 |[39m
+  [31m[1m>[22m[39m[90m 206 |[39m [36mexport[39m [36mconst[39m useApplicationDetail [33m=[39m () [33m=>[39m {
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 207 |[39m   [36mconst[39m [application[33m,[39m setApplication] [33m=[39m useState[33m<[39m[33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m[33m>[39m([36mnull[39m)[33m;[39m
+   [90m 208 |[39m   [36mconst[39m [loading[33m,[39m setLoading] [33m=[39m useState([36mfalse[39m)[33m;[39m
+   [90m 209 |[39m   [36mconst[39m [error[33m,[39m setError] [33m=[39m useState[33m<[39m[33mstring[39m[33m>[39m([32m""[39m)[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:256:10
+TS2300: Duplicate identifier 'useMemo'.
+  [0m [90m 254 |[39m
+   [90m 255 |[39m [90m// hooks/useQueueFiltering.ts[39m
+  [31m[1m>[22m[39m[90m 256 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 257 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 258 |[39m
+   [90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m ([0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:257:10
+TS2300: Duplicate identifier 'IntakeFilter'.
+  [0m [90m 255 |[39m [90m// hooks/useQueueFiltering.ts[39m
+   [90m 256 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 257 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 258 |[39m
+   [90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m (
+   [90m 260 |[39m   queue[33m:[39m [33mReviewQueueItem[39m[][33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:257:24
+TS2300: Duplicate identifier 'SortOrder'.
+  [0m [90m 255 |[39m [90m// hooks/useQueueFiltering.ts[39m
+   [90m 256 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 257 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 258 |[39m
+   [90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m (
+   [90m 260 |[39m   queue[33m:[39m [33mReviewQueueItem[39m[][33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:257:41
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 255 |[39m [90m// hooks/useQueueFiltering.ts[39m
+   [90m 256 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 257 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 258 |[39m
+   [90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m (
+   [90m 260 |[39m   queue[33m:[39m [33mReviewQueueItem[39m[][33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:259:14
+TS2395: Individual declarations in merged declaration 'useQueueFiltering' must be all exported or all local.
+  [0m [90m 257 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 258 |[39m
+  [31m[1m>[22m[39m[90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m (
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 260 |[39m   queue[33m:[39m [33mReviewQueueItem[39m[][33m,[39m
+   [90m 261 |[39m   filter[33m:[39m [33mIntakeFilter[39m[33m,[39m
+   [90m 262 |[39m   searchTerm[33m:[39m string[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:260:10
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 258 |[39m
+   [90m 259 |[39m [36mexport[39m [36mconst[39m useQueueFiltering [33m=[39m (
+  [31m[1m>[22m[39m[90m 260 |[39m   queue[33m:[39m [33mReviewQueueItem[39m[][33m,[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 261 |[39m   filter[33m:[39m [33mIntakeFilter[39m[33m,[39m
+   [90m 262 |[39m   searchTerm[33m:[39m string[33m,[39m
+   [90m 263 |[39m   sortOrder[33m:[39m [33mSortOrder[39m[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:299:10
+TS2300: Duplicate identifier 'useMemo'.
+  [0m [90m 297 |[39m
+   [90m 298 |[39m [90m// hooks/useQueueSummary.ts[39m
+  [31m[1m>[22m[39m[90m 299 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 300 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 301 |[39m
+   [90m 302 |[39m [36mexport[39m [36mconst[39m useQueueSummary [33m=[39m (queue[33m:[39m [33mReviewQueueItem[39m[])[33m:[39m [33mQueueSummary[39m [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:300:10
+TS2300: Duplicate identifier 'QueueSummary'.
+  [0m [90m 298 |[39m [90m// hooks/useQueueSummary.ts[39m
+   [90m 299 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 300 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 301 |[39m
+   [90m 302 |[39m [36mexport[39m [36mconst[39m useQueueSummary [33m=[39m (queue[33m:[39m [33mReviewQueueItem[39m[])[33m:[39m [33mQueueSummary[39m [33m=>[39m {
+   [90m 303 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:300:30
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 298 |[39m [90m// hooks/useQueueSummary.ts[39m
+   [90m 299 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 300 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 301 |[39m
+   [90m 302 |[39m [36mexport[39m [36mconst[39m useQueueSummary [33m=[39m (queue[33m:[39m [33mReviewQueueItem[39m[])[33m:[39m [33mQueueSummary[39m [33m=>[39m {
+   [90m 303 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:302:14
+TS2395: Individual declarations in merged declaration 'useQueueSummary' must be all exported or all local.
+  [0m [90m 300 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 301 |[39m
+  [31m[1m>[22m[39m[90m 302 |[39m [36mexport[39m [36mconst[39m useQueueSummary [33m=[39m (queue[33m:[39m [33mReviewQueueItem[39m[])[33m:[39m [33mQueueSummary[39m [33m=>[39m {
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 303 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {
+   [90m 304 |[39m     [36mconst[39m today [33m=[39m [36mnew[39m [33mDate[39m()[33m;[39m
+   [90m 305 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:302:40
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 300 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 301 |[39m
+  [31m[1m>[22m[39m[90m 302 |[39m [36mexport[39m [36mconst[39m useQueueSummary [33m=[39m (queue[33m:[39m [33mReviewQueueItem[39m[])[33m:[39m [33mQueueSummary[39m [33m=>[39m {
+   [90m     |[39m                                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 303 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {
+   [90m 304 |[39m     [36mconst[39m today [33m=[39m [36mnew[39m [33mDate[39m()[33m;[39m
+   [90m 305 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:321:10
+TS2300: Duplicate identifier 'useMemo'.
+  [0m [90m 319 |[39m
+   [90m 320 |[39m [90m// hooks/useApplicationSummary.ts[39m
+  [31m[1m>[22m[39m[90m 321 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 322 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 323 |[39m
+   [90m 324 |[39m [36mexport[39m [36mconst[39m useApplicationSummary [33m=[39m ([0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:322:10
+TS2300: Duplicate identifier 'ApplicationSummary'.
+  [0m [90m 320 |[39m [90m// hooks/useApplicationSummary.ts[39m
+   [90m 321 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 322 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 323 |[39m
+   [90m 324 |[39m [36mexport[39m [36mconst[39m useApplicationSummary [33m=[39m (
+   [90m 325 |[39m   application[33m:[39m [33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:322:36
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 320 |[39m [90m// hooks/useApplicationSummary.ts[39m
+   [90m 321 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 322 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 323 |[39m
+   [90m 324 |[39m [36mexport[39m [36mconst[39m useApplicationSummary [33m=[39m (
+   [90m 325 |[39m   application[33m:[39m [33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:324:14
+TS2395: Individual declarations in merged declaration 'useApplicationSummary' must be all exported or all local.
+  [0m [90m 322 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 323 |[39m
+  [31m[1m>[22m[39m[90m 324 |[39m [36mexport[39m [36mconst[39m useApplicationSummary [33m=[39m (
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 325 |[39m   application[33m:[39m [33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m
+   [90m 326 |[39m )[33m:[39m [33mApplicationSummary[39m [33m|[39m [36mnull[39m [33m=>[39m {
+   [90m 327 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:358:10
+TS2300: Duplicate identifier 'useMemo'.
+  [0m [90m 356 |[39m
+   [90m 357 |[39m [90m// hooks/useLatestComments.ts[39m
+  [31m[1m>[22m[39m[90m 358 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 359 |[39m
+   [90m 360 |[39m [36mexport[39m [36mconst[39m useLatestComments [33m=[39m (application[33m:[39m [33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m) [33m=>[39m {
+   [90m 361 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:360:14
+TS2395: Individual declarations in merged declaration 'useLatestComments' must be all exported or all local.
+  [0m [90m 358 |[39m [36mimport[39m { useMemo } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m 359 |[39m
+  [31m[1m>[22m[39m[90m 360 |[39m [36mexport[39m [36mconst[39m useLatestComments [33m=[39m (application[33m:[39m [33mApplicationDetailResponse[39m [33m|[39m [36mnull[39m) [33m=>[39m {
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 361 |[39m   [36mreturn[39m useMemo(() [33m=>[39m {
+   [90m 362 |[39m     [36mif[39m ([33m![39mapplication) [36mreturn[39m [][33m;[39m
+   [90m 363 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:373:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 371 |[39m
+   [90m 372 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+  [31m[1m>[22m[39m[90m 373 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 374 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 375 |[39m
+   [90m 376 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:374:10
+TS2300: Duplicate identifier 'QueueSummary'.
+  [0m [90m 372 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+   [90m 373 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 374 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 375 |[39m
+   [90m 376 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {
+   [90m 377 |[39m   summary[33m:[39m [33mQueueSummary[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:374:30
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 372 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+   [90m 373 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 374 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 375 |[39m
+   [90m 376 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {
+   [90m 377 |[39m   summary[33m:[39m [33mQueueSummary[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:380:14
+TS2395: Individual declarations in merged declaration 'IntakeSummaryGrid' must be all exported or all local.
+  [0m [90m 378 |[39m }
+   [90m 379 |[39m
+  [31m[1m>[22m[39m[90m 380 |[39m [36mexport[39m [36mconst[39m [33mIntakeSummaryGrid[39m[33m:[39m [33mReact[39m[33m.[39m[33mFC[39m[33m<[39m[33mIntakeSummaryGridProps[39m[33m>[39m [33m=[39m ({ summary }) [33m=>[39m {
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 381 |[39m   [36mconst[39m cards [33m=[39m [
+   [90m 382 |[39m     {
+   [90m 383 |[39m       title[33m:[39m [32m"Started Today"[39m[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:423:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 421 |[39m
+   [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+  [31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 424 |[39m
+   [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+   [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:426:9
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 424 |[39m
+   [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+  [31m[1m>[22m[39m[90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m
+   [90m     |[39m         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 427 |[39m   isSelected[33m:[39m boolean[33m;[39m
+   [90m 428 |[39m   onSelect[33m:[39m (id[33m:[39m string) [33m=>[39m [36mvoid[39m[33m;[39m
+   [90m 429 |[39m }[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:489:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 487 |[39m
+   [90m 488 |[39m [90m// components/IntakeQueuePanel.tsx[39m
+  [31m[1m>[22m[39m[90m 489 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 490 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 491 |[39m
+   [90m 492 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:490:10
+TS2300: Duplicate identifier 'IntakeFilter'.
+  [0m [90m 488 |[39m [90m// components/IntakeQueuePanel.tsx[39m
+   [90m 489 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 490 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 491 |[39m
+   [90m 492 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {
+   [90m 493 |[39m   items[33m:[39m [33mReviewQueueItem[39m[][33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:490:24
+TS2300: Duplicate identifier 'SortOrder'.
+  [0m [90m 488 |[39m [90m// components/IntakeQueuePanel.tsx[39m
+   [90m 489 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 490 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 491 |[39m
+   [90m 492 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {
+   [90m 493 |[39m   items[33m:[39m [33mReviewQueueItem[39m[][33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:490:41
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 488 |[39m [90m// components/IntakeQueuePanel.tsx[39m
+   [90m 489 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 490 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 491 |[39m
+   [90m 492 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {
+   [90m 493 |[39m   items[33m:[39m [33mReviewQueueItem[39m[][33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:493:10
+TS2304: Cannot find name 'ReviewQueueItem'.
+  [0m [90m 491 |[39m
+   [90m 492 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {
+  [31m[1m>[22m[39m[90m 493 |[39m   items[33m:[39m [33mReviewQueueItem[39m[][33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 494 |[39m   selectedId[33m:[39m string[33m;[39m
+   [90m 495 |[39m   loading[33m:[39m boolean[33m;[39m
+   [90m 496 |[39m   searchTerm[33m:[39m string[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:506:14
+TS2395: Individual declarations in merged declaration 'IntakeQueuePanel' must be all exported or all local.
+  [0m [90m 504 |[39m }
+   [90m 505 |[39m
+  [31m[1m>[22m[39m[90m 506 |[39m [36mexport[39m [36mconst[39m [33mIntakeQueuePanel[39m[33m:[39m [33mReact[39m[33m.[39m[33mFC[39m[33m<[39m[33mIntakeQueuePanelProps[39m[33m>[39m [33m=[39m ({
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 507 |[39m   items[33m,[39m
+   [90m 508 |[39m   selectedId[33m,[39m
+   [90m 509 |[39m   loading[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:618:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 616 |[39m
+   [90m 617 |[39m [90m// components/ApplicationDetailModal.tsx[39m
+  [31m[1m>[22m[39m[90m 618 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 619 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m 620 |[39m
+   [90m 621 |[39m [36minterface[39m [33mApplicationDetailModalProps[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:619:10
+TS2300: Duplicate identifier 'ApplicationSummary'.
+  [0m [90m 617 |[39m [90m// components/ApplicationDetailModal.tsx[39m
+   [90m 618 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 619 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 620 |[39m
+   [90m 621 |[39m [36minterface[39m [33mApplicationDetailModalProps[39m {
+   [90m 622 |[39m   isOpen[33m:[39m boolean[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:619:36
+TS2307: Cannot find module '../types/intake.types' or its corresponding type declarations.
+  [0m [90m 617 |[39m [90m// components/ApplicationDetailModal.tsx[39m
+   [90m 618 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 619 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+   [90m     |[39m                                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 620 |[39m
+   [90m 621 |[39m [36minterface[39m [33mApplicationDetailModalProps[39m {
+   [90m 622 |[39m   isOpen[33m:[39m boolean[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:632:14
+TS2395: Individual declarations in merged declaration 'ApplicationDetailModal' must be all exported or all local.
+  [0m [90m 630 |[39m }
+   [90m 631 |[39m
+  [31m[1m>[22m[39m[90m 632 |[39m [36mexport[39m [36mconst[39m [33mApplicationDetailModal[39m[33m:[39m [33mReact[39m[33m.[39m[33mFC[39m[33m<[39m[33mApplicationDetailModalProps[39m[33m>[39m [33m=[39m ({
+   [90m     |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 633 |[39m   isOpen[33m,[39m
+   [90m 634 |[39m   onClose[33m,[39m
+   [90m 635 |[39m   application[33m,[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:713:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 711 |[39m
+   [90m 712 |[39m [90m// components/ApplicationDetailContent.tsx[39m
+  [31m[1m>[22m[39m[90m 713 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m     |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 714 |[39m
+   [90m 715 |[39m [36minterface[39m [33mApplicationDetailContentProps[39m {
+   [90m 716 |[39m   application[33m:[39m [33mApplicationDetailResponse[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1023:33
+TS2339: Property 'id' does not exist on type 'Comment'.
+  [0m [90m 1021 |[39m       [33m<[39m[33mdiv[39m className[33m=[39m[32m"message-list"[39m[33m>[39m
+   [90m 1022 |[39m         {comments[33m.[39mmap((comment) [33m=>[39m (
+  [31m[1m>[22m[39m[90m 1023 |[39m           [33m<[39m[33marticle[39m key[33m=[39m{comment[33m.[39mid} className[33m=[39m[32m"message-item"[39m[33m>[39m
+   [90m      |[39m                                 [31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1024 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"message-item__header"[39m[33m>[39m
+   [90m 1025 |[39m               [33m<[39m[33mstrong[39m[33m>[39m
+   [90m 1026 |[39m                 {comment[33m.[39msectionKey [33m?[39m humanize(comment[33m.[39msectionKey) [33m:[39m [32m"General note"[39m}[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1026:26
+TS2339: Property 'sectionKey' does not exist on type 'Comment'.
+  [0m [90m 1024 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"message-item__header"[39m[33m>[39m
+   [90m 1025 |[39m               [33m<[39m[33mstrong[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 1026 |[39m                 {comment[33m.[39msectionKey [33m?[39m humanize(comment[33m.[39msectionKey) [33m:[39m [32m"General note"[39m}
+   [90m      |[39m                          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1027 |[39m               [33m<[39m[33m/[39m[33mstrong[39m[33m>[39m
+   [90m 1028 |[39m               [33m<[39m[33mspan[39m
+   [90m 1029 |[39m                 className[33m=[39m{[32m`status-chip${[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1026:56
+TS2339: Property 'sectionKey' does not exist on type 'Comment'.
+  [0m [90m 1024 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"message-item__header"[39m[33m>[39m
+   [90m 1025 |[39m               [33m<[39m[33mstrong[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 1026 |[39m                 {comment[33m.[39msectionKey [33m?[39m humanize(comment[33m.[39msectionKey) [33m:[39m [32m"General note"[39m}
+   [90m      |[39m                                                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1027 |[39m               [33m<[39m[33m/[39m[33mstrong[39m[33m>[39m
+   [90m 1028 |[39m               [33m<[39m[33mspan[39m
+   [90m 1029 |[39m                 className[33m=[39m{[32m`status-chip${[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1030:27
+TS2339: Property 'isResolved' does not exist on type 'Comment'.
+  [0m [90m 1028 |[39m               [33m<[39m[33mspan[39m
+   [90m 1029 |[39m                 className[33m=[39m{[32m`status-chip${[39m
+  [31m[1m>[22m[39m[90m 1030 |[39m [32m                  comment.isResolved[39m
+   [90m      |[39m                           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1031 |[39m [32m                    ? " status-chip--brand"[39m
+   [90m 1032 |[39m [32m                    : comment.visibility === "internal"[39m
+   [90m 1033 |[39m [32m                    ? ""[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1032:31
+TS2339: Property 'visibility' does not exist on type 'Comment'.
+  [0m [90m 1030 |[39m [32m                  comment.isResolved[39m
+   [90m 1031 |[39m [32m                    ? " status-chip--brand"[39m
+  [31m[1m>[22m[39m[90m 1032 |[39m [32m                    : comment.visibility === "internal"[39m
+   [90m      |[39m                               [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1033 |[39m [32m                    ? ""[39m
+   [90m 1034 |[39m [32m                    : " status-chip--soft"[39m
+   [90m 1035 |[39m [32m                }`[39m}[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1037:26
+TS2339: Property 'isResolved' does not exist on type 'Comment'.
+  [0m [90m 1035 |[39m [32m                }`[39m}
+   [90m 1036 |[39m               [33m>[39m
+  [31m[1m>[22m[39m[90m 1037 |[39m                 {comment[33m.[39misResolved
+   [90m      |[39m                          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1038 |[39m                   [33m?[39m [32m"Resolved"[39m
+   [90m 1039 |[39m                   [33m:[39m comment[33m.[39mvisibility [33m===[39m [32m"internal"[39m
+   [90m 1040 |[39m                   [33m?[39m [32m"Internal"[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1039:29
+TS2339: Property 'visibility' does not exist on type 'Comment'.
+  [0m [90m 1037 |[39m                 {comment[33m.[39misResolved
+   [90m 1038 |[39m                   [33m?[39m [32m"Resolved"[39m
+  [31m[1m>[22m[39m[90m 1039 |[39m                   [33m:[39m comment[33m.[39mvisibility [33m===[39m [32m"internal"[39m
+   [90m      |[39m                             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1040 |[39m                   [33m?[39m [32m"Internal"[39m
+   [90m 1041 |[39m                   [33m:[39m [32m"Open with applicant"[39m}
+   [90m 1042 |[39m               [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1044:25
+TS2339: Property 'message' does not exist on type 'Comment'.
+  [0m [90m 1042 |[39m               [33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+   [90m 1043 |[39m             [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 1044 |[39m             [33m<[39m[33mp[39m[33m>[39m{comment[33m.[39mmessage}[33m<[39m[33m/[39m[33mp[39m[33m>[39m
+   [90m      |[39m                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1045 |[39m             [33m<[39m[33mspan[39m className[33m=[39m[32m"message-item__meta"[39m[33m>[39m
+   [90m 1046 |[39m               {comment[33m.[39mauthor[33m.[39mfullName} [33m|[39m {humanize(comment[33m.[39mcommentType)} [33m|[39m{[32m" "[39m}
+   [90m 1047 |[39m               {formatDate(comment[33m.[39mupdatedAt)}[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1046:24
+TS2339: Property 'author' does not exist on type 'Comment'.
+  [0m [90m 1044 |[39m             [33m<[39m[33mp[39m[33m>[39m{comment[33m.[39mmessage}[33m<[39m[33m/[39m[33mp[39m[33m>[39m
+   [90m 1045 |[39m             [33m<[39m[33mspan[39m className[33m=[39m[32m"message-item__meta"[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 1046 |[39m               {comment[33m.[39mauthor[33m.[39mfullName} [33m|[39m {humanize(comment[33m.[39mcommentType)} [33m|[39m{[32m" "[39m}
+   [90m      |[39m                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1047 |[39m               {formatDate(comment[33m.[39mupdatedAt)}
+   [90m 1048 |[39m             [33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+   [90m 1049 |[39m           [33m<[39m[33m/[39m[33marticle[39m[33m>[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1046:61
+TS2339: Property 'commentType' does not exist on type 'Comment'.
+  [0m [90m 1044 |[39m             [33m<[39m[33mp[39m[33m>[39m{comment[33m.[39mmessage}[33m<[39m[33m/[39m[33mp[39m[33m>[39m
+   [90m 1045 |[39m             [33m<[39m[33mspan[39m className[33m=[39m[32m"message-item__meta"[39m[33m>[39m
+  [31m[1m>[22m[39m[90m 1046 |[39m               {comment[33m.[39mauthor[33m.[39mfullName} [33m|[39m {humanize(comment[33m.[39mcommentType)} [33m|[39m{[32m" "[39m}
+   [90m      |[39m                                                             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1047 |[39m               {formatDate(comment[33m.[39mupdatedAt)}
+   [90m 1048 |[39m             [33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+   [90m 1049 |[39m           [33m<[39m[33m/[39m[33marticle[39m[33m>[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1047:35
+TS2339: Property 'updatedAt' does not exist on type 'Comment'.
+  [0m [90m 1045 |[39m             [33m<[39m[33mspan[39m className[33m=[39m[32m"message-item__meta"[39m[33m>[39m
+   [90m 1046 |[39m               {comment[33m.[39mauthor[33m.[39mfullName} [33m|[39m {humanize(comment[33m.[39mcommentType)} [33m|[39m{[32m" "[39m}
+  [31m[1m>[22m[39m[90m 1047 |[39m               {formatDate(comment[33m.[39mupdatedAt)}
+   [90m      |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1048 |[39m             [33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+   [90m 1049 |[39m           [33m<[39m[33m/[39m[33marticle[39m[33m>[39m
+   [90m 1050 |[39m         ))}[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1057:8
+TS2300: Duplicate identifier 'React'.
+  [0m [90m 1055 |[39m
+   [90m 1056 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+  [31m[1m>[22m[39m[90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m      |[39m        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+   [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1057:28
+TS2300: Duplicate identifier 'useState'.
+  [0m [90m 1055 |[39m
+   [90m 1056 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+  [31m[1m>[22m[39m[90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m      |[39m                            [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+   [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1057:38
+TS2300: Duplicate identifier 'useCallback'.
+  [0m [90m 1055 |[39m
+   [90m 1056 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+  [31m[1m>[22m[39m[90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m      |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+   [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1059:10
+TS2300: Duplicate identifier 'IntakeFilter'.
+  [0m [90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1059:24
+TS2300: Duplicate identifier 'SortOrder'.
+  [0m [90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m      |[39m                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1059:41
+TS2307: Cannot find module './types/intake.types' or its corresponding type declarations.
+  [0m [90m 1057 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+   [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m      |[39m                                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1060:10
+TS2395: Individual declarations in merged declaration 'useIntakeQueue' must be all exported or all local.
+  [0m [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+   [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1060:32
+TS2307: Cannot find module './hooks/useIntakeQueue' or its corresponding type declarations.
+  [0m [90m 1058 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+   [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m      |[39m                                [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1061:10
+TS2395: Individual declarations in merged declaration 'useApplicationDetail' must be all exported or all local.
+  [0m [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1061:38
+TS2307: Cannot find module './hooks/useApplicationDetail' or its corresponding type declarations.
+  [0m [90m 1059 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+   [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m      |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1062:10
+TS2395: Individual declarations in merged declaration 'useQueueFiltering' must be all exported or all local.
+  [0m [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1062:35
+TS2307: Cannot find module './hooks/useQueueFiltering' or its corresponding type declarations.
+  [0m [90m 1060 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m
+   [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m      |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1063:10
+TS2395: Individual declarations in merged declaration 'useQueueSummary' must be all exported or all local.
+  [0m [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1063:33
+TS2307: Cannot find module './hooks/useQueueSummary' or its corresponding type declarations.
+  [0m [90m 1061 |[39m [36mimport[39m { useApplicationDetail } [36mfrom[39m [32m"./hooks/useApplicationDetail"[39m[33m;[39m
+   [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m      |[39m                                 [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1064:10
+TS2395: Individual declarations in merged declaration 'useApplicationSummary' must be all exported or all local.
+  [0m [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1064:39
+TS2307: Cannot find module './hooks/useApplicationSummary' or its corresponding type declarations.
+  [0m [90m 1062 |[39m [36mimport[39m { useQueueFiltering } [36mfrom[39m [32m"./hooks/useQueueFiltering"[39m[33m;[39m
+   [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m      |[39m                                       [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1065:10
+TS2395: Individual declarations in merged declaration 'useLatestComments' must be all exported or all local.
+  [0m [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1065:35
+TS2307: Cannot find module './hooks/useLatestComments' or its corresponding type declarations.
+  [0m [90m 1063 |[39m [36mimport[39m { useQueueSummary } [36mfrom[39m [32m"./hooks/useQueueSummary"[39m[33m;[39m
+   [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m      |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1066:10
+TS2395: Individual declarations in merged declaration 'IntakeSummaryGrid' must be all exported or all local.
+  [0m [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m 1069 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1066:35
+TS2307: Cannot find module './components/IntakeSummaryGrid' or its corresponding type declarations.
+  [0m [90m 1064 |[39m [36mimport[39m { useApplicationSummary } [36mfrom[39m [32m"./hooks/useApplicationSummary"[39m[33m;[39m
+   [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m      |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m 1069 |[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1067:10
+TS2395: Individual declarations in merged declaration 'IntakeQueuePanel' must be all exported or all local.
+  [0m [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m 1069 |[39m
+   [90m 1070 |[39m [36mfunction[39m [33mInternalIntakeWorkspace[39m()[33m:[39m [33mJSX[39m[33m.[39m[33mElement[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1067:34
+TS2307: Cannot find module './components/IntakeQueuePanel' or its corresponding type declarations.
+  [0m [90m 1065 |[39m [36mimport[39m { useLatestComments } [36mfrom[39m [32m"./hooks/useLatestComments"[39m[33m;[39m
+   [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+   [90m      |[39m                                  [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m 1069 |[39m
+   [90m 1070 |[39m [36mfunction[39m [33mInternalIntakeWorkspace[39m()[33m:[39m [33mJSX[39m[33m.[39m[33mElement[39m {[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1068:10
+TS2395: Individual declarations in merged declaration 'ApplicationDetailModal' must be all exported or all local.
+  [0m [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m      |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1069 |[39m
+   [90m 1070 |[39m [36mfunction[39m [33mInternalIntakeWorkspace[39m()[33m:[39m [33mJSX[39m[33m.[39m[33mElement[39m {
+   [90m 1071 |[39m   [36mconst[39m navigate [33m=[39m useNavigate()[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1068:40
+TS2307: Cannot find module './components/ApplicationDetailModal' or its corresponding type declarations.
+  [0m [90m 1066 |[39m [36mimport[39m { [33mIntakeSummaryGrid[39m } [36mfrom[39m [32m"./components/IntakeSummaryGrid"[39m[33m;[39m
+   [90m 1067 |[39m [36mimport[39m { [33mIntakeQueuePanel[39m } [36mfrom[39m [32m"./components/IntakeQueuePanel"[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 1068 |[39m [36mimport[39m { [33mApplicationDetailModal[39m } [36mfrom[39m [32m"./components/ApplicationDetailModal"[39m[33m;[39m
+   [90m      |[39m                                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1069 |[39m
+   [90m 1070 |[39m [36mfunction[39m [33mInternalIntakeWorkspace[39m()[33m:[39m [33mJSX[39m[33m.[39m[33mElement[39m {
+   [90m 1071 |[39m   [36mconst[39m navigate [33m=[39m useNavigate()[33m;[39m[0m
+
+ERROR in src/components/InternalIntakeWorkspace.tsx:1198:9
+TS2322: Type 'ReviewCommentItem[]' is not assignable to type 'Comment[]'.
+  Type 'ReviewCommentItem' is missing the following properties from type 'CharacterData': data, length, ownerDocument, appendData, and 59 more.
+  [0m [90m 1196 |[39m         summary[33m=[39m{applicationSummary}
+   [90m 1197 |[39m         loading[33m=[39m{loadingDetail}
+  [31m[1m>[22m[39m[90m 1198 |[39m         latestComments[33m=[39m{latestComments}
+   [90m      |[39m         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 1199 |[39m         onRefresh[33m=[39m{handleRefresh}
+   [90m 1200 |[39m         onOpenReview[33m=[39m{handleOpenReviewQueue}
+   [90m 1201 |[39m       [33m/[39m[33m>[39m[0m
+
