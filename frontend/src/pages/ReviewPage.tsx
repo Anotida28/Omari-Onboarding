@@ -5,10 +5,10 @@ import { ADMIN_NAV_GROUPS } from "../constants/navigation";
 function ReviewPage(): JSX.Element {
   return (
     <PortalShell
-      title="Omari - Review System"
-      eyebrow="Internal review"
+      title="Omari - Review Queue"
+      eyebrow="Internal operations"
       heading="Review Queue"
-      description="Assess submitted applications, clear document checks, and record approval decisions with full audit context."
+      description="Review submitted applications, verify documents, manage review tasks, and make approval decisions."
       navGroups={ADMIN_NAV_GROUPS}
     >
       <InternalReviewWorkspace />

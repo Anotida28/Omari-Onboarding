@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCurrentPortalLoginPath, redirectWithNavigate } from "../utils/portal";
@@ -14,6 +14,7 @@ interface PortalShellProps {
 }
 
 function PortalShell({
+  title,
   eyebrow,
   heading,
   description,
@@ -23,6 +24,10 @@ function PortalShell({
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
 
   if (!user) {
     return <></>;
