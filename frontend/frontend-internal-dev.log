@@ -87,3 +87,1892 @@ src\components\InternalIntakeWorkspace.tsx
 webpack compiled with [1m[31m2 errors[39m[22m
 Files successfully emitted, waiting for typecheck results...
 Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (423:7) (423:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (423:7)
+
+[0m [90m 421 |[39m
+ [90m 422 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 423 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 424 |[39m
+ [90m 425 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 426 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 423:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (423:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (384:7) (384:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (384:7)
+
+[0m [90m 382 |[39m
+ [90m 383 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 384 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 385 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 386 |[39m
+ [90m 387 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 384:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (384:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (384:7) (384:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (384:7)
+
+[0m [90m 382 |[39m
+ [90m 383 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 384 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 385 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 386 |[39m
+ [90m 387 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 384:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (384:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (382:7) (382:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (382:7)
+
+[0m [90m 380 |[39m
+ [90m 381 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 382 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 383 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 384 |[39m
+ [90m 385 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 382:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (382:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (379:7) (379:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (379:7)
+
+[0m [90m 377 |[39m
+ [90m 378 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 379 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 380 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 381 |[39m
+ [90m 382 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 379:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (379:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (376:7) (376:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (376:7)
+
+[0m [90m 374 |[39m
+ [90m 375 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 376 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 377 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 378 |[39m
+ [90m 379 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 376:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (376:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (373:7) (373:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (373:7)
+
+[0m [90m 371 |[39m
+ [90m 372 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 373 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 374 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 375 |[39m
+ [90m 376 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 373:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (373:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (370:7) (370:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (370:7)
+
+[0m [90m 368 |[39m
+ [90m 369 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 370 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 371 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 372 |[39m
+ [90m 373 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 370:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (370:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (367:7) (367:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (367:7)
+
+[0m [90m 365 |[39m
+ [90m 366 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 367 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 368 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 369 |[39m
+ [90m 370 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 367:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (367:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (365:7) (365:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (365:7)
+
+[0m [90m 363 |[39m
+ [90m 364 |[39m [90m// components/IntakeSummaryGrid.tsx[39m
+[31m[1m>[22m[39m[90m 365 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 366 |[39m [36mimport[39m { [33mQueueSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 367 |[39m
+ [90m 368 |[39m [36minterface[39m [33mIntakeSummaryGridProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 365:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (365:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (412:7) (412:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (412:7)
+
+[0m [90m 410 |[39m
+ [90m 411 |[39m [90m// components/IntakeQueueItem.tsx[39m
+[31m[1m>[22m[39m[90m 412 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 413 |[39m
+ [90m 414 |[39m [36minterface[39m [33mIntakeQueueItemProps[39m {
+ [90m 415 |[39m   item[33m:[39m [33mReviewQueueItem[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 412:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (412:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (476:7) (476:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (476:7)
+
+[0m [90m 474 |[39m
+ [90m 475 |[39m [90m// components/IntakeQueuePanel.tsx[39m
+[31m[1m>[22m[39m[90m 476 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 477 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 478 |[39m
+ [90m 479 |[39m [36minterface[39m [33mIntakeQueuePanelProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 476:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (476:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (602:7) (602:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (602:7)
+
+[0m [90m 600 |[39m
+ [90m 601 |[39m [90m// components/ApplicationDetailModal.tsx[39m
+[31m[1m>[22m[39m[90m 602 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 603 |[39m [36mimport[39m { [33mApplicationSummary[39m } [36mfrom[39m [32m"../types/intake.types"[39m[33m;[39m
+ [90m 604 |[39m
+ [90m 605 |[39m [36minterface[39m [33mApplicationDetailModalProps[39m {[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 602:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (602:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (694:7) (694:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (694:7)
+
+[0m [90m 692 |[39m
+ [90m 693 |[39m [90m// components/ApplicationDetailContent.tsx[39m
+[31m[1m>[22m[39m[90m 694 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m     |[39m        [31m[1m^[22m[39m
+ [90m 695 |[39m
+ [90m 696 |[39m [36minterface[39m [33mApplicationDetailContentProps[39m {
+ [90m 697 |[39m   application[33m:[39m [33mApplicationDetailResponse[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 694:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (694:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (1036:7) (1036:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (1036:7)
+
+[0m [90m 1034 |[39m
+ [90m 1035 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+[31m[1m>[22m[39m[90m 1036 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m      |[39m        [31m[1m^[22m[39m
+ [90m 1037 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+ [90m 1038 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+ [90m 1039 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 1036:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (1036:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (1036:7) (1036:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (1036:7)
+
+[0m [90m 1034 |[39m
+ [90m 1035 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+[31m[1m>[22m[39m[90m 1036 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m      |[39m        [31m[1m^[22m[39m
+ [90m 1037 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+ [90m 1038 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+ [90m 1039 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 1036:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (1036:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Failed to compile.
+
+[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+Syntax error: Identifier 'React' has already been declared. (1036:7) (1036:7)
+[1m[31mERROR[39m[22m in [1m./src/components/InternalIntakeWorkspace.tsx[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\src\components\InternalIntakeWorkspace.tsx: Identifier 'React' has already been declared. (1036:7)
+
+[0m [90m 1034 |[39m
+ [90m 1035 |[39m [90m// InternalIntakeWorkspace.tsx (Main Component - Refactored)[39m
+[31m[1m>[22m[39m[90m 1036 |[39m [36mimport[39m [33mReact[39m[33m,[39m { useEffect[33m,[39m useState[33m,[39m useCallback } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m      |[39m        [31m[1m^[22m[39m
+ [90m 1037 |[39m [36mimport[39m { useNavigate } [36mfrom[39m [32m"react-router-dom"[39m[33m;[39m
+ [90m 1038 |[39m [36mimport[39m { [33mIntakeFilter[39m[33m,[39m [33mSortOrder[39m } [36mfrom[39m [32m"./types/intake.types"[39m[33m;[39m
+ [90m 1039 |[39m [36mimport[39m { useIntakeQueue } [36mfrom[39m [32m"./hooks/useIntakeQueue"[39m[33m;[39m[0m
+    at constructor (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+    at TypeScriptScopeHandler.checkRedeclarationInScope (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1619:19)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:1585:12)
+    at TypeScriptScopeHandler.declareName (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:4880:11)
+    at TypeScriptParserMixin.declareNameFromIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7567:16)
+    at TypeScriptParserMixin.checkIdentifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7563:12)
+    at TypeScriptParserMixin.checkLVal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:7500:12)
+    at TypeScriptParserMixin.finishImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14266:10)
+    at TypeScriptParserMixin.parseImportSpecifierLocal (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14263:31)
+    at TypeScriptParserMixin.maybeParseDefaultImportSpecifier (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14366:12)
+    at TypeScriptParserMixin.parseImportSpecifiersAndAfter (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14239:29)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14235:17)
+    at TypeScriptParserMixin.parseImport (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9353:26)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12876:27)
+    at TypeScriptParserMixin.parseStatementContent (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12767:17)
+    at TypeScriptParserMixin.parseModuleItem (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12744:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13316:36)
+    at TypeScriptParserMixin.parseBlockBody (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:13309:10)
+    at TypeScriptParserMixin.parseProgram (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12622:10)
+    at TypeScriptParserMixin.parseTopLevel (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:12612:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14488:25)
+    at TypeScriptParserMixin.parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:10126:18)
+    at parse (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\parser\lib\index.js:14522:38)
+    at parser (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:261:32)
+    at C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\Users\om526127\Documents\GitHub\Projects\Omari-Onboarding\frontend\node_modules\gensync\index.js:223:11)
+
+[1m[31mERROR[39m[22m in [1m[eslint] 
+src\components\InternalIntakeWorkspace.tsx
+  Line 1036:7:  Parsing [1m[31merror[39m[22m[1m: Identifier 'React' has already been declared. (1036:7)
+
+[39m[22m
+
+webpack compiled with [1m[31m2 errors[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled [1m[32msuccessfully[39m[22m
+No issues found.

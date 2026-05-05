@@ -268,7 +268,8 @@ body {
 }
 
 .sidebar__item--active .sidebar__icon {
-  background: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  color: var(--brand-800);
 }
 
 .sidebar__account {
@@ -5621,11 +5622,6 @@ body {
   border-radius: var(--radius-sm);
 }
 
-.intake-layout {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
-}
-
 .intake-queue-column {
   top: 28px;
 }
@@ -5645,7 +5641,6 @@ body {
 .intake-queue-list {
   max-height: calc(100vh - 350px);
   gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .intake-queue-item {
@@ -5848,4 +5843,192 @@ body {
     border-left: 0;
     border-top: 1px solid var(--line);
   }
+}
+
+/* ===== LOADING SPINNER ===== */
+@keyframes omari-spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(20, 162, 122, 0.18);
+  border-top-color: var(--brand-700);
+  animation: omari-spin 0.72s linear infinite;
+  flex-shrink: 0;
+}
+
+.spinner--sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-state {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.loading-state strong {
+  color: var(--text-900);
+}
+
+.loading-state span {
+  color: var(--text-700);
+}
+
+/* ===== DECISION BUTTON COLORS ===== */
+.button--danger {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.18);
+}
+
+.button--danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.28);
+  transform: translateY(-1px);
+}
+
+.button--warning {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.18);
+}
+
+.button--warning:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.28);
+  transform: translateY(-1px);
+}
+
+/* ===== PASSWORD FIELD WITH TOGGLE ===== */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  flex: 1;
+  padding-right: 46px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.password-toggle:hover {
+  color: var(--text-900);
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== STATUS BADGE INDICATORS ===== */
+.status-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.status-badge--draft::before {
+  opacity: 0.5;
+}
+
+/* ===== INTAKE DETAIL COLUMN IMPROVEMENTS ===== */
+.intake-detail-column {
+  min-height: 300px;
+}
+
+.intake-detail-column > .empty-state {
+  min-height: 200px;
+  display: grid;
+  place-items: center;
+}
+
+/* ===== REVIEW ACTIONS PANEL BUTTON SPACING ===== */
+.review-actions-panel .form-actions {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-actions-panel .form-actions .button {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ===== APPLICATION ENTRY HOVER POLISH ===== */
+.application-entry {
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.application-entry:hover {
+  border-color: rgba(20, 162, 122, 0.22);
+  box-shadow: 0 8px 20px rgba(10, 72, 60, 0.07);
+  transform: translateY(-1px);
+}
+
+.application-entry__icon {
+  font-size: 1rem;
+}
+
+/* ===== ROUTE LOADER SPINNER ===== */
+.route-loader__card .spinner {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+/* ===== DASHBOARD LOADING STATE ===== */
+.dashboard-loading {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 60px 24px;
+  text-align: center;
+  border: 1px dashed rgba(13, 111, 89, 0.2);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+}
+
+.dashboard-loading h3 {
+  margin: 0;
+  color: var(--text-900);
+  font-size: 1.1rem;
+}
+
+.dashboard-loading span {
+  color: var(--text-700);
 }

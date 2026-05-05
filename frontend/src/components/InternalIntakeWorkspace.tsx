@@ -1,3 +1,14 @@
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getReviewQueue,
+  getApplication,
+  ApplicationDetailResponse,
+  ReviewQueueItem,
+  ReviewCommentItem,
+  ReviewTaskItem,
+} from "../services/api";
+
 // types/intake.types.ts
 export type IntakeFilter =
   | "all"
@@ -26,12 +37,10 @@ export interface ApplicationSummary {
   openComments: number;
   applicantVisibleComments: number;
   progressPercent: number;
-  latestTask: ReviewTask | null;
+  latestTask: ReviewTaskItem | null;
 }
 
 // constants/intake.constants.ts
-import { IntakeFilterOption } from "../types/intake.types";
-
 export const INTAKE_FILTERS: readonly IntakeFilterOption[] = [
   { value: "all", label: "All Active" },
   { value: "draft", label: "Drafts" },
@@ -40,11 +49,11 @@ export const INTAKE_FILTERS: readonly IntakeFilterOption[] = [
   { value: "action-required", label: "Action Required" },
 ] as const;
 
-export const REVIEWING_STATUSES = new Set([
+export const REVIEWING_STATUSES = new Set<string>([
   "initial_review",
   "document_check",
   "compliance_review",
-] as const);
+]);
 
 export const STATUS_LABELS: Record<string, string> = {
   draft: "Draft",
@@ -154,9 +163,6 @@ export const resolveSelectedApplicationId = (
 };
 
 // hooks/useIntakeQueue.ts
-import { useState, useCallback, useRef } from "react";
-import { getReviewQueue } from "../services/api";
-
 export const useIntakeQueue = () => {
   const [queue, setQueue] = useState<ReviewQueueItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -200,9 +206,6 @@ export const useIntakeQueue = () => {
 };
 
 // hooks/useApplicationDetail.ts
-import { useState, useCallback, useRef } from "react";
-import { getApplication, ApplicationDetailResponse } from "../services/api";
-
 export const useApplicationDetail = () => {
   const [application, setApplication] = useState<ApplicationDetailResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -253,9 +256,6 @@ export const useApplicationDetail = () => {
 };
 
 // hooks/useQueueFiltering.ts
-import { useMemo } from "react";
-import { IntakeFilter, SortOrder } from "../types/intake.types";
-
 export const useQueueFiltering = (
   queue: ReviewQueueItem[],
   filter: IntakeFilter,
@@ -296,9 +296,6 @@ export const useQueueFiltering = (
 };
 
 // hooks/useQueueSummary.ts
-import { useMemo } from "react";
-import { QueueSummary } from "../types/intake.types";
-
 export const useQueueSummary = (queue: ReviewQueueItem[]): QueueSummary => {
   return useMemo(() => {
     const today = new Date();
@@ -318,9 +315,6 @@ export const useQueueSummary = (queue: ReviewQueueItem[]): QueueSummary => {
 };
 
 // hooks/useApplicationSummary.ts
-import { useMemo } from "react";
-import { ApplicationSummary } from "../types/intake.types";
-
 export const useApplicationSummary = (
   application: ApplicationDetailResponse | null
 ): ApplicationSummary | null => {
@@ -355,8 +349,6 @@ export const useApplicationSummary = (
 };
 
 // hooks/useLatestComments.ts
-import { useMemo } from "react";
-
 export const useLatestComments = (application: ApplicationDetailResponse | null) => {
   return useMemo(() => {
     if (!application) return [];
@@ -370,9 +362,6 @@ export const useLatestComments = (application: ApplicationDetailResponse | null)
 };
 
 // components/IntakeSummaryGrid.tsx
-import React from "react";
-import { QueueSummary } from "../types/intake.types";
-
 interface IntakeSummaryGridProps {
   summary: QueueSummary;
 }
@@ -420,8 +409,6 @@ export const IntakeSummaryGrid: React.FC<IntakeSummaryGridProps> = ({ summary })
 };
 
 // components/IntakeQueueItem.tsx
-import React from "react";
-
 interface IntakeQueueItemProps {
   item: ReviewQueueItem;
   isSelected: boolean;
@@ -486,9 +473,6 @@ export const IntakeQueueItem: React.FC<IntakeQueueItemProps> = ({
 };
 
 // components/IntakeQueuePanel.tsx
-import React from "react";
-import { IntakeFilter, SortOrder } from "../types/intake.types";
-
 interface IntakeQueuePanelProps {
   items: ReviewQueueItem[];
   selectedId: string;
@@ -615,16 +599,13 @@ export const IntakeQueuePanel: React.FC<IntakeQueuePanelProps> = ({
 };
 
 // components/ApplicationDetailModal.tsx
-import React from "react";
-import { ApplicationSummary } from "../types/intake.types";
-
 interface ApplicationDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   application: ApplicationDetailResponse | null;
   summary: ApplicationSummary | null;
   loading: boolean;
-  latestComments: Comment[];
+  latestComments: ReviewCommentItem[];
   onRefresh: () => Promise<void>;
   onOpenReview: () => void;
 }
@@ -710,12 +691,10 @@ export const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
 };
 
 // components/ApplicationDetailContent.tsx
-import React from "react";
-
 interface ApplicationDetailContentProps {
   application: ApplicationDetailResponse;
   summary: ApplicationSummary;
-  latestComments: Comment[];
+  latestComments: ReviewCommentItem[];
   onRefresh: () => Promise<void>;
   onOpenReview: () => void;
 }
@@ -998,7 +977,7 @@ const ApplicationReadiness: React.FC<{ application: ApplicationDetailResponse; s
 );
 
 // components/ApplicationComments.tsx
-const ApplicationComments: React.FC<{ comments: Comment[] }> = ({ comments }) => (
+const ApplicationComments: React.FC<{ comments: ReviewCommentItem[] }> = ({ comments }) => (
   <section className="page-section">
     <div className="page-section__header">
       <div>
@@ -1054,28 +1033,15 @@ const ApplicationComments: React.FC<{ comments: Comment[] }> = ({ comments }) =>
 );
 
 // InternalIntakeWorkspace.tsx (Main Component - Refactored)
-import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { IntakeFilter, SortOrder } from "./types/intake.types";
-import { useIntakeQueue } from "./hooks/useIntakeQueue";
-import { useApplicationDetail } from "./hooks/useApplicationDetail";
-import { useQueueFiltering } from "./hooks/useQueueFiltering";
-import { useQueueSummary } from "./hooks/useQueueSummary";
-import { useApplicationSummary } from "./hooks/useApplicationSummary";
-import { useLatestComments } from "./hooks/useLatestComments";
-import { IntakeSummaryGrid } from "./components/IntakeSummaryGrid";
-import { IntakeQueuePanel } from "./components/IntakeQueuePanel";
-import { ApplicationDetailModal } from "./components/ApplicationDetailModal";
 
 function InternalIntakeWorkspace(): JSX.Element {
   const navigate = useNavigate();
-  
+
   // State
   const [selectedApplicationId, setSelectedApplicationId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<IntakeFilter>("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [message, setMessage] = useState("");
 
   // Custom hooks
@@ -1108,7 +1074,6 @@ function InternalIntakeWorkspace(): JSX.Element {
   useEffect(() => {
     if (filteredQueue.length === 0) {
       setSelectedApplicationId("");
-      setIsDetailModalOpen(false);
       return;
     }
 
@@ -1122,7 +1087,6 @@ function InternalIntakeWorkspace(): JSX.Element {
   useEffect(() => {
     if (!selectedApplicationId) {
       resetRequestId();
-      setIsDetailModalOpen(false);
       return;
     }
 
@@ -1151,14 +1115,11 @@ function InternalIntakeWorkspace(): JSX.Element {
       resetRequestId();
     }
     setSelectedApplicationId(applicationId);
-    setIsDetailModalOpen(true);
     setMessage("");
   }, [selectedApplicationId, resetRequestId]);
 
   const handleOpenReviewQueue = useCallback((): void => {
     if (!application) return;
-    
-    setIsDetailModalOpen(false);
     navigate(`/internal/review?scope=pending&applicationId=${application.applicationId}`);
   }, [application, navigate]);
 
@@ -1187,18 +1148,29 @@ function InternalIntakeWorkspace(): JSX.Element {
             onSelectItem={handleSelectQueueItem}
           />
         </aside>
-      </div>
 
-      <ApplicationDetailModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        application={application}
-        summary={applicationSummary}
-        loading={loadingDetail}
-        latestComments={latestComments}
-        onRefresh={handleRefresh}
-        onOpenReview={handleOpenReviewQueue}
-      />
+        <div className="intake-detail-column">
+          {loadingDetail ? (
+            <div className="empty-state">
+              <div className="spinner" aria-label="Loading..." />
+              <strong>Loading application detail...</strong>
+            </div>
+          ) : !application || !applicationSummary ? (
+            <div className="empty-state">
+              <strong>No application selected</strong>
+              <span>Choose an onboarding record from the list to inspect its current state.</span>
+            </div>
+          ) : (
+            <ApplicationDetailContent
+              application={application}
+              summary={applicationSummary}
+              latestComments={latestComments}
+              onRefresh={handleRefresh}
+              onOpenReview={handleOpenReviewQueue}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

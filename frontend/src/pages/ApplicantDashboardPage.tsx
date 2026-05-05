@@ -148,7 +148,7 @@ function ApplicantDashboardPage(): JSX.Element {
     >
       {isLoading ? (
         <div className="empty-state">
-          <div className="empty-state-icon">...</div>
+          <div className="spinner" aria-label="Loading..." />
           <h3>Loading your dashboard...</h3>
         </div>
       ) : application ? (

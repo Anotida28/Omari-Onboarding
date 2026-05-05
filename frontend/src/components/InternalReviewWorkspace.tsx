@@ -2402,7 +2402,7 @@ function InternalReviewWorkspace(): JSX.Element {
                     <div className="form-actions">
                       <button
                         type="button"
-                        className="button button--ghost"
+                        className="button button--warning"
                         onClick={() => openDecisionModal("request-info")}
                         disabled={processingAction || isDecisionLocked}
                       >
@@ -2410,7 +2410,7 @@ function InternalReviewWorkspace(): JSX.Element {
                       </button>
                       <button
                         type="button"
-                        className="button button--ghost"
+                        className="button button--danger"
                         onClick={() => openDecisionModal("reject")}
                         disabled={processingAction || isDecisionLocked}
                       >

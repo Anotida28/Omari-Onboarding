@@ -304,16 +304,25 @@ const writeAuthAuditLog = async (
     details?: Record<string, unknown>;
   }
 ): Promise<void> => {
-  await client.auditLog.create({
-    data: {
-      actorUserId: payload.actorUserId || null,
-      entityType: "auth",
-      entityId: payload.entityId,
+  try {
+    await client.auditLog.create({
+      data: {
+        actorUserId: payload.actorUserId || null,
+        entityType: "auth",
+        entityId: payload.entityId,
+        action: payload.action,
+        summary: payload.summary,
+        detailsJson: payload.details ? JSON.stringify(payload.details) : null
+      }
+    });
+  } catch (error) {
+    // Audit logging must not block auth flows when the DB pool is saturated.
+    console.error("Failed to persist auth audit log.", {
       action: payload.action,
-      summary: payload.summary,
-      detailsJson: payload.details ? JSON.stringify(payload.details) : null
-    }
-  });
+      entityId: payload.entityId,
+      error
+    });
+  }
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
